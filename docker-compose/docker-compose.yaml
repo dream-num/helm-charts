@@ -1,0 +1,68 @@
+version: '3'
+services:
+  universer:
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/universer:dev
+    expose:
+      - 8000
+      - 9000
+    volumes:
+      - ./universer-configs:/data/configs
+    depends_on:
+      - univer-postgres
+      - univer-rabbitmq
+      - univer-clickhouse
+
+  collaboration-server:
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration:latest
+    environment:
+      - URL_OF_UNIVERSER_SERVICE=univer-sidecar:8000
+      - URL_OF_SNAPSHOT_SERVICE=univer-sidecar:9000
+    expose:
+      - 5001
+      - 5002
+
+  univer-postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: univer
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./sql/postgresql:/docker-entrypoint-initdb.d
+
+  univer-rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "8090:15672"
+      - "5672:5672"
+
+  univer-clickhouse:
+    image: bitnami/clickhouse:23.10.2-debian-11-r0
+    environment:
+      - CLICKHOUSE_ADMIN_USER=clickhouse
+      - CLICKHOUSE_ADMIN_PASSWORD=clickhouse
+      - ALLOW_EMPTY_PASSWORD=no
+    volumes:
+      - clickhouse-data:/bitnami/clickhouse
+      - ./sql/clickhouse:/docker-entrypoint-initdb.d
+    ports:
+      - "4000:8123"
+      - "4001:9000"
+
+  univer-sidecar:
+    image: bitnami/nginx:1.25.1-debian-11-r0
+    volumes:
+      - ./sidecar-configs/:/opt/bitnami/nginx/conf/server_blocks/:ro
+    ports:
+      - 8000:8000
+      - 9000:9000
+      - 5001:5001
+      - 5002:5002
+
+volumes:
+  postgres-data:
+
+  clickhouse-data:

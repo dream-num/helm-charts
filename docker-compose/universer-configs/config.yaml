@@ -1,0 +1,28 @@
+server:
+  http:
+    addr: 0.0.0.0:8000
+    timeout: 10s
+  grpc:
+    addr: 0.0.0.0:9000
+    timeout: 10s
+data:
+  database:
+    driver: postgresql
+    database: univer
+    dsn: host=univer-postgres port=5432 dbname=univer user=postgres password=postgres sslmode=disable TimeZone=Asia/Shanghai
+  redis:
+    addr: 127.0.0.1:6379
+    read_timeout: 0.2s
+    write_timeout: 0.2s
+  rabbitmq:
+    addr: amqp://guest:guest@univer-rabbitmq:5672/
+  clickhouse:
+    dsn: clickhouse://clickhouse:clickhouse@univer-clickhouse:9000/univer?dial_timeout=10s&read_timeout=20s
+service:
+  transform:
+    addr: univer-sidecar:5001
+    timeout: 10s
+  apply:
+    addr: univer-sidecar:5002
+    timeout: 10s
+
