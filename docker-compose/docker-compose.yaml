@@ -1,7 +1,7 @@
 version: '3'
 services:
   universer:
-    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/universer:dev
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/universer:latest
     expose:
       - 8000
       - 9000
@@ -21,12 +21,17 @@ services:
       - 5001
       - 5002
 
+  collaboration-demo:
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration-demo:latest
+    ports:
+      - "3010:3010"
+
   univer-postgres:
     image: postgres:latest
     environment:
-      POSTGRES_DB: univer
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      - POSTGRES_DB=univer
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     ports:
       - "5432:5432"
     volumes:
