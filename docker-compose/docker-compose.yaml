@@ -1,10 +1,12 @@
 version: '3'
 services:
   universer:
+    restart: always
+    container_name: universer
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/universer:latest
-    expose:
-      - 8000
-      - 9000
+    ports:
+      - 8000:8000
+      - 9000:9000
     volumes:
       - ./universer-configs:/data/configs
     depends_on:
@@ -13,13 +15,18 @@ services:
       - univer-clickhouse
 
   collaboration-server:
+    restart: always
+    container_name: collaboration-server
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration:latest
     environment:
-      - URL_OF_UNIVERSER_SERVICE=univer-sidecar:8000
-      - URL_OF_SNAPSHOT_SERVICE=univer-sidecar:9000
-    expose:
-      - 5001
-      - 5002
+      - URL_OF_TRANSFORM_SERVICE=0.0.0.0:5001
+      - URL_OF_APPLY_SERVICE=0.0.0.0:5002
+      - URL_OF_UNIVERSER_SERVICE=universer:8000
+      - URL_OF_SNAPSHOT_SERVICE=universer:9000
+      - SAVE_SNAPSHOT_INTERVAL=3
+    ports:
+      - 5001:5001
+      - 5002:5002
 
   collaboration-demo:
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration-demo:latest
@@ -28,23 +35,30 @@ services:
 
   univer-postgres:
     image: postgres:latest
+    restart: always
+    container_name: univer-postgres
     environment:
       - POSTGRES_DB=univer
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - PGDATA=/var/lib/postgresql/data/
     ports:
       - "5432:5432"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - /mnt/postgresql:/var/lib/postgresql/data/:rw
       - ./sql/postgresql:/docker-entrypoint-initdb.d
 
   univer-rabbitmq:
+    restart: always
+    container_name: univer-rabbitmq
     image: rabbitmq:3-management
     ports:
       - "8090:15672"
       - "5672:5672"
 
   univer-clickhouse:
+    restart: always
+    container_name: univer-clickhouse
     image: bitnami/clickhouse:23.10.2-debian-11-r0
     environment:
       - CLICKHOUSE_ADMIN_USER=clickhouse
@@ -57,17 +71,6 @@ services:
       - "4000:8123"
       - "4001:9000"
 
-  univer-sidecar:
-    image: bitnami/nginx:1.25.1-debian-11-r0
-    volumes:
-      - ./sidecar-configs/:/opt/bitnami/nginx/conf/server_blocks/:ro
-    ports:
-      - 8000:8000
-      - 9000:9000
-      - 5001:5001
-      - 5002:5002
-
 volumes:
-  postgres-data:
 
   clickhouse-data:

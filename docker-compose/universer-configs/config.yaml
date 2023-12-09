@@ -20,9 +20,9 @@ data:
     dsn: clickhouse://clickhouse:clickhouse@univer-clickhouse:9000/univer?dial_timeout=10s&read_timeout=20s
 service:
   transform:
-    addr: univer-sidecar:5001
+    addr: collaboration-server:5001
     timeout: 10s
   apply:
-    addr: univer-sidecar:5002
+    addr: collaboration-server:5002
     timeout: 10s
 
