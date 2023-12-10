@@ -39,13 +39,13 @@ services:
     container_name: univer-postgres
     environment:
       - POSTGRES_DB=univer
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=univer
+      - POSTGRES_PASSWORD=pgstaging@univer.ai
       - PGDATA=/var/lib/postgresql/data/
     ports:
-      - "5432:5432"
+      - "10001:5432"
     volumes:
-      - /mnt/postgresql:/var/lib/postgresql/data/:rw
+      - postgres-data:/var/lib/postgresql/data
       - ./sql/postgresql:/docker-entrypoint-initdb.d
 
   univer-rabbitmq:
@@ -53,8 +53,8 @@ services:
     container_name: univer-rabbitmq
     image: rabbitmq:3-management
     ports:
-      - "8090:15672"
-      - "5672:5672"
+      - "10003:15672"
+      - "10002:5672"
 
   univer-clickhouse:
     restart: always
@@ -68,9 +68,10 @@ services:
       - clickhouse-data:/bitnami/clickhouse
       - ./sql/clickhouse:/docker-entrypoint-initdb.d
     ports:
-      - "4000:8123"
-      - "4001:9000"
+      - "10004:8123"
+      - "10005:9000"
 
 volumes:
+  postgres-data:
 
   clickhouse-data:

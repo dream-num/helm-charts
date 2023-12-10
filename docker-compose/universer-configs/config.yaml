@@ -9,7 +9,7 @@ data:
   database:
     driver: postgresql
     database: univer
-    dsn: host=univer-postgres port=5432 dbname=univer user=postgres password=postgres sslmode=disable TimeZone=Asia/Shanghai
+    dsn: host=univer-postgres port=5432 dbname=univer user=univer password=pgstaging@univer.ai sslmode=disable TimeZone=Asia/Shanghai
   redis:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s
