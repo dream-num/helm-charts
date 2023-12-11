@@ -7,12 +7,16 @@ services:
     ports:
       - 8000:8000
       - 9000:9000
+    environment:
+      - NO_PROXY=127.0.0.1,localhost,univer-temporal
     volumes:
       - ./universer-configs:/data/configs
     depends_on:
       - univer-postgres
       - univer-rabbitmq
       - univer-clickhouse
+    networks:
+      - univer
 
   collaboration-server:
     restart: always
@@ -27,11 +31,15 @@ services:
     ports:
       - 5001:5001
       - 5002:5002
+    networks:
+      - univer
 
   collaboration-demo:
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration-demo:latest
     ports:
       - "3010:3010"
+    networks:
+      - univer
 
   univer-postgres:
     image: postgres:latest
@@ -39,7 +47,7 @@ services:
     container_name: univer-postgres
     environment:
       - POSTGRES_DB=univer
-      - POSTGRES_USER=univer
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=pgstaging@univer.ai
       - PGDATA=/var/lib/postgresql/data/
     ports:
@@ -47,6 +55,8 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./sql/postgresql:/docker-entrypoint-initdb.d
+    networks:
+      - univer
 
   univer-rabbitmq:
     restart: always
@@ -55,6 +65,8 @@ services:
     ports:
       - "10003:15672"
       - "10002:5672"
+    networks:
+      - univer
 
   univer-clickhouse:
     restart: always
@@ -70,6 +82,48 @@ services:
     ports:
       - "10004:8123"
       - "10005:9000"
+    networks:
+      - univer
+
+  univer-temporal:
+    image: temporalio/auto-setup:1.22.2
+    environment:
+      - DB=postgresql
+      - DB_PORT=5432
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
+      - POSTGRES_USER=postgres
+      - POSTGRES_PWD=pgstaging@univer.ai
+      - POSTGRES_SEEDS=univer-postgres
+      - TEMPORAL_CLI_SHOW_STACKS=1
+      - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16
+    volumes:
+      - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
+    expose:
+      - 7233
+    depends_on:
+      - univer-postgres
+    networks:
+      - univer
+
+  univer-worker:
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-worker:0.0.1
+    volumes:
+      - ./configs:/app/configs
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/univers:/tmp/univers
+    environment:
+      - NO_PROXY=127.0.0.1,localhost,univer-temporal
+    depends_on:
+      - univer-temporal
+    networks:
+      - univer
+
+networks:
+  univer:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.30.0.0/16
 
 volumes:
   postgres-data:
