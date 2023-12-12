@@ -8,7 +8,7 @@ services:
       - 8000:8000
       - 9000:9000
     environment:
-      - NO_PROXY=127.0.0.1,localhost,univer-temporal
+      - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-temporal
     volumes:
       - ./universer-configs:/data/configs
     depends_on:
@@ -17,6 +17,8 @@ services:
       - univer-clickhouse
     networks:
       - univer
+    labels:
+      - com.univer.app=universer
 
   collaboration-server:
     restart: always
@@ -33,6 +35,8 @@ services:
       - 5002:5002
     networks:
       - univer
+    labels:
+      - com.univer.app=collaboration-server
 
   collaboration-demo:
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration-demo:latest
@@ -40,6 +44,8 @@ services:
       - "3010:3010"
     networks:
       - univer
+    labels:
+      - com.univer.app=collaboration-demo
 
   univer-postgres:
     image: postgres:latest
@@ -57,6 +63,8 @@ services:
       - ./sql/postgresql:/docker-entrypoint-initdb.d
     networks:
       - univer
+    labels:
+      - com.univer.app=postgres
 
   univer-rabbitmq:
     restart: always
@@ -67,6 +75,8 @@ services:
       - "10002:5672"
     networks:
       - univer
+    labels:
+      - com.univer.app=rabbitmq
 
   univer-clickhouse:
     restart: always
@@ -84,6 +94,8 @@ services:
       - "10005:9000"
     networks:
       - univer
+    labels:
+      - com.univer.app=clickhouse
 
   univer-temporal:
     image: temporalio/auto-setup:1.22.2
@@ -104,6 +116,8 @@ services:
       - univer-postgres
     networks:
       - univer
+    labels:
+      - com.univer.app=temporal
 
   univer-worker:
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-worker:0.0.1
@@ -112,11 +126,68 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/univers:/tmp/univers
     environment:
-      - NO_PROXY=127.0.0.1,localhost,univer-temporal
+      - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-temporal
     depends_on:
       - univer-temporal
     networks:
       - univer
+    labels:
+      - com.univer.app=worker
+
+  univer-loki:
+    image: grafana/loki:2.9.0
+    expose:
+      - 3100
+    environment:
+      - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16
+    command: -config.file=/etc/loki/config.yaml
+    volumes:
+      - ./loki/loki:/etc/loki:ro
+      - loki-data:/loki
+    labels:
+      - com.univer.app=loki
+
+  univer-promtail:
+    image: grafana/promtail:2.9.0
+    volumes:
+      - ./loki/promtail:/etc/promtail:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-loki
+    command: -config.file=/etc/promtail/config.yml
+    labels:
+      - com.univer.app=promtail
+
+  univer-grafana:
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=123456
+      - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-loki
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /etc/grafana/provisioning/datasources
+        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+        apiVersion: 1
+        datasources:
+        - name: Loki
+          type: loki
+          access: proxy
+          orgId: 1
+          url: http://univer-loki:3100
+          basicAuth: false
+          isDefault: true
+          version: 1
+          editable: false
+        EOF
+        /run.sh
+    image: grafana/grafana:10.2.2
+    ports:
+      - "3000:3000"
+    labels:
+      - com.univer.app=grafana
 
 networks:
   univer:
@@ -129,3 +200,5 @@ volumes:
   postgres-data:
 
   clickhouse-data:
+
+  loki-data:
