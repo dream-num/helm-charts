@@ -1,0 +1,32 @@
+server:
+  http:
+    addr: 0.0.0.0:8000
+    timeout: 10s
+  grpc:
+    addr: 0.0.0.0:9000
+    timeout: 10s
+data:
+  database:
+    driver: postgresql
+    database: ${POSTGRES_DATABASE}
+    dsn: host=${POSTGRES_HOST} port=${POSTGRES_PORT} dbname=${POSTGRES_DATABASE} user=${POSTGRES_USERNAME} password=${POSTGRES_PASSWORD} sslmode=disable TimeZone=Asia/Shanghai
+  rabbitmq:
+    addr: amqp://${RABBITMQ_USERNAME}:${RABBITMQ_PASSWORD}@${RABBITMQ_HOST}:${RABBITMQ_PORT}/
+  clickhouse:
+    dsn: clickhouse://${CLICKHOUSE_USERNAME}:${CLICKHOUSE_PASSWORD}@${CLICKHOUSE_HOST}:${CLICKHOUSE_PORT}/univer?dial_timeout=10s&read_timeout=20s
+  temporal:
+    addr: univer-temporal:7233
+    namespace: default
+    worker_task_queue: migration-task-queue
+service:
+  transform:
+    addr: collaboration-server:5001
+    timeout: 10s
+  apply:
+    addr: collaboration-server:5002
+    timeout: 10s
+admin:
+  - user: ${UNIVERSER_ADMIN_USERNAME}
+    password: ${UNIVERSER_ADMIN_PASSWORD}
+extra:
+  celldataMaxSize: 10485760 # 单位字节，10M

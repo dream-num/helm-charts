@@ -1,0 +1,42 @@
+name: Main Workflow
+
+on:
+  # pull_request:
+  #   branches:
+  #     - main
+  workflow_dispatch:
+    
+
+jobs:
+  deploy:
+    name: DockerComposeDeploy
+    runs-on: ubuntu-latest
+    steps:
+    - uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ vars.HOST }}
+        username: ${{ vars.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ vars.PORT }}
+        script_stop: true
+        debug: true
+        script: |
+          source ~/.bashrc;
+
+          repo_url="https://github.com/dream-num/helm-charts.git";
+
+          if [ ! -d "$local_dir" ]; then \
+            git clone "$repo_url" $local_dir; \
+          else \
+            cd $local_dir; \
+            git pull; \
+          fi;
+
+          ls $local_dir/docker-compose;
+
+          cd $local_dir/docker-compose;
+          bash run.sh;
+
+          exit;
+
+

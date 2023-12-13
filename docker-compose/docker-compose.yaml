@@ -3,14 +3,15 @@ services:
   universer:
     restart: always
     container_name: universer
-    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/universer:latest
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer:${UNIVERSER_VERSION}
     ports:
       - 8000:8000
       - 9000:9000
     environment:
       - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-temporal
-    volumes:
-      - ./universer-configs:/data/configs
+    configs:
+      - source: conf
+        target: /data/configs/config.yaml
     depends_on:
       - univer-postgres
       - univer-rabbitmq
@@ -23,7 +24,7 @@ services:
   collaboration-server:
     restart: always
     container_name: collaboration-server
-    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration:latest
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration:${COLLABORATION_SERVER_VERSION}
     environment:
       - URL_OF_TRANSFORM_SERVICE=0.0.0.0:5001
       - URL_OF_APPLY_SERVICE=0.0.0.0:5002
@@ -39,7 +40,7 @@ services:
       - com.univer.app=collaboration-server
 
   collaboration-demo:
-    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration-demo:latest
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-demo:${COLLABORATION_DEMO_VERSION}
     ports:
       - "3010:3010"
     networks:
@@ -48,13 +49,13 @@ services:
       - com.univer.app=collaboration-demo
 
   univer-postgres:
-    image: postgres:latest
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/postgres:${POSTGRES_VERSION}
     restart: always
     container_name: univer-postgres
     environment:
-      - POSTGRES_DB=univer
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=pgstaging@univer.ai
+      - POSTGRES_DB=${POSTGRES_DATABASE}
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - PGDATA=/var/lib/postgresql/data/
     ports:
       - "10001:5432"
@@ -69,10 +70,13 @@ services:
   univer-rabbitmq:
     restart: always
     container_name: univer-rabbitmq
-    image: rabbitmq:3-management
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/rabbitmq:${RABBITMQ_VERSION}
     ports:
       - "10003:15672"
       - "10002:5672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
     networks:
       - univer
     labels:
@@ -81,31 +85,31 @@ services:
   univer-clickhouse:
     restart: always
     container_name: univer-clickhouse
-    image: bitnami/clickhouse:23.10.2-debian-11-r0
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/clickhouse:${CLICKHOUSE_VERSION}
     environment:
-      - CLICKHOUSE_ADMIN_USER=clickhouse
-      - CLICKHOUSE_ADMIN_PASSWORD=clickhouse
+      - CLICKHOUSE_ADMIN_USER=${CLICKHOUSE_USERNAME}
+      - CLICKHOUSE_ADMIN_PASSWORD=${CLICKHOUSE_PASSWORD}
       - ALLOW_EMPTY_PASSWORD=no
     volumes:
       - clickhouse-data:/bitnami/clickhouse
       - ./sql/clickhouse:/docker-entrypoint-initdb.d
-    ports:
-      - "10004:8123"
-      - "10005:9000"
+    expose:
+      - 8123
+      - 9000
     networks:
       - univer
     labels:
       - com.univer.app=clickhouse
 
   univer-temporal:
-    image: temporalio/auto-setup:1.22.2
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/temporal:${TEMPORAL_VERSION}
     environment:
       - DB=postgresql
-      - DB_PORT=5432
+      - POSTGRES_SEEDS=${POSTGRES_HOST}
+      - DB_PORT=${POSTGRES_PORT}
       - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
-      - POSTGRES_USER=postgres
-      - POSTGRES_PWD=pgstaging@univer.ai
-      - POSTGRES_SEEDS=univer-postgres
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PWD=${POSTGRES_PASSWORD}
       - TEMPORAL_CLI_SHOW_STACKS=1
       - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16
     volumes:
@@ -120,11 +124,14 @@ services:
       - com.univer.app=temporal
 
   univer-worker:
-    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-worker:0.0.1
+    restart: always
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-worker:${UNIVER_WORKER_VERSION}
     volumes:
-      - ./configs:/app/configs
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/univers:/tmp/univers
+    configs:
+      - source: conf
+        target: /app/configs/config.yaml
     environment:
       - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-temporal
     depends_on:
@@ -135,12 +142,14 @@ services:
       - com.univer.app=worker
 
   univer-loki:
-    image: grafana/loki:2.9.0
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/loki:${LOKI_VERSION}
     expose:
       - 3100
     environment:
       - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16
     command: -config.file=/etc/loki/config.yaml
+    networks:
+      - univer
     volumes:
       - ./loki/loki:/etc/loki:ro
       - loki-data:/loki
@@ -148,21 +157,23 @@ services:
       - com.univer.app=loki
 
   univer-promtail:
-    image: grafana/promtail:2.9.0
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/promtail:${PROMTAIL_VERSION}
     volumes:
       - ./loki/promtail:/etc/promtail:ro
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-loki
     command: -config.file=/etc/promtail/config.yml
+    networks:
+      - univer
     labels:
       - com.univer.app=promtail
 
   univer-grafana:
     environment:
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=123456
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
       - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-loki
     entrypoint:
       - sh
@@ -183,11 +194,17 @@ services:
           editable: false
         EOF
         /run.sh
-    image: grafana/grafana:10.2.2
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/grafana:${GRAFANA_VERSION}
     ports:
       - "3000:3000"
+    networks:
+      - univer
     labels:
       - com.univer.app=grafana
+
+configs:
+  conf:
+    file: ./configs/config.yaml
 
 networks:
   univer:
