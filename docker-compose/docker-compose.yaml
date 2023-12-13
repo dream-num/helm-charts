@@ -215,7 +215,8 @@ networks:
 
 volumes:
   postgres-data:
-
+    name: univer-postgres-data
   clickhouse-data:
-
+    name: univer-clickhouse-data
   loki-data:
+    name: univer-loki-data
