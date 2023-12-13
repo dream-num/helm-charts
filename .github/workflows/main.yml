@@ -23,6 +23,8 @@ jobs:
         script: |
           source ~/.bashrc;
 
+          env;
+
           local_dir=~/helm-charts;
 
           repo_url="https://github.com/dream-num/helm-charts.git";
