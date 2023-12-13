@@ -19,5 +19,14 @@ cd helm-charts/docker-compose
 
 4. Run docker-compose.
 ```bash
-docker-compose up
+bash run.sh
 ```
+
+## Use port
+
+| service              | port      | description              |
+| -------------------- | --------- | ------------------------ |
+| universer            | 8000,9000 | api http and grpc server |
+| collaboration-server | 5001,5001 |                          |
+| collaboration-demo   | 3010      |                          |
+| grafana              | 3000      | use to query server log  |
