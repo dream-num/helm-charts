@@ -29,10 +29,10 @@ jobs:
           repo_url="https://github.com/dream-num/helm-charts.git";
 
           if [ ! -d "$local_dir" ]; then \
-            source ~/.bashrc && git clone "$repo_url" $local_dir; \
+            source ~/.bashrc && env && git clone "$repo_url" $local_dir; \
           else \
             cd $local_dir; \
-            source ~/.bashrc && git pull; \
+            source ~/.bashrc && env && git pull; \
           fi;
 
           ls $local_dir/docker-compose;
