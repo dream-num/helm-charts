@@ -197,6 +197,8 @@ services:
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/grafana:${GRAFANA_VERSION}
     ports:
       - "3000:3000"
+    volumes:
+      - ./loki/grafana/grafana.ini:/etc/grafana/grafana.ini:ro
     networks:
       - univer
     labels:
