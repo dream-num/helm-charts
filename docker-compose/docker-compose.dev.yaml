@@ -1,0 +1,226 @@
+version: '3'
+
+name: unvier
+
+services:
+  universer:
+    restart: always
+    container_name: universer
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/universer:${UNIVERSER_VERSION}
+    ports:
+      - 18000:8000
+      - 19000:9000
+    environment:
+      - NO_PROXY=127.0.0.1,localhost,172.31.0.0/16,univer-temporal
+    configs:
+      - source: conf
+        target: /data/configs/config.yaml
+    depends_on:
+      - univer-postgres
+      - univer-rabbitmq
+      - univer-clickhouse
+    networks:
+      - univer
+    labels:
+      - com.univer.app=universer
+
+  collaboration-server:
+    restart: always
+    container_name: collaboration-server
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration:${COLLABORATION_SERVER_VERSION}
+    environment:
+      - URL_OF_TRANSFORM_SERVICE=0.0.0.0:5001
+      - URL_OF_APPLY_SERVICE=0.0.0.0:5002
+      - URL_OF_UNIVERSER_SERVICE=universer:8000
+      - URL_OF_SNAPSHOT_SERVICE=universer:9000
+      - SAVE_SNAPSHOT_INTERVAL=3
+    ports:
+      - 15001:5001
+      - 15002:5002
+    networks:
+      - univer
+    labels:
+      - com.univer.app=collaboration-server
+
+  collaboration-demo:
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration-demo:${COLLABORATION_DEMO_VERSION}
+    ports:
+      - 13010:3010
+    networks:
+      - univer
+    labels:
+      - com.univer.app=collaboration-demo
+
+  univer-postgres:
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/postgres:${POSTGRES_VERSION}
+    restart: always
+    container_name: univer-postgres
+    environment:
+      - POSTGRES_DB=${POSTGRES_DATABASE}
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - PGDATA=/var/lib/postgresql/data/
+    ports:
+      - 11001:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./sql/postgresql:/docker-entrypoint-initdb.d
+    networks:
+      - univer
+    labels:
+      - com.univer.app=postgres
+
+  univer-rabbitmq:
+    restart: always
+    container_name: univer-rabbitmq
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/rabbitmq:${RABBITMQ_VERSION}
+    expose:
+      - 15672
+      - 5672
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    networks:
+      - univer
+    labels:
+      - com.univer.app=rabbitmq
+
+  univer-clickhouse:
+    restart: always
+    container_name: univer-clickhouse
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/clickhouse:${CLICKHOUSE_VERSION}
+    environment:
+      - CLICKHOUSE_ADMIN_USER=${CLICKHOUSE_USERNAME}
+      - CLICKHOUSE_ADMIN_PASSWORD=${CLICKHOUSE_PASSWORD}
+      - ALLOW_EMPTY_PASSWORD=no
+    volumes:
+      - clickhouse-data:/bitnami/clickhouse
+      - ./sql/clickhouse:/docker-entrypoint-initdb.d
+    expose:
+      - 8123
+      - 9000
+    networks:
+      - univer
+    labels:
+      - com.univer.app=clickhouse
+
+  univer-temporal:
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/temporal:${TEMPORAL_VERSION}
+    environment:
+      - DB=postgresql
+      - POSTGRES_SEEDS=${POSTGRES_HOST}
+      - DB_PORT=${POSTGRES_PORT}
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PWD=${POSTGRES_PASSWORD}
+      - TEMPORAL_CLI_SHOW_STACKS=1
+      - NO_PROXY=127.0.0.1,localhost,172.31.0.0/16
+    volumes:
+      - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
+    expose:
+      - 7233
+    depends_on:
+      - univer-postgres
+    networks:
+      - univer
+    labels:
+      - com.univer.app=temporal
+
+  univer-worker:
+    restart: always
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-worker:${UNIVER_WORKER_VERSION}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/univers:/tmp/univers
+    configs:
+      - source: conf
+        target: /app/configs/config.yaml
+    environment:
+      - NO_PROXY=127.0.0.1,localhost,172.31.0.0/16,univer-temporal
+    depends_on:
+      - univer-temporal
+    networks:
+      - univer
+    labels:
+      - com.univer.app=worker
+
+  univer-loki:
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/loki:${LOKI_VERSION}
+    expose:
+      - 3100
+    environment:
+      - NO_PROXY=127.0.0.1,localhost,172.31.0.0/16
+    command: -config.file=/etc/loki/config.yaml
+    networks:
+      - univer
+    volumes:
+      - ./loki/loki:/etc/loki:ro
+      - loki-data:/loki
+    labels:
+      - com.univer.app=loki
+
+  univer-promtail:
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/promtail:${PROMTAIL_VERSION}
+    volumes:
+      - ./loki/promtail:/etc/promtail:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - NO_PROXY=127.0.0.1,localhost,172.31.0.0/16,univer-loki
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - univer
+    labels:
+      - com.univer.app=promtail
+
+  univer-grafana:
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - NO_PROXY=127.0.0.1,localhost,172.31.0.0/16,univer-loki
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /etc/grafana/provisioning/datasources
+        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+        apiVersion: 1
+        datasources:
+        - name: Loki
+          type: loki
+          access: proxy
+          orgId: 1
+          url: http://univer-loki:3100
+          basicAuth: false
+          isDefault: true
+          version: 1
+          editable: false
+        EOF
+        /run.sh
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/grafana:${GRAFANA_VERSION}
+    ports:
+      - 13000:3000
+    networks:
+      - univer
+    labels:
+      - com.univer.app=grafana
+
+configs:
+  conf:
+    file: ./configs/config.yaml
+
+networks:
+  univer:
+    driver: bridge
+    name: unvier
+    ipam:
+     config:
+       - subnet: 172.32.0.0/16
+
+volumes:
+  postgres-data:
+    name: univer-postgres-data
+  clickhouse-data:
+    name: univer-clickhouse-data
+  loki-data:
+    name: univer-loki-data

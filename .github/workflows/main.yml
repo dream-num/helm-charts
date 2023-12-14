@@ -13,33 +13,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: appleboy/ssh-action@v1.0.0
+      env:
+        REGISTRY_USERNAME: "${{ secrets.REGISTRY_USERNAME }}"
+        REGISTRY_PASSWORD: "${{ secrets.REGISTRY_PASSWORD }}"
       with:
         host: ${{ vars.HOST }}
         username: ${{ vars.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         port: ${{ vars.PORT }}
         script_stop: true
-        debug: true
+        envs: REGISTRY_USERNAME,REGISTRY_PASSWORD
         script: |
-          source ~/.bashrc;
-
-          env;
-
           local_dir=~/helm-charts;
 
           repo_url="https://github.com/dream-num/helm-charts.git";
 
           if [ ! -d "$local_dir" ]; then \
-            git clone "$repo_url" $local_dir; \
+            source ~/.bashrc && git clone "$repo_url" $local_dir; \
           else \
             cd $local_dir; \
-            git pull; \
+            source ~/.bashrc && git pull; \
           fi;
 
           ls $local_dir/docker-compose;
 
           cd $local_dir/docker-compose;
-          bash run.sh;
+          bash run.dev.sh;
 
           exit;
 
