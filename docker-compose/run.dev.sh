@@ -9,7 +9,7 @@ done < .env.dev
 
 docker compose -f docker-compose.dev.yaml down
 
-docker login --username=$REGISTRY_USRENAME --password=$REGISTRY_PASSWORD univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+echo $REGISTRY_PASSWORD | docker login univer-acr-registry.cn-shenzhen.cr.aliyuncs.com -u $REGISTRY_USERNAME --password-stdin
 
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/universer:latest
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration:latest
