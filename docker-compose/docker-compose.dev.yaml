@@ -13,13 +13,15 @@ services:
       - 9000
     environment:
       - NO_PROXY=127.0.0.1,localhost,172.31.0.0/16,univer-temporal
-    configs:
-      - source: conf
-        target: /data/configs/config.yaml
+    volumes:
+      - ./configs:/data/configs
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/univers:/tmp/univers
     depends_on:
       - univer-postgres
       - univer-rabbitmq
       - univer-clickhouse
+      - univer-temporal
     networks:
       - univer
     labels:
