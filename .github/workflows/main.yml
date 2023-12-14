@@ -16,23 +16,27 @@ jobs:
       env:
         REGISTRY_USERNAME: "${{ secrets.REGISTRY_USERNAME }}"
         REGISTRY_PASSWORD: "${{ secrets.REGISTRY_PASSWORD }}"
+        HTTPS_PROXY: "${{ secrets.HTTPS_PROXY }}"
+        NO_PROXY: "${{ vars.NO_PROXY }}"
       with:
         host: ${{ vars.HOST }}
         username: ${{ vars.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         port: ${{ vars.PORT }}
         script_stop: true
-        envs: REGISTRY_USERNAME,REGISTRY_PASSWORD
+        envs: REGISTRY_USERNAME,REGISTRY_PASSWORD,HTTPS_PROXY,NO_PROXY
         script: |
           local_dir=~/helm-charts;
+
+          env;
 
           repo_url="https://github.com/dream-num/helm-charts.git";
 
           if [ ! -d "$local_dir" ]; then \
-            bash ~/.bashrc && echo https_proxy: $https_proxy && git clone "$repo_url" $local_dir; \
+            git clone "$repo_url" $local_dir; \
           else \
             cd $local_dir; \
-            bash ~/.bashrc && echo https_proxy: $https_proxy && git pull; \
+            git pull; \
           fi;
 
           ls $local_dir/docker-compose;
