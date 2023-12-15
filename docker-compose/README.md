@@ -17,16 +17,17 @@ git clone https://github.com/dream-num/helm-charts.git
 cd helm-charts/docker-compose
 ```
 
-4. Run docker-compose.
+4. Put `License` and `public_key.crt` file to ./configs folder.
+
+5. Run docker-compose.
 ```bash
 bash run.sh
 ```
 
 ## Use port
 
-| service              | port      | description              |
-| -------------------- | --------- | ------------------------ |
-| universer            | 8000,9000 | api http and grpc server |
-| collaboration-server | 5001,5001 |                          |
-| collaboration-demo   | 3010      |                          |
-| grafana              | 3000      | use to query server log  |
+| service            | port | description             |
+| ------------------ | ---- | ----------------------- |
+| universer          | 8000 | api http server         |
+| collaboration-demo | 3010 | demo http server        |
+| grafana            | 3000 | use to query server log |
