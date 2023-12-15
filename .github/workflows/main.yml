@@ -18,13 +18,15 @@ jobs:
         REGISTRY_PASSWORD: "${{ secrets.REGISTRY_PASSWORD }}"
         HTTPS_PROXY: "${{ secrets.HTTPS_PROXY }}"
         NO_PROXY: "${{ vars.NO_PROXY }}"
+        LICENSE: "${{ secrets.LICENSE }}"
+        PUBLIC_KEY: "${{ secrets.PUBLIC_KEY }}"
       with:
         host: ${{ vars.HOST }}
         username: ${{ vars.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         port: ${{ vars.PORT }}
         script_stop: true
-        envs: REGISTRY_USERNAME,REGISTRY_PASSWORD,HTTPS_PROXY,NO_PROXY
+        envs: REGISTRY_USERNAME,REGISTRY_PASSWORD,HTTPS_PROXY,NO_PROXY,LICENSE,PUBLIC_KEY
         script: |
           local_dir=~/helm-charts;
 
@@ -42,6 +44,10 @@ jobs:
           ls $local_dir/docker-compose;
 
           cd $local_dir/docker-compose;
+
+          echo $LICENSE > ./configs/LICENSE;
+          echo $PUBLIC_KEY > ./configs/public_key.crt;
+
           bash run.dev.sh;
 
           exit;
