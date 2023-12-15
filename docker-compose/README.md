@@ -17,7 +17,23 @@ git clone https://github.com/dream-num/helm-charts.git
 cd helm-charts/docker-compose
 ```
 
-4. Put `License` and `public_key.crt` file to ./configs folder.
+4. Put `LICENSE` and `public_key.crt` file to ./configs folder.
+```bash
+vim ./configs/LICENSE 
+vim ./configs/public_key.crt
+
+Copy the contents of the email
+
+eg LICENSE:
+-----BEGIN LICENSE KEY-----
+xxxxx
+-----END LICENSE KEY-----
+
+eg public_key.crt:
+-----BEGIN RSA PUBLIC KEY-----
+xxxxx
+-----END RSA PUBLIC KEY-----
+```
 
 5. Run docker-compose.
 ```bash
