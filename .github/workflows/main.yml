@@ -45,8 +45,8 @@ jobs:
 
           cd $local_dir/docker-compose;
 
-          echo $LICENSE > ./configs/LICENSE;
-          echo $PUBLIC_KEY > ./configs/public_key.crt;
+          echo -e $LICENSE > ./configs/LICENSE;
+          echo -e $PUBLIC_KEY > ./configs/public_key.crt;
 
           bash run.dev.sh;
 
