@@ -6,7 +6,8 @@ services:
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer:${UNIVERSER_VERSION}
     ports:
       - 8000:8000
-      - 9000:9000
+    expose:
+      - 9000
     environment:
       - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-temporal
     volumes:
@@ -33,9 +34,9 @@ services:
       - URL_OF_UNIVERSER_SERVICE=universer:8000
       - URL_OF_SNAPSHOT_SERVICE=universer:9000
       - SAVE_SNAPSHOT_INTERVAL=3
-    ports:
-      - 5001:5001
-      - 5002:5002
+    expose:
+      - 5001
+      - 5002
     networks:
       - univer
     labels:
@@ -59,8 +60,8 @@ services:
       - POSTGRES_USER=${POSTGRES_USERNAME}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - PGDATA=/var/lib/postgresql/data/
-    ports:
-      - "10001:5432"
+    expose:
+      - 5432
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./sql/postgresql:/docker-entrypoint-initdb.d
@@ -73,9 +74,8 @@ services:
     restart: always
     container_name: univer-rabbitmq
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/rabbitmq:${RABBITMQ_VERSION}
-    ports:
-      - "10003:15672"
-      - "10002:5672"
+    expose:
+      - 5672
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
@@ -212,6 +212,7 @@ configs:
 
 networks:
   univer:
+    name: unvier-prod
     driver: bridge
     ipam:
      config:
@@ -219,8 +220,8 @@ networks:
 
 volumes:
   postgres-data:
-    name: univer-postgres-data
+    name: univer-prod-postgres-data
   clickhouse-data:
-    name: univer-clickhouse-data
+    name: univer-prod-clickhouse-data
   loki-data:
-    name: univer-loki-data
+    name: univer-prod-loki-data
