@@ -37,6 +37,7 @@ services:
       - URL_OF_UNIVERSER_SERVICE=universer:8000
       - URL_OF_SNAPSHOT_SERVICE=universer:9000
       - SAVE_SNAPSHOT_INTERVAL=3
+      - no_proxy=127.0.0.1,localhost,172.30.0.0/16,universer
     expose:
       - 5001
       - 5002
@@ -46,6 +47,7 @@ services:
       - com.univer.app=collaboration-server
 
   collaboration-demo:
+    restart: always
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration-demo:${COLLABORATION_DEMO_VERSION}
     ports:
       - 3010:3010
@@ -53,6 +55,8 @@ services:
       - univer
     labels:
       - com.univer.app=collaboration-demo
+    depends_on:
+      - universer
 
   univer-postgres:
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/postgres:${POSTGRES_VERSION}

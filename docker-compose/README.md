@@ -40,6 +40,28 @@ xxxxx
 bash run.sh
 ```
 
+6. Create a demo sheet.
+```bash
+curl -i -X 'POST' \
+  'http://localhost:8000/universer-api/snapshot/2/unit/-/create' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "type": 2,
+    "name": "New Sheet - 12/13",
+    "creator": "user",
+    "workbookMeta": {
+        "name": "New Sheet - 12/13",
+        "locale": "en_US"
+    }
+}'
+
+# response: 
+# {"error":{"code":"OK","message":"success"},"unitID":"1735864608675115008"}
+```
+
+7. Open the web page to try Univer. `http://localhost:3010?unit=${unitID}&type=2`
+
 ## Use port
 
 | service            | port | description             |
