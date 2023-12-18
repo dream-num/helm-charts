@@ -12,7 +12,7 @@ services:
     expose:
       - 9000
     environment:
-      - NO_PROXY=127.0.0.1,localhost,172.31.0.0/16,univer-temporal,collaboration-server
+      - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16,univer-temporal,collaboration-server
     volumes:
       - ./configs:/data/configs
       - /var/run/docker.sock:/var/run/docker.sock
@@ -37,7 +37,7 @@ services:
       - URL_OF_UNIVERSER_SERVICE=universer:8000
       - URL_OF_SNAPSHOT_SERVICE=universer:9000
       - SAVE_SNAPSHOT_INTERVAL=3
-      - no_proxy=127.0.0.1,localhost,172.30.0.0/16,universer
+      - no_proxy=127.0.0.1,localhost,172.32.0.0/16,universer
     expose:
       - 5001
       - 5002
@@ -122,7 +122,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USERNAME}
       - POSTGRES_PWD=${POSTGRES_PASSWORD}
       - TEMPORAL_CLI_SHOW_STACKS=1
-      - NO_PROXY=127.0.0.1,localhost,172.31.0.0/16
+      - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16
     volumes:
       - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
     expose:
@@ -144,7 +144,7 @@ services:
       - source: conf
         target: /app/configs/config.yaml
     environment:
-      - NO_PROXY=127.0.0.1,localhost,172.31.0.0/16,univer-temporal
+      - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16,univer-temporal
     depends_on:
       - univer-temporal
     networks:
@@ -157,7 +157,7 @@ services:
     expose:
       - 3100
     environment:
-      - NO_PROXY=127.0.0.1,localhost,172.31.0.0/16
+      - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16
     command: -config.file=/etc/loki/config.yaml
     networks:
       - univer
@@ -173,7 +173,7 @@ services:
       - ./loki/promtail:/etc/promtail:ro
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - NO_PROXY=127.0.0.1,localhost,172.31.0.0/16,univer-loki
+      - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16,univer-loki
     command: -config.file=/etc/promtail/config.yml
     networks:
       - univer
@@ -185,7 +185,7 @@ services:
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
-      - NO_PROXY=127.0.0.1,localhost,172.31.0.0/16,univer-loki
+      - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16,univer-loki
     entrypoint:
       - sh
       - -euc
