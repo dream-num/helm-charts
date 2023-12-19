@@ -20,13 +20,18 @@ jobs:
         NO_PROXY: "${{ vars.NO_PROXY }}"
         LICENSE: "${{ secrets.LICENSE }}"
         PUBLIC_KEY: "${{ secrets.PUBLIC_KEY }}"
+        POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
+        RABBITMQ_PASSWORD: "${{ secrets.RABBITMQ_PASSWORD }}"
+        CLICKHOUSE_PASSWORD: "${{ secrets.CLICKHOUSE_PASSWORD }}"
+        UNIVERSER_ADMIN_PASSWORD: "${{ secrets.UNIVERSER_ADMIN_PASSWORD }}"
+        GRAFANA_PASSWORD: "${{ secrets.GRAFANA_PASSWORD }]"
       with:
         host: ${{ vars.HOST }}
         username: ${{ vars.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         port: ${{ vars.PORT }}
         script_stop: true
-        envs: REGISTRY_USERNAME,REGISTRY_PASSWORD,HTTPS_PROXY,NO_PROXY,LICENSE,PUBLIC_KEY
+        envs: REGISTRY_USERNAME,REGISTRY_PASSWORD,HTTPS_PROXY,NO_PROXY,LICENSE,PUBLIC_KEY,POSTGRES_PASSWORD,RABBITMQ_PASSWORD,CLICKHOUSE_PASSWORD,UNIVERSER_ADMIN_PASSWORD,GRAFANA_PASSWORD
         script: |
           local_dir=~/helm-charts;
 
