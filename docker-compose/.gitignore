@@ -1,4 +1,5 @@
 bin/
 
+configs/config.yaml
 configs/LICENSE
 configs/public_key.crt
