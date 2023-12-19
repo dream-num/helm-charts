@@ -73,6 +73,8 @@ curl -i -X 'POST' \
 
 7. You can use our demo to try. 
 ```bash
+docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-demo:latest
+
 docker run -it -d \
   -p 3010:3010 \
   univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-demo:latest

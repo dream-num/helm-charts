@@ -73,6 +73,8 @@ curl -i -X 'POST' \
 
 7. 可以利用我们提供的demo打开对应的表格. 
 ```bash
+docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-demo:latest
+
 docker run -it -d \
   -p 3010:3010 \
   univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-demo:latest
