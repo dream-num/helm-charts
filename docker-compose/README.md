@@ -9,9 +9,9 @@ A temporary way to run univer servers using docker-compose. This is not intended
 ---
 
 ## Machine Requirement
-1. CPU: 2 cores
-2. Memory: 4G
-3. Disk: 50G
+1. CPU: 1 cores
+2. Memory: 2G
+3. Disk: 10G
 4. OS: Linux, Mac
 
 ## Quick start
@@ -28,30 +28,16 @@ git clone https://github.com/dream-num/helm-charts.git
 cd helm-charts/docker-compose
 ```
 
-4. Put `LICENSE` and `public_key.crt` file to ./configs folder (ask `developer@univer.ai` or [Discord](https://discord.gg/z3NKNT6D2f) for get it to try out).
-```bash
-vim ./configs/LICENSE 
-vim ./configs/public_key.crt
+4. Ask `developer@univer.ai` or [Discord](https://discord.gg/z3NKNT6D2f) for get `LICENSE` and `public_key.crt` file to try out.
 
-Copy the contents of the email
+5. Put `LICENSE` and `public_key.crt` file to ./configs folder.
 
-eg LICENSE:
------BEGIN LICENSE KEY-----
-xxxxx
------END LICENSE KEY-----
-
-eg public_key.crt:
------BEGIN RSA PUBLIC KEY-----
-xxxxx
------END RSA PUBLIC KEY-----
-```
-
-5. Run docker-compose.
+6. Run docker-compose.
 ```bash
 bash run.sh
 ```
 
-6. Create a demo sheet.
+7. Create a demo sheet.
 ```bash
 curl -i -X 'POST' \
   'http://localhost:8000/universer-api/snapshot/2/unit/-/create' \
@@ -71,7 +57,7 @@ curl -i -X 'POST' \
 # {"error":{"code":"OK","message":"success"},"unitID":"1735864608675115008"}
 ```
 
-7. You can use our demo to try. 
+8. You can use our demo to try. 
 ```bash
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-demo:latest
 

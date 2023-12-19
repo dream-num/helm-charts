@@ -9,9 +9,9 @@
 ---
 
 ## Machine Requirement
-1. CPU: 2核
-2. 内存: 4G
-3. 磁盘：50G
+1. CPU: 1核
+2. 内存: 2G
+3. 磁盘：10G
 4. 系统: Linux, Mac
 
 ## Quick start
@@ -28,30 +28,16 @@ git clone https://github.com/dream-num/helm-charts.git
 cd helm-charts/docker-compose
 ```
 
-1. 将 `LICENSE` 和 `public_key.crt` 文件放到./configs目录下（激活文件可以发邮件到 `developer@univer.ai` 或者官方微信联系获取）. 
-```bash
-vim ./configs/LICENSE 
-vim ./configs/public_key.crt
+4. 发送申请试用文件到 `developer@univer.ai` 或者官方微信联系获取`LICENSE` 和 `public_key.crt` 文件.
 
-Copy the contents of the email
+5. 将 `LICENSE` 和 `public_key.crt` 文件放到./configs目录下.
 
-eg LICENSE:
------BEGIN LICENSE KEY-----
-xxxxx
------END LICENSE KEY-----
-
-eg public_key.crt:
------BEGIN RSA PUBLIC KEY-----
-xxxxx
------END RSA PUBLIC KEY-----
-```
-
-5. 启动服务.
+6. 启动服务.
 ```bash
 bash run.sh
 ```
 
-6. 创建一个试用表格.
+7. 创建一个试用表格.
 ```bash
 curl -i -X 'POST' \
   'http://localhost:8000/universer-api/snapshot/2/unit/-/create' \
@@ -71,7 +57,7 @@ curl -i -X 'POST' \
 # {"error":{"code":"OK","message":"success"},"unitID":"1735864608675115008"}
 ```
 
-7. 可以利用我们提供的demo打开对应的表格. 
+8. 可以利用我们提供的demo打开对应的表格. 
 ```bash
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-demo:latest
 
