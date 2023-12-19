@@ -1,7 +1,7 @@
 
 # docker compose
 
-A temporary way to run univer servers using docker-compose. This is not intended for production use.
+使用Docker Compose 运行通用服务器的临时方法。此方法不适用于生产环境。
 
 - [EN](./README.md)
 - [CN](./README-CN.md)
@@ -10,19 +10,19 @@ A temporary way to run univer servers using docker-compose. This is not intended
 
 ## Quick start
 
-1. Install [docker](https://docs.docker.com/install/) and [docker-compose](https://docs.docker.com/compose/install/).
+1. 安装 [docker](https://docs.docker.com/install/) 和 [docker-compose](https://docs.docker.com/compose/install/).
 
-2. Clone this repository.
+2. 克隆本仓库.
 ```bash
 git clone https://github.com/dream-num/helm-charts.git
 ```
 
-3. Change directory to `docker-compose`.
+3. 进入 `docker-compose` 目录.
 ```bash
 cd helm-charts/docker-compose
 ```
 
-4. Put `LICENSE` and `public_key.crt` file to ./configs folder (ask `developer@univer.ai` or [Discord](https://discord.gg/z3NKNT6D2f) for get it to try out).
+1. 将 `LICENSE` 和 `public_key.crt` 文件放到./configs目录下（激活文件可以发邮件到 `developer@univer.ai` 或者官方微信联系获取）. 
 ```bash
 vim ./configs/LICENSE 
 vim ./configs/public_key.crt
@@ -40,12 +40,12 @@ xxxxx
 -----END RSA PUBLIC KEY-----
 ```
 
-5. Run docker-compose.
+5. 启动服务.
 ```bash
 bash run.sh
 ```
 
-6. Create a demo sheet.
+6. 创建一个试用表格.
 ```bash
 curl -i -X 'POST' \
   'http://localhost:8000/universer-api/snapshot/2/unit/-/create' \
@@ -65,7 +65,7 @@ curl -i -X 'POST' \
 # {"error":{"code":"OK","message":"success"},"unitID":"1735864608675115008"}
 ```
 
-7. You can use our demo to try. 
+7. 可以利用我们提供的demo打开对应的表格. 
 ```bash
 docker run -it -d \
   -p 3010:3010 \
