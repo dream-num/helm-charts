@@ -8,6 +8,12 @@
 
 ---
 
+## Machine Requirement
+1. CPU: 2核
+2. 内存: 4G
+3. 磁盘：50G
+4. 系统: Linux, Mac
+
 ## Quick start
 
 1. 安装 [docker](https://docs.docker.com/install/) 和 [docker-compose](https://docs.docker.com/compose/install/).
@@ -69,7 +75,7 @@ curl -i -X 'POST' \
 ```bash
 docker run -it -d \
   -p 3010:3010 \
-  univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration-demo:latest
+  univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-demo:latest
 
 # Open URL: http://localhost:3010?unit=${unitID}&type=2
 ```

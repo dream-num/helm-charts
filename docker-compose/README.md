@@ -8,6 +8,12 @@ A temporary way to run univer servers using docker-compose. This is not intended
 
 ---
 
+## Machine Requirement
+1. CPU: 2 cores
+2. Memory: 4G
+3. Disk: 50G
+4. OS: Linux, Mac
+
 ## Quick start
 
 1. Install [docker](https://docs.docker.com/install/) and [docker-compose](https://docs.docker.com/compose/install/).
@@ -69,7 +75,7 @@ curl -i -X 'POST' \
 ```bash
 docker run -it -d \
   -p 3010:3010 \
-  univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration-demo:latest
+  univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-demo:latest
 
 # Open URL: http://localhost:3010?unit=${unitID}&type=2
 ```
