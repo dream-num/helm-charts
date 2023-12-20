@@ -1,7 +1,7 @@
 
 # docker compose
 
-使用Docker Compose 运行通用服务器的临时方法。此方法不适用于生产环境。
+使用Docker Compose 运行 Univer 服务端, 此方法不适用于生产环境。
 
 - [EN](./README.md)
 - [CN](./README-CN.md)
@@ -16,7 +16,7 @@
 
 ## Quick start
 
-1. 安装 [docker](https://docs.docker.com/install/) 和 [docker-compose](https://docs.docker.com/compose/install/).
+1. 安装 [docker >= 23 版本](https://docs.docker.com/engine/install/).
 
 2. 克隆本仓库.
 ```bash

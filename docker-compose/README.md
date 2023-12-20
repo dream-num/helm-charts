@@ -16,7 +16,7 @@ A temporary way to run univer servers using docker-compose. This is not intended
 
 ## Quick start
 
-1. Install [docker](https://docs.docker.com/install/) and [docker-compose](https://docs.docker.com/compose/install/).
+1. Install [docker >= 23.0 version](https://docs.docker.com/engine/install/).
 
 2. Clone this repository.
 ```bash
