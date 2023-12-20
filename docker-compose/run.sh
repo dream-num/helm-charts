@@ -6,6 +6,15 @@ if [ "$PLATFORM" == "Darwin" ]; then
     SED="sed -i \"\""
 fi
 
+DOCKER_COMPOSE="docker compose"
+if [! $DOCKER_COMPOSE version] &> /dev/null; then
+    DOCKER_COMPOSE="docker-compose"
+fi
+if [! $DOCKER_COMPOSE version] &> /dev/null; then
+    echo "need docker compose."
+    exit 1
+fi
+
 cp ./configs/config.yaml.template ./configs/config.yaml
 
 while IFS='=' read -r name value ; do
@@ -13,6 +22,6 @@ while IFS='=' read -r name value ; do
     $SED -e 's|${'"${name}"'}|'"${value}"'|' ./configs/config.yaml
 done < .env
 
-docker compose down
+$DOCKER_COMPOSE down
 
-docker compose up -d
+$DOCKER_COMPOSE up -d
