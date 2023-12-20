@@ -28,7 +28,7 @@ git clone https://github.com/dream-num/helm-charts.git
 cd helm-charts/docker-compose
 ```
 
-4. 发送申请试用文件到 `developer@univer.ai` 或者官方微信联系获取`LICENSE` 和 `public_key.crt` 文件.
+4. 发送邮件到 `developer@univer.ai` 或联系官方微信申请试用资格,获取`LICENSE` 和 `public_key.crt` 文件.
 
 5. 将 `LICENSE` 和 `public_key.crt` 文件放到./configs目录下.
 
