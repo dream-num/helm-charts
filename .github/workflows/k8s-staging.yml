@@ -1,0 +1,51 @@
+name: ⚓ K8s staging
+
+on:
+  # pull_request:
+  #   branches:
+  #     - main
+  workflow_dispatch:
+    
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  deploy:
+    name: K8sDeploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: azure/setup-helm@v3
+        with:
+          version: v3.12.0
+
+      - name: HelmUpgradeInstall
+        run: |
+          mkdir -p ~/.kube
+          echo -e "${{ secrets.KUBECONFIG }}" >> ~/.kube/config
+
+          helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace --values charts-value/postgresql.yaml \
+            --set global.postgresql.auth.postgresPassword=${{ secrets.POSTGRES_PASSWORD }} \
+            postgresql charts/postgresql
+          
+          helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace --values charts-value/rabbitmq.yaml \
+            --set auth.password=${{ secrets.RABBITMQ_PASSWORD }} \
+            rabbitmq charts/rabbitmq
+            
+          helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace --values charts-value/collaboration-server.yaml \
+            collaboration-server charts/collaboration-server
+
+          helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace --values charts-value/universer.yaml \
+            --set license.LICENSE="${{ secrets.LICENSE }}" \
+            --set license.publicKey="${{ secrets.PUBLIC_KEY }}" \
+            --set config.postgresql.password="${{ secrets.POSTGRES_PASSWORD }}" \
+            --set config.rabbitmq.password="${{ secrets.RABBITMQ_PASSWORD }}" \
+            --set-json 'config.admin=[{"user": "admin", "password": "${{ secrets.UNIVERSER_ADMIN_PASSWORD }}"}]' \
+            universer charts/universer
+          
+          helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace --values charts-value/loki-stack.yaml \
+            --set grafana.adminPassword=${{ secrets.GRAFANA_PASSWORD }} \
+            loki-stack charts/loki-stack
+

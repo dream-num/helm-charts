@@ -1,0 +1,5 @@
+replicaCount: 1
+
+image:
+  repository: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration
+  tag: "048dae6"

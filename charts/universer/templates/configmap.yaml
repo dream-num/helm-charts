@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "universer.fullname" . }}-config
+  labels:
+    {{- include "universer.labels" . | nindent 4 }}
+data:
+  config.yaml: |
+    {{ tpl (.Files.Get "config/config.yml") . | nindent 4 | trim }}
