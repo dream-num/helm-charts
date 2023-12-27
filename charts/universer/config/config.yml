@@ -1,0 +1,37 @@
+server:
+  http:
+    addr: 0.0.0.0:{{ .Values.service.http }}
+    timeout: 10s
+  grpc:
+    addr: 0.0.0.0:{{ .Values.service.grpc }}
+    timeout: 10s
+data:
+  database:
+    driver: postgresql
+    database: {{ .Values.config.postgresql.database }}
+    dsn: host={{ .Values.config.postgresql.host }} port={{ .Values.config.postgresql.port }} dbname={{ .Values.config.postgresql.database }} user={{ .Values.config.postgresql.username }} password={{ .Values.config.postgresql.password }} sslmode=disable TimeZone=Asia/Shanghai
+  rabbitmq:
+    addr: amqp://{{ .Values.config.rabbitmq.username }}:{{ .Values.config.rabbitmq.password }}@{{ .Values.config.rabbitmq.host }}:{{ .Values.config.rabbitmq.port }}/
+  clickhouse:
+    dsn: clickhouse://clickhouse:clickhouse@clickhouse:9000/univer?dial_timeout=10s&read_timeout=20s
+  temporal:
+    addr: univer-temporal:7233
+    namespace: default
+    worker_task_queue: migration-task-queue
+service:
+  transform:
+    addr: "{{ .Values.config.transform.host }}:{{ .Values.config.transform.port }}"
+    timeout: 10s
+  apply:
+    addr: "{{ .Values.config.apply.host }}:{{ .Values.config.apply.port }}"
+    timeout: 10s
+admin: 
+{{- if .Values.config.admin -}}
+  {{- range .Values.config.admin }}
+  - user: {{ .user }}
+    password: {{ .password }}
+  {{- end }}
+{{- else }} []
+{{- end }}
+extra:
+  celldataMaxSize: 10485760 # 单位字节，10M

@@ -1,0 +1,48 @@
+name: ⚙️ K8s staging dispatch
+
+on:
+  repository_dispatch:
+    types: [dispatch]
+    
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  deploy:
+    name: K8sDeploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: azure/setup-helm@v3
+        with:
+          version: v3.12.0
+      
+      - name: HelmUpgradeInstall
+        run: |
+          mkdir -p ~/.kube
+          echo -e "${{ secrets.KUBECONFIG }}" >> ~/.kube/config
+
+          if [ "${{ github.event.client_payload.service }}" == "universer" ]; then
+            
+            helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
+              --set config.postgresql.password="${{ secrets.POSTGRES_PASSWORD }}" \
+              --set config.rabbitmq.password="${{ secrets.RABBITMQ_PASSWORD }}" \
+              --set-json 'config.admin=[{"user":"admin","password":"${{ secrets.UNIVERSER_ADMIN_PASSWORD }}"}]' \
+              --set license.LICENSE="${{ secrets.LICENSE }}" \
+              --set license.publicKey="${{ secrets.PUBLIC_KEY }}" \
+              --set image.repository="univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/universer" \
+              --set image.tag="${{ github.event.client_payload.tag }}" \
+              --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
+              universer charts/universer
+
+          elif [ "${{ github.event.client_payload.service }}" == "collaboration-server" ]; then 
+
+            helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
+              --set image.repository="univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration" \
+              --set image.tag="${{ github.event.client_payload.tag }}" \
+              --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
+              collaboration-server charts/collaboration-server
+
+          fi
