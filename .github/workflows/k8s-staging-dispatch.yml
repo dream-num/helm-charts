@@ -26,7 +26,7 @@ jobs:
 
           if [ "${{ github.event.client_payload.service }}" == "universer" ]; then
             
-            helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace --values charts-value/universer.yaml \
+            helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
               --set config.postgresql.password="${{ secrets.POSTGRES_PASSWORD }}" \
               --set config.rabbitmq.password="${{ secrets.RABBITMQ_PASSWORD }}" \
               --set-json 'config.admin=[{"user":"admin","password":"${{ secrets.UNIVERSER_ADMIN_PASSWORD }}"}]' \
@@ -39,7 +39,7 @@ jobs:
 
           elif [ "${{ github.event.client_payload.service }}" == "collaboration-server" ]; then 
 
-            helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace --values charts-value/collaboration-server.yaml \
+            helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
               --set image.repository="univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration" \
               --set image.tag="${{ github.event.client_payload.tag }}" \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \

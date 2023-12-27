@@ -1,0 +1,55 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "universer.fullname" . }}-job
+  labels:
+    {{- include "universer.labels" . | nindent 4 }}
+spec:
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.job.image.repository }}:{{ .Values.job.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.job.image.pullPolicy }}
+          env:
+            - name: PGPASSWORD
+              value: {{ .Values.config.postgresql.password }}
+          volumeMounts:
+            - name: initd
+              mountPath: /data
+          command: 
+            - /bin/bash
+            - -c
+            - >-
+              echo "SELECT 'CREATE DATABASE {{ .Values.config.postgresql.database }}' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '{{ .Values.config.postgresql.database }}')\gexec" | \
+                psql -h {{ .Values.config.postgresql.host }} \
+                  -p {{ .Values.config.postgresql.port }} \
+                  -U {{ .Values.config.postgresql.username }};
+              
+              for file in /data/*; do
+                psql -h {{ .Values.config.postgresql.host }} \
+                  -p {{ .Values.config.postgresql.port }} \
+                  -U {{ .Values.config.postgresql.username }} \
+                  -d {{ .Values.config.postgresql.database }} \
+                  -f $file;
+              done
+      volumes:
+        - name: initd
+          configMap:
+            name: {{ include "universer.fullname" . }}-job-config
+      restartPolicy: Never
+  backoffLimit: 1
+

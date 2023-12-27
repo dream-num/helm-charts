@@ -24,11 +24,12 @@ git clone https://github.com/dream-num/helm-charts.git
    
 5. Run install charts.
 ```bash
-bash run.sh
+helm install -n univer collaboration-server charts/collaboration-server --create-namespace 
 
-# Use NAMESPACE env to deploy different namespace:
-# NAMESPACE=univer bash run.sh
-
-# Use KUBECONFIG env to choice your kubeconfig file:
-# KUBECONFIG=~/.kube/config bash run.sh
+helm install -n univer \
+    --set-file license.LICENSE=./configs/LICENSE \
+    --set-file license.publicKey=./configs/public_key.crt \
+    --set-json 'config.postgresql={"host":"postgresql","port":5432,"database":"univer","username":"postgres","password":"postgres"}' \
+    --set-json 'config.rabbitmq={"host":"rabbitmq","port":5672,"username":"guest","password":"guest"}' \
+    universer charts/universer --create-namespace
 ```
