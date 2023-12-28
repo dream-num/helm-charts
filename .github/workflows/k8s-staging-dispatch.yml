@@ -30,19 +30,23 @@ jobs:
               --set config.postgresql.password="${{ secrets.POSTGRES_PASSWORD }}" \
               --set config.rabbitmq.password="${{ secrets.RABBITMQ_PASSWORD }}" \
               --set-json 'config.admin=[{"user":"admin","password":"${{ secrets.UNIVERSER_ADMIN_PASSWORD }}"}]' \
-              --set license.LICENSE="${{ secrets.LICENSE }}" \
-              --set license.publicKey="${{ secrets.PUBLIC_KEY }}" \
-              --set image.repository="univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/universer" \
-              --set image.tag="${{ github.event.client_payload.tag }}" \
+              --set-json 'license={"LICENSE":"${{ secrets.LICENSE }}","publicKey":"${{ secrets.PUBLIC_KEY }}"}' \
+              --set-json 'image={"registry":"{{ .vars.REGISTRY }}","repository":"univer/universer","tag":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
               universer charts/universer
 
           elif [ "${{ github.event.client_payload.service }}" == "collaboration-server" ]; then 
 
             helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
-              --set image.repository="univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration" \
-              --set image.tag="${{ github.event.client_payload.tag }}" \
+              --set-json 'image={"registry":"{{ .vars.REGISTRY }}","repository":"univer/univer-collaboration","tag":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
               collaboration-server charts/collaboration-server
+
+          elif [ "${{ github.event.client_payload.service }}" == "collaboration-demo" ]; then 
+
+            helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
+              --set-json 'image={"registry":"{{ .vars.REGISTRY }}","repository":"univer/univer-collaboration-demo","tag":"${{ github.event.client_payload.tag }}"}' \
+              --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
+              collaboration-demo charts/collaboration-demo
 
           fi

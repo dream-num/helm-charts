@@ -27,13 +27,18 @@ jobs:
           echo -e "${{ secrets.KUBECONFIG }}" >> ~/.kube/config
             
           helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
+            --set image.registry="{{ vars.REGISTRY }}" \
             collaboration-server charts/collaboration-server
 
           helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
-            --set license.LICENSE="${{ secrets.LICENSE }}" \
-            --set license.publicKey="${{ secrets.PUBLIC_KEY }}" \
+            --set image.registry="{{ vars.REGISTRY }}" \
+            collaboration-demo charts/collaboration-demo
+
+          helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
+            --set image.registry="{{ vars.REGISTRY }}" \
             --set config.postgresql.password="${{ secrets.POSTGRES_PASSWORD }}" \
             --set config.rabbitmq.password="${{ secrets.RABBITMQ_PASSWORD }}" \
+            --set-json 'license={"LICENSE":"${{ secrets.LICENSE }}","publicKey":"${{ secrets.PUBLIC_KEY }}"}' \
             --set-json 'config.admin=[{"user": "admin", "password": "${{ secrets.UNIVERSER_ADMIN_PASSWORD }}"}]' \
             universer charts/universer
 

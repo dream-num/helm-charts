@@ -1,4 +1,4 @@
-# Default values for collaboration-server.
+# Default values for collaboration-demo.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -6,10 +6,10 @@ replicaCount: 1
 
 image:
   registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
-  repository: release/univer-collaboration
+  repository: release/univer-collaboration-demo
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "048dae6"
+  tag: "latest"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -30,13 +30,19 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  transform: 5001
-  apply: 5002
+  port: 3010
 
-config:
-  univerServer: universer:8000
-  snapshotServer: universer:9000
-  saveSnapshotInterval: 3
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  host: univer.private
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
