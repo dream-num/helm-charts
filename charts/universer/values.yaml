@@ -5,7 +5,8 @@
 replicaCount: 1
 
 image:
-  repository: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer
+  registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+  repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "41dce0e"
@@ -38,7 +39,7 @@ ingress:
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  host: api.univer.private
+  host: univer.private
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -88,7 +89,8 @@ license:
 
 job:
   image:
-    repository: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/postgresql-client
+    registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+    repository: release/postgresql-client
     pullPolicy: IfNotPresent
     tag: "0.0.1"
   

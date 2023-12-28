@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "collaboration-server.name" -}}
+{{- define "collaboration-demo.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "collaboration-server.fullname" -}}
+{{- define "collaboration-demo.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "collaboration-server.chart" -}}
+{{- define "collaboration-demo.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "collaboration-server.labels" -}}
-helm.sh/chart: {{ include "collaboration-server.chart" . }}
-{{ include "collaboration-server.selectorLabels" . }}
+{{- define "collaboration-demo.labels" -}}
+helm.sh/chart: {{ include "collaboration-demo.chart" . }}
+{{ include "collaboration-demo.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "collaboration-server.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "collaboration-server.name" . }}
+{{- define "collaboration-demo.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "collaboration-demo.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "collaboration-server.serviceAccountName" -}}
+{{- define "collaboration-demo.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "collaboration-server.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "collaboration-demo.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
