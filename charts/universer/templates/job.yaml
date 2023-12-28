@@ -4,6 +4,9 @@ metadata:
   name: {{ include "universer.fullname" . }}-job
   labels:
     {{- include "universer.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation
 spec:
   template:
     metadata:
