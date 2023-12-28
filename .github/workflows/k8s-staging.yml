@@ -27,16 +27,16 @@ jobs:
           echo -e "${{ secrets.KUBECONFIG }}" >> ~/.kube/config
             
           helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
-            --set image.registry="${{vars.REGISTRY }}" \
+            --set image.registry="${{ vars.REGISTRY }}" \
             collaboration-server charts/collaboration-server
 
           helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
-            --set image.registry="${{vars.REGISTRY }}" \
+            --set image.registry="${{ vars.REGISTRY }}" \
             --set-json 'ingress={"enabled":true,"host":"${{ secrets.K8S_UNIVER_HOST }}"}' \
             collaboration-demo charts/collaboration-demo
 
           helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
-            --set image.registry="${{vars.REGISTRY }}" \
+            --set image.registry="${{ vars.REGISTRY }}" \
             --set job.image.registry="${{vars.REGISTRY }}" \
             --set config.postgresql.password="${{ secrets.POSTGRES_PASSWORD }}" \
             --set config.rabbitmq.password="${{ secrets.RABBITMQ_PASSWORD }}" \
