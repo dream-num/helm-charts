@@ -34,7 +34,7 @@ jobs:
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/universer","tag":"${{ github.event.client_payload.tag }}"}' \
               --set job.image.registry="${{ vars.REGISTRY }}" \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
-              --set-json 'ingress={"enabled":true,"host":"${{ secrets.K8S_UNIVER_HOST }}"}' \
+              --set-json 'ingress={"enabled":true,"host":"${{ secrets.K8S_UNIVER_HOST }}","tls":[{"secretName":"${{ secrets.K8S_UNIVER_TLS }}","hosts":["${{ secrets.K8S_UNIVER_HOST }}"]}]}' \
               universer charts/universer
 
           elif [ "${{ github.event.client_payload.service }}" == "collaboration-server" ]; then 
@@ -49,7 +49,7 @@ jobs:
             helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/univer-collaboration-demo","tag":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
-              --set-json 'ingress={"enabled":true,"host":"${{ secrets.K8S_UNIVER_HOST }}"}' \
+              --set-json 'ingress={"enabled":true,"host":"${{ secrets.K8S_UNIVER_HOST }}","tls":[{"secretName":"${{ secrets.K8S_UNIVER_TLS }}","hosts":["${{ secrets.K8S_UNIVER_HOST }}"]}]}' \
               collaboration-demo charts/collaboration-demo
 
           fi
