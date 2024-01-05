@@ -57,7 +57,7 @@ jobs:
             helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/univer-docs","tag":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
-              --set-json 'ingress={"enabled":true,"host":"www.univer.work"}' \
+              --set-json 'ingress={"enabled":true,"host":"www.univer.work","annotations":{"nginx.ingress.kubernetes.io/proxy-redirect-from":"http://www.univer.work:3020/","nginx.ingress.kubernetes.io/proxy-redirect-to":"/"}}' \
               docs charts/docs
 
           fi
