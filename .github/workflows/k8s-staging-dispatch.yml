@@ -52,4 +52,12 @@ jobs:
               --set-json 'ingress={"enabled":true,"host":"${{ secrets.K8S_UNIVER_HOST }}","tls":[{"secretName":"${{ secrets.K8S_UNIVER_TLS }}","hosts":["${{ secrets.K8S_UNIVER_HOST }}"]}]}' \
               collaboration-demo charts/collaboration-demo
 
+          elif [ "${{ github.event.client_payload.service }}" == "docs" ]; then 
+
+            helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
+              --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/univer-docs","tag":"${{ github.event.client_payload.tag }}"}' \
+              --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
+              --set-json 'ingress={"enabled":true,"host":"www.univer.work"}' \
+              docs charts/docs
+
           fi
