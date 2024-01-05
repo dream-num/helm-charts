@@ -81,5 +81,5 @@ jobs:
 
             docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-docs:${{ github.event.client_payload.tag }}
 
-            docker stop univer-docs && docker run --name univer-docs -p 3020:3020 univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-docs:${{ github.event.client_payload.tag }}
+            docker stop univer-docs && docker run --rm -d --name univer-docs -p 3020:3020 univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-docs:${{ github.event.client_payload.tag }}
 
