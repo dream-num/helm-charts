@@ -62,3 +62,24 @@ jobs:
 
           fi
 
+      - name: ENDocsDeploy
+        if: ${{ github.event.client_payload.service == 'docs' }}
+        uses: appleboy/ssh-action@v1.0.0
+        env:
+          REGISTRY_USERNAME: "${{ secrets.REGISTRY_USERNAME }}"
+          REGISTRY_PASSWORD: "${{ secrets.REGISTRY_PASSWORD }}"
+        with:
+          host: ${{ vars.EN_HOST }}
+          username: ${{ vars.EN_HOST_USERNAME }}
+          password: ${{ secrets.EN_HOST_PASSWORD }}
+          script_stop: true
+          envs: REGISTRY_USERNAME,REGISTRY_PASSWORD
+          script: |
+            env;
+
+            echo $REGISTRY_PASSWORD | docker login univer-acr-registry.cn-shenzhen.cr.aliyuncs.com -u $REGISTRY_USERNAME --password-stdin
+
+            docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-docs:${{ github.event.client_payload.tag }}
+
+            docker stop univer-docs && docker run --name univer-docs -p 3020:3020 univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-docs:${{ github.event.client_payload.tag }}
+
