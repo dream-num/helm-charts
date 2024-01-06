@@ -46,17 +46,13 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Selector labels
 */}}
 {{- define "universer.selectorLabels" -}}
+app: {{ include "universer.fullname" . }}
 app.kubernetes.io/name: {{ include "universer.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "universer.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "universer.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
+{{- define "universer.istio.labels" -}}
+{{- if .Values.istio.enabled -}}
+version: default
 {{- end }}
 {{- end }}

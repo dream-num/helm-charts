@@ -46,19 +46,9 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Selector labels
 */}}
 {{- define "collaboration-demo.selectorLabels" -}}
+app: {{ include "collaboration-demo.fullname" . }}
 app.kubernetes.io/name: {{ include "collaboration-demo.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end }}
-
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "collaboration-demo.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "collaboration-demo.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
 {{- end }}
 
 {{/* vim: set filetype=mustache: */}}
@@ -81,3 +71,9 @@ Return the proper image name
     {{- printf "%s%s%s"  $repositoryName $separator $termination -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "collaboration-demo.istio.labels" -}}
+{{- if .Values.istio.enabled -}}
+version: default
+{{- end }}
+{{- end }}

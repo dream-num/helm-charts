@@ -61,3 +61,19 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+istio:
+  enabled: false
+  
+  gateway:
+    enabled: false
+    host: univer.private
+
+    # select istio ingress gateway. for example
+    # ingressSelector:
+    #   istio: ingressgateway
+    ingressSelector: {}
+
+    tls:
+      enabled: false
+      credentialName: ""
