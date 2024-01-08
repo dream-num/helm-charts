@@ -1,0 +1,21 @@
+apiVersion: istiomerger.monime.sl/v1alpha1
+kind: VirtualServiceMerge
+metadata:
+  name: {{ include "collaboration-demo.fullname" . }}
+  labels:
+    {{- include "collaboration-demo.labels" . | nindent 4 }}
+spec:
+  target:
+    name: collaboration-demo ## the virtual service above
+  patch:
+    http:
+      - match:
+          - headers:
+              x-feature-id:
+                exact: {{ .Values.istio.version | quote }}
+        route:
+          - destination:
+              host: collaboration-demo
+              port: 
+                number: {{ .Values.service.port }}
+              subset: {{ .Values.istio.version  | quote }}

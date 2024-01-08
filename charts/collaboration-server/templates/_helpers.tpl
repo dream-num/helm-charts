@@ -46,9 +46,8 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Selector labels
 */}}
 {{- define "collaboration-server.selectorLabels" -}}
-app: {{ include "collaboration-server.fullname" . }}
+app: {{ include "collaboration-server.name" . }}
 app.kubernetes.io/name: {{ include "collaboration-server.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/* vim: set filetype=mustache: */}}

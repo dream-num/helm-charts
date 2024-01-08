@@ -10,10 +10,10 @@ spec:
     - port: {{ .Values.service.transform }}
       targetPort: transform
       protocol: TCP
-      name: transform
+      name: grpc-transform
     - port: {{ .Values.service.apply }}
       targetPort: apply
       protocol: TCP
-      name: apply
+      name: grpc-apply
   selector:
     {{- include "collaboration-server.selectorLabels" . | nindent 4 }}

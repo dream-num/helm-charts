@@ -72,7 +72,5 @@ Return the proper image name
 {{- end -}}
 
 {{- define "collaboration-demo.istio.labels" -}}
-{{- if .Values.istio.enabled -}}
-version: default
-{{- end }}
+version: {{ .Values.istio.version | quote }}
 {{- end }}
