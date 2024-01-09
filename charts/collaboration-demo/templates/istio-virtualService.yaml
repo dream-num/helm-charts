@@ -17,6 +17,10 @@ spec:
           exact: "/"
       - uri:
           prefix: "/mvp"
+      - uri:
+          regex: ".*.css"
+      - uri:
+          regex: ".*.js"
     delegate:
       name: {{ include "collaboration-demo.fullname" . }}
 {{- end }}
