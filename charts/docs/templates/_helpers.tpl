@@ -46,8 +46,8 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Selector labels
 */}}
 {{- define "docs.selectorLabels" -}}
+app: {{ include "docs.name" . }}
 app.kubernetes.io/name: {{ include "docs.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/* vim: set filetype=mustache: */}}

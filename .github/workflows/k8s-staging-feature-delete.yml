@@ -1,4 +1,4 @@
-name: 🧩 K8s staging feature delete
+name: 🚧 K8s staging feature delete
 
 on:
   repository_dispatch:
@@ -9,8 +9,8 @@ permissions:
   pull-requests: write
 
 jobs:
-  deploy:
-    name: K8sDeploy
+  uninstall:
+    name: Uninstall
     runs-on: ubuntu-latest
     steps:
       - uses: azure/setup-helm@v3
