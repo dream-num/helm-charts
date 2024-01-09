@@ -10,7 +10,7 @@ spec:
   hosts:
   - {{ .Values.istio.gateway.host | quote }}
   gateways:
-  - {{ include "universer.fullname" . }}
+  - univer
   http:
   - match:
       - uri:

@@ -1,0 +1,14 @@
+{{- if .Values.istio.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: {{ include "collaboration-demo.fullname" . }}
+  labels:
+    {{- include "collaboration-demo.labels" . | nindent 4 }}
+spec:
+  host: {{ include "collaboration-demo.fullname" . }}
+  subsets:
+  - name: default
+    labels:
+      version: default
+{{- end -}}

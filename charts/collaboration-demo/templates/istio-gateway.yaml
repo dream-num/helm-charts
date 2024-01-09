@@ -3,7 +3,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: {{ include "collaboration-demo.fullname" . }}
+  name: univer
   labels:
     {{- include "collaboration-demo.labels" . | nindent 4 }}
 spec:
