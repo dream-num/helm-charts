@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "collaboration-demo.fullname" . }}
+  name: {{ include "universer.fullname" . }}
   labels:
-    {{- include "collaboration-demo.labels" . | nindent 4 }}
-    {{- include "collaboration-demo.istio.labels" . | nindent 4 }}
+    {{- include "universer.labels" . | nindent 4 }}
+    {{- include "universer.istio.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "collaboration-demo.selectorLabels" . | nindent 6 }}
-      {{- include "collaboration-demo.istio.labels" . | nindent 6 }}
+      {{- include "universer.selectorLabels" . | nindent 6 }}
+      {{- include "universer.istio.labels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,8 +18,8 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "collaboration-demo.selectorLabels" . | nindent 8 }}
-        {{- include "collaboration-demo.istio.labels" . | nindent 8 }}
+        {{- include "universer.selectorLabels" . | nindent 8 }}
+        {{- include "universer.istio.labels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -35,7 +35,10 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: {{ .Values.service.http }}
+              protocol: TCP
+            - name: grpc
+              containerPort: {{ .Values.service.grpc }}
               protocol: TCP
           # livenessProbe:
           #   httpGet:
@@ -47,6 +50,16 @@ spec:
           #     port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: conf
+              mountPath: /data/configs/config.yaml
+              subPath: config.yaml
+            - name: secret
+              mountPath: /data/configs/LICENSE
+              subPath: LICENSE
+            - name: secret
+              mountPath: /data/configs/public_key.crt
+              subPath: public_key.crt
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -59,3 +72,10 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+        - name: conf
+          configMap: 
+            name: universer-config
+        - name: secret
+          secret:
+            secretName: universer-secret

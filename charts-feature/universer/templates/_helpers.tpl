@@ -51,7 +51,5 @@ app.kubernetes.io/name: {{ include "universer.name" . }}
 {{- end }}
 
 {{- define "universer.istio.labels" -}}
-{{- if .Values.istio.enabled -}}
-version: default
-{{- end }}
+version: {{ .Values.istio.version | quote }}
 {{- end }}

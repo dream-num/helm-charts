@@ -57,4 +57,4 @@ tolerations: []
 affinity: {}
 
 istio:
-  enabled: false
+  version: v1

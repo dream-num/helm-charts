@@ -13,7 +13,7 @@ jobs:
     name: K8sDeploy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: azure/setup-helm@v3
         with:
@@ -21,12 +21,11 @@ jobs:
       
       - name: HelmUpgradeInstall
         run: |
-          mkdir -p ~/.kube
-          echo -e "${{ secrets.KUBECONFIG }}" >> ~/.kube/config
+          echo -e "${{ secrets.KUBECONFIG }}" >> ./kubeconfig
 
           if [ "${{ github.event.client_payload.service }}" == "universer" ]; then
             
-            helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
+            helm --kubeconfig ./kubeconfig upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
               --set config.postgresql.password="${{ secrets.POSTGRES_PASSWORD }}" \
               --set config.rabbitmq.password="${{ secrets.RABBITMQ_PASSWORD }}" \
               --set-json 'config.admin=[{"user":"admin","password":"${{ secrets.UNIVERSER_ADMIN_PASSWORD }}"}]' \
@@ -35,26 +34,29 @@ jobs:
               --set job.image.registry="${{ vars.REGISTRY }}" \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
               --set-json 'ingress={"enabled":true,"host":"${{ secrets.K8S_UNIVER_HOST }}","tls":[{"secretName":"${{ secrets.K8S_UNIVER_TLS }}","hosts":["${{ secrets.K8S_UNIVER_HOST }}"]}]}' \
+              --set istio.enabled=true \
               universer charts/universer
 
           elif [ "${{ github.event.client_payload.service }}" == "collaboration-server" ]; then 
 
-            helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
+            helm --kubeconfig ./kubeconfig upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/univer-collaboration","tag":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
+              --set istio.enabled=true \
               collaboration-server charts/collaboration-server
 
           elif [ "${{ github.event.client_payload.service }}" == "collaboration-demo" ]; then 
 
-            helm upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
+            helm --kubeconfig ./kubeconfig upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/univer-collaboration-demo","tag":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
               --set-json 'ingress={"enabled":true,"host":"${{ secrets.K8S_UNIVER_HOST }}","tls":[{"secretName":"${{ secrets.K8S_UNIVER_TLS }}","hosts":["${{ secrets.K8S_UNIVER_HOST }}"]}]}' \
+              --set istio.enabled=true \
               collaboration-demo charts/collaboration-demo
 
           elif [ "${{ github.event.client_payload.service }}" == "docs" ]; then 
 
-            helm upgrade --install -n prod --create-namespace \
+            helm --kubeconfig ./kubeconfig upgrade --install -n prod --create-namespace \
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/univer-docs","tag":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
               --set-json 'ingress={"enabled":true,"host":"www.univer.work","annotations":{"nginx.ingress.kubernetes.io/proxy-redirect-from":"http://www.univer.work:3020/","nginx.ingress.kubernetes.io/proxy-redirect-to":"/"},"tls":[{"secretName":"ssl.univer.work","hosts":["www.univer.work"]}]}' \

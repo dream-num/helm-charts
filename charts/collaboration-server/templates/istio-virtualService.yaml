@@ -1,0 +1,28 @@
+{{- if .Values.istio.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "collaboration-server.fullname" . }}
+  labels:
+    {{- include "collaboration-server.labels" . | nindent 4 }}
+spec:
+  hosts:
+    - {{ include "collaboration-server.fullname" . | quote }}
+  http:
+    - match:
+        - port: {{ .Values.service.apply }}
+      route:
+        - destination:
+            host: {{ include "collaboration-server.fullname" . }}
+            port: 
+              number: {{ .Values.service.apply }}
+            subset: default
+    - match:
+        - port: {{ .Values.service.transform }}
+      route:
+        - destination:
+            host: {{ include "collaboration-server.fullname" . }}
+            port: 
+              number: {{ .Values.service.transform }}
+            subset: default
+{{- end -}}

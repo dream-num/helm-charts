@@ -4,11 +4,13 @@ metadata:
   name: {{ include "universer.fullname" . }}
   labels:
     {{- include "universer.labels" . | nindent 4 }}
+    {{- include "universer.istio.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       {{- include "universer.selectorLabels" . | nindent 6 }}
+      {{- include "universer.istio.labels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -17,6 +19,7 @@ spec:
       {{- end }}
       labels:
         {{- include "universer.selectorLabels" . | nindent 8 }}
+        {{- include "universer.istio.labels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

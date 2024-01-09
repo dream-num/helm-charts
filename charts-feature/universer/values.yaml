@@ -1,4 +1,4 @@
-# Default values for collaboration-server.
+# Default values for universer.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -6,10 +6,10 @@ replicaCount: 1
 
 image:
   registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
-  repository: release/univer-collaboration
+  repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "048dae6"
+  tag: "41dce0e"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -20,6 +20,11 @@ podAnnotations: {}
 podSecurityContext: {}
   # fsGroup: 2000
 
+service:
+  type: ClusterIP
+  http: 8000
+  grpc: 9000
+
 securityContext: {}
   # capabilities:
   #   drop:
@@ -27,16 +32,6 @@ securityContext: {}
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
   # runAsUser: 1000
-
-service:
-  type: ClusterIP
-  transform: 5001
-  apply: 5002
-
-config:
-  univerServer: universer:8000
-  snapshotServer: universer:9000
-  saveSnapshotInterval: 3
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -57,4 +52,4 @@ tolerations: []
 affinity: {}
 
 istio:
-  enabled: false
+  version: "v1"

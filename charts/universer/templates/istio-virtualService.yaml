@@ -1,0 +1,48 @@
+{{- if .Values.istio.enabled -}}
+{{- if and (not .Values.ingress.enabled) .Values.istio.gateway.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "universer.fullname" . }}-gws
+  labels:
+    {{- include "universer.labels" . | nindent 4 }}
+spec:
+  hosts:
+  - {{ .Values.istio.gateway.host | quote }}
+  gateways:
+  - {{ include "universer.fullname" . }}
+  http:
+  - match:
+      - uri:
+          prefix: "/universer-api/"
+    delegate:
+      name: {{ include "universer.fullname" . }}
+{{- end }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "universer.fullname" . }}
+  labels:
+    {{- include "universer.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.istio.gateway.enabled }}
+  hosts:
+    - {{ include "universer.fullname" . | quote }}
+  {{- end }}
+  http:
+    - match:
+        - port: {{ .Values.service.grpc }}
+      route:
+        - destination:
+            host: {{ include "universer.fullname" . }}
+            port: 
+              number: {{ .Values.service.grpc }}
+            subset: default
+    - route:
+        - destination:
+            host: {{ include "universer.fullname" . }}
+            port: 
+              number: {{ .Values.service.http }}
+            subset: default
+{{- end -}}

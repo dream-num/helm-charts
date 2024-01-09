@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "collaboration-demo.name" -}}
+{{- define "collaboration-server.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "collaboration-demo.fullname" -}}
+{{- define "collaboration-server.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "collaboration-demo.chart" -}}
+{{- define "collaboration-server.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "collaboration-demo.labels" -}}
-helm.sh/chart: {{ include "collaboration-demo.chart" . }}
-{{ include "collaboration-demo.selectorLabels" . }}
+{{- define "collaboration-server.labels" -}}
+helm.sh/chart: {{ include "collaboration-server.chart" . }}
+{{ include "collaboration-server.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,9 +45,9 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "collaboration-demo.selectorLabels" -}}
-app: {{ include "collaboration-demo.name" . }}
-app.kubernetes.io/name: {{ include "collaboration-demo.name" . }}
+{{- define "collaboration-server.selectorLabels" -}}
+app: {{ include "collaboration-server.name" . }}
+app.kubernetes.io/name: {{ include "collaboration-server.name" . }}
 {{- end }}
 
 {{/* vim: set filetype=mustache: */}}
@@ -71,8 +71,6 @@ Return the proper image name
 {{- end -}}
 {{- end -}}
 
-{{- define "collaboration-demo.istio.labels" -}}
-{{- if .Values.istio.enabled -}}
-version: default
-{{- end }}
+{{- define "collaboration-server.istio.labels" -}}
+version: {{ .Values.istio.version | quote }}
 {{- end }}
