@@ -1,7 +1,7 @@
 apiVersion: istiomerger.monime.sl/v1alpha1
 kind: VirtualServiceMerge
 metadata:
-  name: {{ include "universer.fullname" . }}
+  name: {{ include "universer.fullname" . }}-api
   labels:
     {{- include "universer.labels" . | nindent 4 }}
 spec:
@@ -23,7 +23,7 @@ spec:
 apiVersion: istiomerger.monime.sl/v1alpha1
 kind: VirtualServiceMerge
 metadata:
-  name: {{ include "universer.fullname" . }}
+  name: {{ include "universer.fullname" . }}-internal
   labels:
     {{- include "universer.labels" . | nindent 4 }}
 spec:
