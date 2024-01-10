@@ -16,8 +16,42 @@ spec:
       - uri:
           prefix: "/universer-api/"
     delegate:
-      name: {{ include "universer.fullname" . }}
-{{- end }}
+      name: {{ include "universer.fullname" . }}-api
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "universer.fullname" . }}-api
+  labels:
+    {{- include "universer.labels" . | nindent 4 }}
+spec:
+  http:
+    - route:
+        - destination:
+            host: {{ include "universer.fullname" . }}
+            port: 
+              number: {{ .Values.service.http }}
+            subset: default
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "universer.fullname" . }}-internal
+  labels:
+    {{- include "universer.labels" . | nindent 4 }}
+spec:
+  hosts:
+    - {{ include "universer.fullname" . | quote }}
+  http:
+    - match:
+        - port: {{ .Values.service.grpc }}
+      route:
+        - destination:
+            host: {{ include "universer.fullname" . }}
+            port: 
+              number: {{ .Values.service.grpc }}
+            subset: default
+{{- else -}}
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -26,10 +60,8 @@ metadata:
   labels:
     {{- include "universer.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.istio.gateway.enabled }}
   hosts:
     - {{ include "universer.fullname" . | quote }}
-  {{- end }}
   http:
     - match:
         - port: {{ .Values.service.grpc }}
@@ -45,4 +77,5 @@ spec:
             port: 
               number: {{ .Values.service.http }}
             subset: default
+{{- end }}
 {{- end -}}
