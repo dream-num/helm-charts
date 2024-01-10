@@ -12,16 +12,7 @@ spec:
   gateways:
   - univer
   http:
-  - match:
-      - uri:
-          exact: "/"
-      - uri:
-          prefix: "/mvp"
-      - uri:
-          regex: ".*.css"
-      - uri:
-          regex: ".*.js"
-    delegate:
+  - delegate:
       name: {{ include "collaboration-demo.fullname" . }}
 {{- end }}
 ---
