@@ -58,7 +58,7 @@ jobs:
 
             helm --kubeconfig ./kubeconfig upgrade --install -n prod --create-namespace \
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/univer-docs","tag":"${{ github.event.client_payload.tag }}"}' \
-              --set-json 'imagePullSecrets=[{"name":"regcred"}]' \registry
+              --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
               --set istio.enabled=true \
               --set-json 'istio.gateway={"enabled":true,"host":"www.univer.work","ingressSelector":{"istio":"ingress"},"tls":{"enabled":true,"credentialName":"docs-host-credential"}}' \
               docs charts/docs
