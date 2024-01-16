@@ -28,16 +28,12 @@ git clone https://github.com/dream-num/helm-charts.git
 cd helm-charts/docker-compose
 ```
 
-4. 发送邮件到 `developer@univer.ai` 或联系官方微信申请试用资格,获取`LICENSE` 和 `public_key.crt` 文件.
-
-5. 将 `LICENSE` 和 `public_key.crt` 文件放到./configs目录下.
-
-6. 启动服务.
+4. 启动服务.
 ```bash
 bash run.sh
 ```
 
-7. 创建一个试用表格.
+5. 创建一个试用表格.
 ```bash
 curl -i -X 'POST' \
   'http://localhost:8000/universer-api/snapshot/2/unit/-/create' \
@@ -57,7 +53,7 @@ curl -i -X 'POST' \
 # {"error":{"code":"OK","message":"success"},"unitID":"1735864608675115008"}
 ```
 
-8. 可以利用我们提供的demo打开对应的表格. 
+6. 可以利用我们提供的demo打开对应的表格. 
 ```bash
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-demo:latest
 
