@@ -28,36 +28,12 @@ git clone https://github.com/dream-num/helm-charts.git
 cd helm-charts/docker-compose
 ```
 
-4. Ask `developer@univer.ai` or [Discord](https://discord.gg/z3NKNT6D2f) for get `LICENSE` and `public_key.crt` file to try out.
-
-5. Put `LICENSE` and `public_key.crt` file to ./configs folder.
-
-6. Run docker-compose.
+4. Run docker-compose.
 ```bash
 bash run.sh
 ```
 
-7. Create a demo sheet.
-```bash
-curl -i -X 'POST' \
-  'http://localhost:8000/universer-api/snapshot/2/unit/-/create' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "type": 2,
-    "name": "New Sheet - 12/13",
-    "creator": "user",
-    "workbookMeta": {
-        "name": "New Sheet - 12/13",
-        "locale": "en_US"
-    }
-}'
-
-# response: 
-# {"error":{"code":"OK","message":"success"},"unitID":"1735864608675115008"}
-```
-
-8. You can use our demo to try. 
+5. You can use our demo to try. 
 ```bash
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-demo:latest
 
@@ -65,7 +41,7 @@ docker run -it -d \
   -p 3010:3010 \
   univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-demo:latest
 
-# Open URL: http://localhost:3010?unit=${unitID}&type=2
+# Open URL: http://localhost:3010
 ```
 
 ## Use port
