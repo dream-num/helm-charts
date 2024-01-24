@@ -61,6 +61,8 @@ spec:
               value: {{ .Values.config.snapshotServer }}
             - name: SAVE_SNAPSHOT_INTERVAL
               value: {{ .Values.config.saveSnapshotInterval | quote }}
+            - name: X_FEATURE_ID
+              value: {{ .Values.istio.version | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
