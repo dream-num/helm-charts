@@ -3,15 +3,11 @@ name: 🧩 K8s staging feature push
 on:
   repository_dispatch:
     types: [dispatch-push-feature]
-    
-permissions:
-  contents: write
-  pull-requests: write
 
 jobs:
   deploy:
     name: K8sDeploy
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, office]
     steps:
       - uses: actions/checkout@v3
 

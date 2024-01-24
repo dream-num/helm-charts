@@ -3,15 +3,11 @@ name: 🚧 K8s staging feature delete
 on:
   repository_dispatch:
     types: [dispatch-delete-feature]
-    
-permissions:
-  contents: write
-  pull-requests: write
 
 jobs:
   uninstall:
     name: Uninstall
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, office]
     steps:
       - uses: azure/setup-helm@v3
         with:
