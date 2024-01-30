@@ -7,6 +7,10 @@ metadata:
     {{- include "collaboration-server.labels" . | nindent 4 }}
 spec:
   host: {{ include "collaboration-server.fullname" . }}
+  trafficPolicy:
+    loadBalancer:
+      consistentHash:
+        httpHeaderName: x-unit-id
   subsets:
   - name: default
     labels:
