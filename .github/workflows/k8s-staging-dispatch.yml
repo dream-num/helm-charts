@@ -39,6 +39,7 @@ jobs:
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/univer-collaboration","tag":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
               --set istio.enabled=true \
+              --set replicaCount=3 \
               collaboration-server charts/collaboration-server
 
           elif [ "${{ github.event.client_payload.service }}" == "collaboration-demo" ]; then 
