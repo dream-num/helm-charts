@@ -75,6 +75,8 @@ config:
     port: 5672
     username: guest
     password: guest
+  redis:
+    addr: redis:6379
   transform:
     host: collaboration-server
     port: 5001
