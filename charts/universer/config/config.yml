@@ -18,6 +18,10 @@ data:
     addr: univer-temporal:7233
     namespace: default
     worker_task_queue: migration-task-queue
+  redis:
+    addr: {{ .Values.config.redis.addr }}
+    read_timeout: 0.2s
+    write_timeout: 0.2s
 service:
   transform:
     addr: "{{ .Values.config.transform.host }}:{{ .Values.config.transform.port }}"
