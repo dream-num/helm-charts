@@ -22,6 +22,7 @@ jobs:
           if [ "${{ github.event.client_payload.service }}" == "universer" ]; then
             
             helm --kubeconfig ./kubeconfig upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
+              --set replicaCount=3 \
               --set config.postgresql.password="${{ secrets.POSTGRES_PASSWORD }}" \
               --set config.rabbitmq.password="${{ secrets.RABBITMQ_PASSWORD }}" \
               --set config.redis.addr="redis-master.database.svc.cluster.local:6379" \
