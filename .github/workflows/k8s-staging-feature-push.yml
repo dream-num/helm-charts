@@ -25,6 +25,7 @@ jobs:
               --set istio.version="${{ github.event.client_payload.feature }}" \
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/universer","tag":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
+              --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
               universer-${{ github.event.client_payload.feature }} charts-feature/universer
 
           elif [ "${{ github.event.client_payload.service }}" == "collaboration-server" ]; then 
@@ -33,6 +34,7 @@ jobs:
               --set istio.version="${{ github.event.client_payload.feature }}" \
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/univer-collaboration","tag":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
+              --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
               collaboration-server-${{ github.event.client_payload.feature }} charts-feature/collaboration-server
 
           elif [ "${{ github.event.client_payload.service }}" == "collaboration-demo" ]; then 
@@ -41,6 +43,7 @@ jobs:
               --set istio.version="${{ github.event.client_payload.feature }}" \
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/univer-collaboration-demo","tag":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
+              --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
               collaboration-demo-${{ github.event.client_payload.feature }} charts-feature/collaboration-demo
 
           fi

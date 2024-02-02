@@ -31,6 +31,7 @@ jobs:
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/universer","tag":"${{ github.event.client_payload.tag }}"}' \
               --set job.image.registry="${{ vars.REGISTRY }}" \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
+              --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
               --set istio.enabled=true \
               --set-json 'istio.gateway={"enabled":true,"host":"${{ secrets.K8S_UNIVER_HOST }}","ingressSelector":{"istio":"ingress"},"tls":{"enabled":true,"credentialName":"staging-host-credential"}}' \
               universer charts/universer
@@ -42,6 +43,7 @@ jobs:
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
               --set istio.enabled=true \
               --set replicaCount=3 \
+              --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
               collaboration-server charts/collaboration-server
 
           elif [ "${{ github.event.client_payload.service }}" == "collaboration-demo" ]; then 
@@ -49,6 +51,7 @@ jobs:
             helm --kubeconfig ./kubeconfig upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/univer-collaboration-demo","tag":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
+              --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
               --set istio.enabled=true \
               --set-json 'istio.gateway={"enabled":true,"host":"${{ secrets.K8S_UNIVER_HOST }}","ingressSelector":{"istio":"ingress"},"tls":{"enabled":true,"credentialName":"staging-host-credential"}}' \
               collaboration-demo charts/collaboration-demo
@@ -58,6 +61,7 @@ jobs:
             helm --kubeconfig ./kubeconfig upgrade --install -n prod --create-namespace \
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/univer-docs","tag":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
+              --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
               --set istio.enabled=true \
               --set-json 'istio.gateway={"enabled":true,"host":"www.univer.work","ingressSelector":{"istio":"ingress"},"tls":{"enabled":true,"credentialName":"docs-host-credential"}}' \
               docs charts/docs
