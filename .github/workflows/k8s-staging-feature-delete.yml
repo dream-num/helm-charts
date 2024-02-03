@@ -7,7 +7,7 @@ on:
 jobs:
   uninstall:
     name: Uninstall
-    runs-on: [self-hosted, Linux, office]
+    runs-on: arc-runner-set
     steps:
       - uses: azure/setup-helm@v3
         with:
