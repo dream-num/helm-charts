@@ -66,6 +66,17 @@ jobs:
               --set-json 'istio.gateway={"enabled":true,"host":"www.univer.work","ingressSelector":{"istio":"ingress"},"tls":{"enabled":true,"credentialName":"docs-host-credential"}}' \
               docs charts/docs
 
+          elif [ "${{ github.event.client_payload.service }}" == "pro-docs" ]; then 
+
+            helm --kubeconfig ./kubeconfig upgrade --install -n prod --create-namespace \
+              --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/univer-pro-docs","tag":"${{ github.event.client_payload.tag }}"}' \
+              --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
+              --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
+              --set authServerHost="${{ secrets.AUTH_SERVER_HOST }}" \
+              --set istio.enabled=true \
+              --set-json 'istio.gateway={"enabled":true,"host":"${{ secrets.K8S_PRODOCS_HOST }}","ingressSelector":{"istio":"ingress"}}' \
+              pro-docs charts/pro-docs
+
           fi
 
       - name: ENDocsDeploy

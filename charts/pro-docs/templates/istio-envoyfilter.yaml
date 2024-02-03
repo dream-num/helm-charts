@@ -1,0 +1,37 @@
+{{- if and .Values.istio.enabled .Values.istio.gateway.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: {{ include "pro-docs.fullname" . }}-header
+spec:
+  workloadSelector:
+    labels:
+      app: {{ include "pro-docs.name" . }}
+  configPatches:
+    - applyTo: HTTP_FILTER
+      match:
+        context: SIDECAR_INBOUND
+        listener:
+          portNumber: {{ .Values.service.port }}
+          filterChain:
+            filter:
+              name: "envoy.filters.network.http_connection_manager"
+              subFilter:
+                name: "envoy.filters.http.router"
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: envoy.lua
+          typed_config:
+            "@type": "type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua"
+            inlineCode: |
+              function envoy_on_response(handle)
+                local header = handle:headers()
+                local t = header:get("location")
+                if t ~= nil then
+                  local nt = string.match(t, "http://{{ .Values.istio.gateway.host }}:{{ .Values.service.port }}/(.*)")
+                  local loc = "/" .. nt
+                  header:replace("location", loc)
+                end
+              end
+{{- end -}}
