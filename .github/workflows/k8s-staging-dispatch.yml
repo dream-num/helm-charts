@@ -34,6 +34,7 @@ jobs:
               --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
               --set istio.enabled=true \
               --set-json 'istio.gateway={"enabled":true,"host":"${{ secrets.K8S_UNIVER_HOST }}","ingressSelector":{"istio":"ingress"},"tls":{"enabled":true,"credentialName":"staging-host-credential"}}' \
+              --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":50,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
               universer charts/universer
 
           elif [ "${{ github.event.client_payload.service }}" == "collaboration-server" ]; then 
@@ -44,6 +45,7 @@ jobs:
               --set istio.enabled=true \
               --set replicaCount=3 \
               --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
+              --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":50,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
               collaboration-server charts/collaboration-server
 
           elif [ "${{ github.event.client_payload.service }}" == "collaboration-demo" ]; then 
@@ -54,6 +56,7 @@ jobs:
               --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
               --set istio.enabled=true \
               --set-json 'istio.gateway={"enabled":true,"host":"${{ secrets.K8S_UNIVER_HOST }}","ingressSelector":{"istio":"ingress"},"tls":{"enabled":true,"credentialName":"staging-host-credential"}}' \
+              --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":50,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
               collaboration-demo charts/collaboration-demo
 
           elif [ "${{ github.event.client_payload.service }}" == "docs" ]; then 
@@ -64,6 +67,7 @@ jobs:
               --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
               --set istio.enabled=true \
               --set-json 'istio.gateway={"enabled":true,"host":"www.univer.work","ingressSelector":{"istio":"ingress"},"tls":{"enabled":true,"credentialName":"docs-host-credential"}}' \
+              --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":50,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
               docs charts/docs
 
           elif [ "${{ github.event.client_payload.service }}" == "pro-docs" ]; then 
@@ -75,6 +79,7 @@ jobs:
               --set authServerHost="${{ secrets.AUTH_SERVER_HOST }}" \
               --set istio.enabled=true \
               --set-json 'istio.gateway={"enabled":true,"host":"${{ secrets.K8S_PRODOCS_HOST }}","ingressSelector":{"istio":"ingress"}}' \
+              --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":50,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
               pro-docs charts/pro-docs
 
           fi

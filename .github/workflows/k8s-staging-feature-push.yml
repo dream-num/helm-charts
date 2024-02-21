@@ -26,6 +26,7 @@ jobs:
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/universer","tag":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
               --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
+              --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":50,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
               universer-${{ github.event.client_payload.feature }} charts-feature/universer
 
           elif [ "${{ github.event.client_payload.service }}" == "collaboration-server" ]; then 
@@ -35,6 +36,7 @@ jobs:
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/univer-collaboration","tag":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
               --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
+              --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":50,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
               collaboration-server-${{ github.event.client_payload.feature }} charts-feature/collaboration-server
 
           elif [ "${{ github.event.client_payload.service }}" == "collaboration-demo" ]; then 
@@ -44,6 +46,7 @@ jobs:
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/univer-collaboration-demo","tag":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
               --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
+              --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":50,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
               collaboration-demo-${{ github.event.client_payload.feature }} charts-feature/collaboration-demo
 
           fi
