@@ -29,6 +29,9 @@ service:
   apply:
     addr: "{{ .Values.config.apply.host }}:{{ .Values.config.apply.port }}"
     timeout: 10s
+  node_snapshot:
+    addr: "collaboration-server:5003"
+    timeout: 10s
 admin: 
 {{- if .Values.config.admin -}}
   {{- range .Values.config.admin }}
