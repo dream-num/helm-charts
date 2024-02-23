@@ -1,0 +1,48 @@
+name: 🐳 Univer.ai staging
+
+on:
+  workflow_dispatch:
+    
+
+jobs:
+  deploy:
+    name: DockerComposeDeploy
+    runs-on: arc-runner-set
+    steps:
+    - uses: appleboy/ssh-action@v1.0.0
+      env:
+        POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
+        RABBITMQ_PASSWORD: "${{ secrets.RABBITMQ_PASSWORD }}"
+      with:
+        host: ${{ vars.EN_HOST }}
+        username: ${{ vars.EN_HOST_USERNAME }}
+        password: ${{ secrets.EN_HOST_PASSWORD }}
+        script_stop: true
+        envs: POSTGRES_PASSWORD,RABBITMQ_PASSWORD
+        script: |
+          local_dir=~/helm-charts;
+
+          env;
+
+          repo_url="https://github.com/dream-num/helm-charts.git";
+
+          if [ ! -d "$local_dir" ]; then \
+            git clone "$repo_url" $local_dir; \
+          else \
+            cd $local_dir; \
+            git pull; \
+          fi;
+
+          ls $local_dir/docker-compose;
+
+          cd $local_dir/docker-compose;
+
+          cp .env .env.bak;
+          sed -i -e 's|POSTGRES_PASSWORD=postgres|'"POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"'|' \
+            -e 's|RABBITMQ_PASSWORD=guest|'"RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}"'|' .env;
+
+          bash run.sh;
+
+          mv .env.bak .env;
+
+          exit;
