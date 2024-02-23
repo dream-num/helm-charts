@@ -89,7 +89,7 @@ jobs:
               --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":50,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
               pro-docs charts/pro-docs
 
-          elif [ "${{ github.event.client_payload.service }}" == "cibot" && "${{ github.event.client_payload.env }}" == "production" ]; then 
+          elif [ "${{ github.event.client_payload.service }}" == "cibot"] && [ "${{ github.event.client_payload.env }}" == "production" ]; then 
 
             helm --kubeconfig ./kubeconfig upgrade --install -n prod --create-namespace \
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/univer-ci-bot","tag":"${{ github.event.client_payload.tag }}"}' \
@@ -100,7 +100,7 @@ jobs:
               --set ruleConfigMap="cibot-rule-univer" \
               cibot-univer charts/cibot
 
-          elif [ "${{ github.event.client_payload.service }}" == "cibot" && "${{ github.event.client_payload.env }}" == "staging" ]; then
+          elif [ "${{ github.event.client_payload.service }}" == "cibot" ] && [ "${{ github.event.client_payload.env }}" == "staging" ]; then
             
             helm --kubeconfig ./kubeconfig upgrade --install -n prod --create-namespace \
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/univer-ci-bot","tag":"${{ github.event.client_payload.tag }}"}' \
