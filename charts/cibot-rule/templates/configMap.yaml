@@ -5,4 +5,4 @@ metadata:
   labels:
     {{- include "cibot-rule.labels" . | nindent 4 }}
 data:
-{{ (.Files.Glob "rule/{{ .Values.path }}/**").AsConfig | indent 2 }}
+{{ include "cibot-rule.config" . | indent 2 }}

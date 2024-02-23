@@ -49,3 +49,8 @@ Selector labels
 app.kubernetes.io/name: {{ include "cibot-rule.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{- define "cibot-rule.config" -}}
+{{- $path := printf "rule/%s/**" .Values.path -}}
+{{ (.Files.Glob $path).AsConfig }}
+{{- end }}
