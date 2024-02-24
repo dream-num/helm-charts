@@ -20,7 +20,7 @@ services:
     depends_on:
       - univer-postgres
       - univer-rabbitmq
-      - univer-clickhouse
+      # - univer-clickhouse
       - univer-temporal
     networks:
       - univer
