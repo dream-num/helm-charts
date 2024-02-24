@@ -16,6 +16,6 @@ docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collab
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration-demo:latest
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-worker:latest
 
-docker compose -f docker-compose.dev.yaml --env-file .env.dev up -d
+docker compose -f docker-compose.dev.yaml --env-file .env.dev up $SERVICE -d
 
 docker logout univer-acr-registry.cn-shenzhen.cr.aliyuncs.com

@@ -215,6 +215,19 @@ services:
     labels:
       - com.univer.app=grafana
 
+  univer-redis:
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/redis:7.0.15-debian-11-r3
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    expose:
+      - 6379
+    networks:
+      - univer
+    labels:
+      - com.univer.app=redis
+    volumes:
+      - redis-data:/bitnami/redis/data
+
 configs:
   conf:
     file: ./configs/config.yaml
@@ -234,3 +247,5 @@ volumes:
     name: univer-clickhouse-data
   loki-data:
     name: univer-loki-data
+  redis-data:
+    name: univer-redis-data

@@ -11,14 +11,17 @@ jobs:
     steps:
     - uses: appleboy/ssh-action@v1.0.0
       env:
+        REGISTRY_USERNAME: "${{ secrets.REGISTRY_USERNAME }}"
+        REGISTRY_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
         POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
         RABBITMQ_PASSWORD: "${{ secrets.RABBITMQ_PASSWORD }}"
+        SERVICE: "universer collaboration-server collaboration-demo univer-postgres univer-rabbitmq univer-temporal univer-redis"
       with:
         host: ${{ vars.EN_HOST }}
         username: ${{ vars.EN_HOST_USERNAME }}
         password: ${{ secrets.EN_HOST_PASSWORD }}
         script_stop: true
-        envs: POSTGRES_PASSWORD,RABBITMQ_PASSWORD
+        envs: REGISTRY_USERNAME,REGISTRY_PASSWORD,POSTGRES_PASSWORD,RABBITMQ_PASSWORD,SERVICE
         script: |
           local_dir=~/helm-charts;
 
@@ -37,12 +40,6 @@ jobs:
 
           cd $local_dir/docker-compose;
 
-          cp .env .env.bak;
-          sed -i -e 's|POSTGRES_PASSWORD=postgres|'"POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"'|' \
-            -e 's|RABBITMQ_PASSWORD=guest|'"RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}"'|' .env;
-
-          bash run.sh;
-
-          mv .env.bak .env;
+          bash run.dev.sh;
 
           exit;

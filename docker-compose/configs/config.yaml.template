@@ -18,12 +18,19 @@ data:
     addr: univer-temporal:7233
     namespace: default
     worker_task_queue: migration-task-queue
+  redis:
+    addr: univer-redis:6379
+    read_timeout: 0.2s
+    write_timeout: 0.2s
 service:
   transform:
     addr: collaboration-server:5001
     timeout: 10s
   apply:
     addr: collaboration-server:5002
+    timeout: 10s
+  node_snapshot:
+    addr: collaboration-server:5003
     timeout: 10s
 admin:
   - user: ${UNIVERSER_ADMIN_USERNAME}
