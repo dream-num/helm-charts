@@ -55,6 +55,8 @@ spec:
               value: 0.0.0.0:{{ .Values.service.transform }}
             - name: URL_OF_APPLY_SERVICE
               value: 0.0.0.0:{{ .Values.service.apply }}
+            - name: URL_OF_NODE_SNAPSHOT_SERVICE
+              value: 0.0.0.0:{{ .Values.service.nodeSnapshot }}
             - name: URL_OF_UNIVERSER_SERVICE
               value: {{ .Values.config.univerServer }}
             - name: URL_OF_SNAPSHOT_SERVICE
