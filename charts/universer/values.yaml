@@ -84,6 +84,13 @@ config:
     host: collaboration-server
     port: 5002
   admin: []
+  s3:
+    accessKeyID: ""
+    accessKeySecret: ""
+    region: oss-cn-shenzhen
+    endpoint: https://oss-cn-shenzhen.aliyuncs.com
+    usePathStyle: false
+    presignExpires: 3600s
 
 license:
   LICENSE: ""
