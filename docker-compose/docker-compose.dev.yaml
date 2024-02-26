@@ -34,6 +34,7 @@ services:
     environment:
       - URL_OF_TRANSFORM_SERVICE=0.0.0.0:5001
       - URL_OF_APPLY_SERVICE=0.0.0.0:5002
+      - URL_OF_NODE_SNAPSHOT_SERVICE=0.0.0.0:5003
       - URL_OF_UNIVERSER_SERVICE=universer:8000
       - URL_OF_SNAPSHOT_SERVICE=universer:9000
       - SAVE_SNAPSHOT_INTERVAL=3
@@ -41,6 +42,7 @@ services:
     expose:
       - 5001
       - 5002
+      - 5003
     networks:
       - univer
     labels:
