@@ -25,4 +25,12 @@ spec:
             port: 
               number: {{ .Values.service.transform }}
             subset: default
+    - match:
+        - port: {{ .Values.service.nodeSnapshot }}
+      route:
+        - destination:
+            host: {{ include "collaboration-server.fullname" . }}
+            port:
+              number: {{ .Values.service.nodeSnapshot }}
+            subset: default
 {{- end -}}
