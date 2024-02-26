@@ -41,7 +41,7 @@ spec:
               containerPort: {{ .Values.service.apply }}
               protocol: TCP
             - name: nodeSnapshot
-              containerPort: { { .Values.service.nodeSnapshot } }
+              containerPort: {{ .Values.service.nodeSnapshot }}
               protocol: TCP
           # livenessProbe:
           #   httpGet:
