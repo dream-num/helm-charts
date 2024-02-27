@@ -32,7 +32,7 @@ service:
   type: ClusterIP
   transform: 5001
   apply: 5002
-  nodeSnapshot: 5003
+  node-snapshot: 5003
 
 config:
   univerServer: universer:8000

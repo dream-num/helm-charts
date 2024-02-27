@@ -26,11 +26,11 @@ spec:
               number: {{ .Values.service.transform }}
             subset: default
     - match:
-        - port: {{ .Values.service.nodeSnapshot }}
+        - port: {{ .Values.service.node-snapshot }}
       route:
         - destination:
             host: {{ include "collaboration-server.fullname" . }}
             port:
-              number: {{ .Values.service.nodeSnapshot }}
+              number: {{ .Values.service.node-snapshot }}
             subset: default
 {{- end -}}

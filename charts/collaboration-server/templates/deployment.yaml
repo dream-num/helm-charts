@@ -40,8 +40,8 @@ spec:
             - name: apply
               containerPort: {{ .Values.service.apply }}
               protocol: TCP
-            - name: nodeSnapshot
-              containerPort: {{ .Values.service.nodeSnapshot }}
+            - name: node-snapshot
+              containerPort: {{ .Values.service.node-snapshot }}
               protocol: TCP
           # livenessProbe:
           #   httpGet:
@@ -59,7 +59,7 @@ spec:
             - name: URL_OF_APPLY_SERVICE
               value: 0.0.0.0:{{ .Values.service.apply }}
             - name: URL_OF_NODE_SNAPSHOT_SERVICE
-              value: 0.0.0.0:{{ .Values.service.nodeSnapshot }}
+              value: 0.0.0.0:{{ .Values.service.node-snapshot }}
             - name: URL_OF_UNIVERSER_SERVICE
               value: {{ .Values.config.univerServer }}
             - name: URL_OF_SNAPSHOT_SERVICE

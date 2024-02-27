@@ -35,10 +35,10 @@ spec:
           - headers:
               x-feature-id:
                 exact: {{ .Values.istio.version | quote }}
-            port: {{ .Values.service.nodeSnapshot }}
+            port: {{ .Values.service.node-snapshot }}
         route:
           - destination:
               host: collaboration-server
               port:
-                number: {{ .Values.service.nodeSnapshot }}
+                number: {{ .Values.service.node-snapshot }}
               subset: {{ .Values.istio.version  | quote }}
