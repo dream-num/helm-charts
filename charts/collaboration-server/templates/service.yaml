@@ -16,7 +16,7 @@ spec:
       protocol: TCP
       name: grpc-apply
     - port: {{ .Values.service.nodeSnapshot }}
-      targetPort: nodeSnapshot
+      targetPort: node-snapshot
       protocol: TCP
       name: grpc-node-snapshot
   selector:
