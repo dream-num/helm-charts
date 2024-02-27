@@ -18,6 +18,6 @@ spec:
     - port: {{ .Values.service.nodeSnapshot }}
       targetPort: nodeSnapshot
       protocol: TCP
-      name: grpc-nodeSnapshot
+      name: grpc-node-snapshot
   selector:
     {{- include "collaboration-server.selectorLabels" . | nindent 4 }}
