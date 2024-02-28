@@ -124,6 +124,13 @@ jobs:
               --set path="staging" \
               cibot-rule-awesome-univer charts/cibot-rule
 
+          elif [ "${{ github.event.client_payload.service }}" == "worker" ]; then 
+
+            helm --kubeconfig ./kubeconfig upgrade --install -n univer --create-namespace \
+              --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/worker-${{ github.event.client_payload.target }}","tag":"${{ github.event.client_payload.tag }}"}' \
+              --set-json 'temporalServer={"host":"temporal-frontend.temporal:7233","namespace":"staging"}' \
+              worker-${{ github.event.client_payload.target }} charts/worker
+
           fi
 
       - name: ENDocsDeploy
