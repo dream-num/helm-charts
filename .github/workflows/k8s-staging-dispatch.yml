@@ -129,6 +129,8 @@ jobs:
             helm --kubeconfig ./kubeconfig upgrade --install -n univer --create-namespace \
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/worker-${{ github.event.client_payload.target }}","tag":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'temporalServer={"host":"temporal-frontend.temporal:7233","namespace":"staging"}' \
+              --set-json 'podAnnotations={"sidecar.istio.io/inject":"false"}' \
+              --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":1,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
               worker-${{ github.event.client_payload.target }} charts/worker
 
           fi
