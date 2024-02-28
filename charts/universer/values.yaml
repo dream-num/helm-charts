@@ -83,6 +83,9 @@ config:
   apply:
     host: collaboration-server
     port: 5002
+  node_snapshot:
+    host: collaboration-server
+    port: 5001
   admin: []
   s3:
     accessKeyID: ""
