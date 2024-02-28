@@ -37,7 +37,7 @@ service:
     addr: "{{ .Values.config.apply.host }}:{{ .Values.config.apply.port }}"
     timeout: 10s
   node_snapshot:
-    addr: "{{ .Values.config.transform.host }}:{{ .Values.config.transform.port }}"
+    addr: "{{ .Values.config.node_snapshot.host }}:{{ .Values.config.node_snapshot.port }}"
     timeout: 10s
 admin: 
 {{- if .Values.config.admin -}}

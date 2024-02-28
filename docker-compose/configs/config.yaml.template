@@ -30,7 +30,7 @@ service:
     addr: collaboration-server:5002
     timeout: 10s
   node_snapshot:
-    addr: collaboration-server:5003
+    addr: collaboration-server:5001
     timeout: 10s
 admin:
   - user: ${UNIVERSER_ADMIN_USERNAME}
