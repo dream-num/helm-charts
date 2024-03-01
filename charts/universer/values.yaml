@@ -94,6 +94,9 @@ config:
     endpoint: https://oss-cn-shenzhen.aliyuncs.com
     usePathStyle: false
     presignExpires: 3600s
+  temporal:
+    addr: univer-temporal:7233
+    namespace: default
 
 license:
   LICENSE: ""

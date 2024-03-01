@@ -34,6 +34,7 @@ jobs:
               --set config.rabbitmq.password="${{ secrets.RABBITMQ_PASSWORD }}" \
               --set config.redis.addr="redis-master.database.svc.cluster.local:6379" \
               --set-json 'config.admin=[{"user":"admin","password":"${{ secrets.UNIVERSER_ADMIN_PASSWORD }}"}]' \
+              --set-json 'config.temporal={"addr":"temporal-frontend.temporal:7233","namespace":"staging"}' \
               --set config.s3.accessKeyID="${{ secrets.S3_ACCESS_KEY_ID }}" \
               --set config.s3.accessKeySecret="${{ secrets.S3_ACCESS_KEY_SECRET }}" \
               --set config.s3.endpoint="https://oss-cn-shenzhen-internal.aliyuncs.com" \
@@ -127,6 +128,7 @@ jobs:
           elif [ "${{ github.event.client_payload.service }}" == "worker" ]; then 
 
             helm --kubeconfig ./kubeconfig upgrade --install -n univer --create-namespace \
+              --set replicaCount=3 \
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/worker-${{ github.event.client_payload.target }}","tag":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
               --set-json 'temporalServer={"host":"temporal-frontend.temporal:7233","namespace":"staging"}' \

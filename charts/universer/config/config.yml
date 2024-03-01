@@ -15,9 +15,8 @@ data:
   clickhouse:
     dsn: clickhouse://clickhouse:clickhouse@clickhouse:9000/univer?dial_timeout=10s&read_timeout=20s
   temporal:
-    addr: univer-temporal:7233
-    namespace: default
-    worker_task_queue: migration-task-queue
+    addr: {{ .Values.config.temporal.addr }}
+    namespace: {{ .Values.config.temporal.namespace }}
   redis:
     addr: {{ .Values.config.redis.addr }}
     read_timeout: 0.2s
