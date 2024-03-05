@@ -1,0 +1,15 @@
+replicaCount: 1
+image:
+  repository: swaggerapi/swagger-ui
+  tag: latest
+  pullPolicy: IfNotPresent
+service:
+  type: NodePort
+  port: 8080
+env:
+  SWAGGER_JSON: /foo/openapi.yaml
+container:
+  ports:
+    - containerPort: 8080
+      hostPort: 80
+      protocol: TCP
