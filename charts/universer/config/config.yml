@@ -26,6 +26,7 @@ data:
     accessKeySecret: {{ .Values.config.s3.accessKeySecret }}
     region: {{ .Values.config.s3.region }}
     endpoint: {{ .Values.config.s3.endpoint }}
+    endpointPublic: {{ .Values.config.s3.endpointPublic }}
     usePathStyle: {{ .Values.config.s3.usePathStyle }}
     presignExpires: {{ .Values.config.s3.presignExpires }}
 service:

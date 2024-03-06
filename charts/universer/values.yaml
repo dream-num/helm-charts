@@ -92,6 +92,7 @@ config:
     accessKeySecret: ""
     region: oss-cn-shenzhen
     endpoint: https://oss-cn-shenzhen.aliyuncs.com
+    endpointPublic: https://oss-cn-shenzhen.aliyuncs.com
     usePathStyle: false
     presignExpires: 3600s
   temporal:
