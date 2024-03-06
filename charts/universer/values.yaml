@@ -98,6 +98,13 @@ config:
   temporal:
     addr: univer-temporal:7233
     namespace: default
+  auth:
+    enabled: false
+    oidc:
+      issuer: https://accounts.google.com
+      clientID: "xxxx"
+      clientSecret: "xxxxxxxxxx"
+      redirectURL: "http://example.com/auth/callback"
 
 license:
   LICENSE: ""
