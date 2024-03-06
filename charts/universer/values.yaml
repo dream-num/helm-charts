@@ -105,6 +105,7 @@ config:
       clientID: "xxxx"
       clientSecret: "xxxxxxxxxx"
       redirectURL: "http://example.com/auth/callback"
+      cookieDomain: "abc.example.com"
 
 license:
   LICENSE: ""
