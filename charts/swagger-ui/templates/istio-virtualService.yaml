@@ -14,7 +14,7 @@ spec:
     - match:
         - headers:
             authorization:
-              exact: "Basic {{ printf "%s:%s" .Values.istio.auth.name .Values.istio.auth.password | b64enc }}"
+              exact: "Basic {{ printf "%s:%s" .Values.istio.auth.user .Values.istio.auth.password | b64enc }}"
       route:
         - destination:
             host: {{ include "swagger-ui.fullname" . }}
