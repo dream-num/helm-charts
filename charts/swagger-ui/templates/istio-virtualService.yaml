@@ -1,0 +1,29 @@
+{{- if and .Values.istio.enabled (not .Values.ingress.enabled) .Values.istio.gateway.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "swagger-ui.fullname" . }}-gws
+  labels:
+    {{- include "swagger-ui.labels" . | nindent 4 }}
+spec:
+  hosts:
+  - {{ .Values.istio.gateway.host | quote }}
+  gateways:
+  - {{ include "swagger-ui.fullname" . }}
+  http:
+    - match:
+        - headers:
+            authorization:
+              exact: "Basic {{ printf "%s:%s" .Values.istio.auth.name .Values.istio.auth.password | b64enc }}"
+      route:
+        - destination:
+            host: {{ include "swagger-ui.fullname" . }}
+            port: 
+              number: {{ .Values.service.port }}
+    - directResponse:
+        status: 401
+      headers:
+        response:
+          set:
+            Www-Authenticate: 'Basic realm="Authentication Required"'
+{{- end -}}

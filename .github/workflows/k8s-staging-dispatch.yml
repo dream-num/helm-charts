@@ -22,6 +22,11 @@ jobs:
         with:
           version: v3.12.0
       
+      - name: DownloadSwaggerJson
+        if: ${{ github.event.client_payload.service == 'swagger-ui' }}
+        run: |
+          curl -o charts/swagger-ui/config/openapi.yaml https://${{ secrets.GH_TOKEN }}@raw.githubusercontent.com/dream-num/univer-protocol/main/openapi.yaml
+
       - name: HelmUpgradeInstall
         run: |
           echo -e "${{ secrets.KUBECONFIG }}" >> ./kubeconfig
@@ -135,6 +140,15 @@ jobs:
               --set-json 'temporalServer={"host":"temporal-frontend.temporal:7233","namespace":"staging"}' \
               --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":1,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
               worker-${{ github.event.client_payload.target }} charts/worker
+
+          elif [ "${{ github.event.client_payload.service }}" == "swagger-ui" ]; then 
+
+              helm --kubeconfig ./kubeconfig upgrade --install -n swagger --create-namespace \
+                --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":1,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
+                --set istio.enabled=true \
+                --set-json 'istio.gateway={"enabled":true,"host":"${{ secrets.SWAGGER_HOST }}","ingressSelector":{"istio":"ingress"}}' \
+                --set-json 'istio.auth={"user":"${{ secrets.SWAGGER_USER }}","password":"${{ secrets.SWAGGER_PASSWORD }}"}' \
+                swagger-ui charts/swagger-ui
 
           fi
 
