@@ -5,9 +5,7 @@ metadata:
   labels:
     {{- include "swagger-ui.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
       {{- include "swagger-ui.selectorLabels" . | nindent 6 }}
@@ -27,7 +25,6 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "swagger-ui.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -41,25 +38,23 @@ spec:
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           env:
-            - name: {{ .Values.env.SWAGGER_JSON_NAME }} 
-              value: {{ .Values.env.SWAGGER_JSON }}              
+            - name: SWAGGER_JSON 
+              value: /etc/swagger/openapi.yaml
+            - name: PORT
+              value: {{ .Values.service.port | quote }}
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
-            - name: {{ .name}}
-              mountPath: {{ .mountPath}}
-          {{- end }}
-      {{- with .Values.volumes }}
+            - name: config
+              mountPath: /etc/swagger
       volumes:
-        - name: {{.name}}
+        - name: config
           configMap:
-            name: {{.configMap.name}}
-      {{- end }}
+            name: {{ include "swagger-ui.fullname" . }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
