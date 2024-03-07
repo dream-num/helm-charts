@@ -25,7 +25,7 @@ jobs:
       - name: DownloadSwaggerJson
         if: ${{ github.event.client_payload.service == 'swagger-ui' }}
         run: |
-          curl -o charts/swagger-ui/config/openapi.yaml https://${{ secrets.GH_TOKEN }}@raw.githubusercontent.com/dream-num/univer-protocol/main/openapi.yaml
+          mkdir -p charts/swagger-ui/config && curl -o charts/swagger-ui/config/openapi.yaml https://${{ secrets.GH_TOKEN }}@raw.githubusercontent.com/dream-num/univer-protocol/main/openapi.yaml
 
       - name: HelmUpgradeInstall
         run: |
