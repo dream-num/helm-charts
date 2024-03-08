@@ -22,6 +22,14 @@ data:
     addr: univer-redis:6379
     read_timeout: 0.2s
     write_timeout: 0.2s
+  s3:
+    accessKeyID: "${S3_USER}"
+    accessKeySecret: "${S3_PASSWORD}"
+    region: ""
+    endpoint: "${S3_ENDPOINT}"
+    endpointPublic: "${S3_ENDPOINT_PUBLIC}"
+    usePathStyle: true
+    presignExpires: 3600s
 service:
   transform:
     addr: collaboration-server:5001
@@ -37,3 +45,5 @@ admin:
     password: ${UNIVERSER_ADMIN_PASSWORD}
 extra:
   celldataMaxSize: 10485760 # 单位字节，10M
+auth:
+  enabled: false

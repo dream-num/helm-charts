@@ -9,7 +9,7 @@ services:
     expose:
       - 9000
     environment:
-      - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-temporal,collaboration-server
+      - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-temporal,collaboration-server,univer-minio
     volumes:
       - ./configs:/data/configs
       - /var/run/docker.sock:/var/run/docker.sock
@@ -75,6 +75,37 @@ services:
     labels:
       - com.univer.app=rabbitmq
 
+  univer-redis:
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/redis:${REDIS_VERSION}
+    container_name: univer-redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    expose:
+      - 6379
+    networks:
+      - univer
+    labels:
+      - com.univer.app=redis
+    volumes:
+      - redis-data:/bitnami/redis/data
+  
+  univer-minio:
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/minio:${MINIO_VERSION}
+    container_name: univer-minio
+    environment:
+      - MINIO_ROOT_USER=${S3_USER}
+      - MINIO_ROOT_PASSWORD=${S3_PASSWORD}
+      - MINIO_DEFAULT_BUCKETS=univer-staging
+    expose:
+      - 9000
+      - 9001
+    networks:
+      - univer
+    labels:
+      - com.univer.app=minio
+    volumes:
+      - minio-data:/bitnami/minio/data
+
 networks:
   univer:
     name: unvier-prod
@@ -86,4 +117,8 @@ networks:
 volumes:
   postgres-data:
     name: univer-prod-postgres-data
+  redis-data:
+    name: univer-prod-redis-data
+  minio-data:
+    name: univer-prod-minio-data
 
