@@ -198,4 +198,27 @@ jobs:
             
             docker run -d --name univer-examples -p 13001:3010 univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-examples:${{ github.event.client_payload.tag }}
       
+      - name: UniverProExamplesDeploy
+        if: ${{ github.event.client_payload.service == 'univer-pro-examples' }}
+        uses: appleboy/ssh-action@v1.0.0
+        env:
+          REGISTRY_USERNAME: "${{ secrets.REGISTRY_USERNAME }}"
+          REGISTRY_PASSWORD: "${{ secrets.REGISTRY_PASSWORD }}"
+        with:
+          host: ${{ vars.EN_HOST }}
+          username: ${{ vars.EN_HOST_USERNAME }}
+          password: ${{ secrets.EN_HOST_PASSWORD }}
+          script_stop: true
+          envs: REGISTRY_USERNAME,REGISTRY_PASSWORD
+          script: |
+            echo $REGISTRY_PASSWORD | docker login univer-acr-registry.cn-shenzhen.cr.aliyuncs.com -u $REGISTRY_USERNAME --password-stdin
+
+            docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-pro-examples:${{ github.event.client_payload.tag }}
+
+            docker stop univer-pro-examples
+
+            docker rm univer-pro-examples
+            
+            docker run -d --name univer-pro-examples -p 13002:3010 univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-pro-examples:${{ github.event.client_payload.tag }}
+      
 
