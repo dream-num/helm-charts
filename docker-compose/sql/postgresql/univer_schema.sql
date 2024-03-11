@@ -71,6 +71,126 @@ ALTER SEQUENCE universer.changeset_id_seq OWNED BY universer.changeset.id;
 
 
 --
+-- Name: document_snapshot; Type: TABLE; Schema: universer; Owner: postgres
+--
+
+CREATE TABLE universer.document_snapshot (
+    id integer NOT NULL,
+    created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    deleted_at timestamp with time zone,
+    unit_id character varying NOT NULL,
+    revision integer NOT NULL,
+    resources jsonb DEFAULT '{}'::jsonb,
+    original_meta jsonb DEFAULT '{}'::jsonb,
+    snapshot_id character varying
+);
+
+
+ALTER TABLE universer.document_snapshot OWNER TO postgres;
+
+--
+-- Name: document_snapshot_id_seq; Type: SEQUENCE; Schema: universer; Owner: postgres
+--
+
+CREATE SEQUENCE universer.document_snapshot_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE universer.document_snapshot_id_seq OWNER TO postgres;
+
+--
+-- Name: document_snapshot_id_seq; Type: SEQUENCE OWNED BY; Schema: universer; Owner: postgres
+--
+
+ALTER SEQUENCE universer.document_snapshot_id_seq OWNED BY universer.document_snapshot.id;
+
+
+--
+-- Name: file_block; Type: TABLE; Schema: universer; Owner: postgres
+--
+
+CREATE TABLE universer.file_block (
+    id integer NOT NULL,
+    created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    deleted_at timestamp with time zone,
+    block_id character varying NOT NULL,
+    cipher_key character varying DEFAULT ''::character varying,
+    object_key character varying NOT NULL
+);
+
+
+ALTER TABLE universer.file_block OWNER TO postgres;
+
+--
+-- Name: file_block_id_seq; Type: SEQUENCE; Schema: universer; Owner: postgres
+--
+
+CREATE SEQUENCE universer.file_block_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE universer.file_block_id_seq OWNER TO postgres;
+
+--
+-- Name: file_block_id_seq; Type: SEQUENCE OWNED BY; Schema: universer; Owner: postgres
+--
+
+ALTER SEQUENCE universer.file_block_id_seq OWNED BY universer.file_block.id;
+
+
+--
+-- Name: file_meta; Type: TABLE; Schema: universer; Owner: postgres
+--
+
+CREATE TABLE universer.file_meta (
+    id integer NOT NULL,
+    created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    deleted_at timestamp with time zone,
+    file_id character varying NOT NULL,
+    name character varying NOT NULL,
+    size integer NOT NULL,
+    block_list jsonb DEFAULT '[]'::jsonb
+);
+
+
+ALTER TABLE universer.file_meta OWNER TO postgres;
+
+--
+-- Name: file_meta_id_seq; Type: SEQUENCE; Schema: universer; Owner: postgres
+--
+
+CREATE SEQUENCE universer.file_meta_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE universer.file_meta_id_seq OWNER TO postgres;
+
+--
+-- Name: file_meta_id_seq; Type: SEQUENCE OWNED BY; Schema: universer; Owner: postgres
+--
+
+ALTER SEQUENCE universer.file_meta_id_seq OWNED BY universer.file_meta.id;
+
+
+--
 -- Name: resource; Type: TABLE; Schema: universer; Owner: postgres
 --
 
@@ -81,7 +201,7 @@ CREATE TABLE universer.resource (
     deleted_at timestamp with time zone,
     resource_id character varying NOT NULL,
     name character varying NOT NULL,
-    data text DEFAULT '{}'::jsonb
+    data jsonb DEFAULT '{}'::jsonb
 );
 
 
@@ -107,6 +227,46 @@ ALTER SEQUENCE universer.resource_id_seq OWNER TO postgres;
 --
 
 ALTER SEQUENCE universer.resource_id_seq OWNED BY universer.resource.id;
+
+
+--
+-- Name: sched_task; Type: TABLE; Schema: universer; Owner: postgres
+--
+
+CREATE TABLE universer.sched_task (
+    id integer NOT NULL,
+    created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    deleted_at timestamp with time zone,
+    task_id character varying NOT NULL,
+    state character varying NOT NULL,
+    data jsonb DEFAULT '{}'::jsonb,
+    task_name character varying
+);
+
+
+ALTER TABLE universer.sched_task OWNER TO postgres;
+
+--
+-- Name: sched_task_id_seq; Type: SEQUENCE; Schema: universer; Owner: postgres
+--
+
+CREATE SEQUENCE universer.sched_task_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE universer.sched_task_id_seq OWNER TO postgres;
+
+--
+-- Name: sched_task_id_seq; Type: SEQUENCE OWNED BY; Schema: universer; Owner: postgres
+--
+
+ALTER SEQUENCE universer.sched_task_id_seq OWNED BY universer.sched_task.id;
 
 
 --
@@ -286,10 +446,38 @@ ALTER TABLE ONLY universer.changeset ALTER COLUMN id SET DEFAULT nextval('univer
 
 
 --
+-- Name: document_snapshot id; Type: DEFAULT; Schema: universer; Owner: postgres
+--
+
+ALTER TABLE ONLY universer.document_snapshot ALTER COLUMN id SET DEFAULT nextval('universer.document_snapshot_id_seq'::regclass);
+
+
+--
+-- Name: file_block id; Type: DEFAULT; Schema: universer; Owner: postgres
+--
+
+ALTER TABLE ONLY universer.file_block ALTER COLUMN id SET DEFAULT nextval('universer.file_block_id_seq'::regclass);
+
+
+--
+-- Name: file_meta id; Type: DEFAULT; Schema: universer; Owner: postgres
+--
+
+ALTER TABLE ONLY universer.file_meta ALTER COLUMN id SET DEFAULT nextval('universer.file_meta_id_seq'::regclass);
+
+
+--
 -- Name: resource id; Type: DEFAULT; Schema: universer; Owner: postgres
 --
 
 ALTER TABLE ONLY universer.resource ALTER COLUMN id SET DEFAULT nextval('universer.resource_id_seq'::regclass);
+
+
+--
+-- Name: sched_task id; Type: DEFAULT; Schema: universer; Owner: postgres
+--
+
+ALTER TABLE ONLY universer.sched_task ALTER COLUMN id SET DEFAULT nextval('universer.sched_task_id_seq'::regclass);
 
 
 --
@@ -329,11 +517,59 @@ ALTER TABLE ONLY universer.changeset
 
 
 --
+-- Name: document_snapshot document_snapshot_pk; Type: CONSTRAINT; Schema: universer; Owner: postgres
+--
+
+ALTER TABLE ONLY universer.document_snapshot
+    ADD CONSTRAINT document_snapshot_pk PRIMARY KEY (id);
+
+
+--
+-- Name: document_snapshot document_snapshot_unique; Type: CONSTRAINT; Schema: universer; Owner: postgres
+--
+
+ALTER TABLE ONLY universer.document_snapshot
+    ADD CONSTRAINT document_snapshot_unique UNIQUE (snapshot_id);
+
+
+--
+-- Name: document_snapshot document_snapshot_unique_1; Type: CONSTRAINT; Schema: universer; Owner: postgres
+--
+
+ALTER TABLE ONLY universer.document_snapshot
+    ADD CONSTRAINT document_snapshot_unique_1 UNIQUE (unit_id, revision);
+
+
+--
+-- Name: file_block file_block_pkey; Type: CONSTRAINT; Schema: universer; Owner: postgres
+--
+
+ALTER TABLE ONLY universer.file_block
+    ADD CONSTRAINT file_block_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: file_meta file_meta_pkey; Type: CONSTRAINT; Schema: universer; Owner: postgres
+--
+
+ALTER TABLE ONLY universer.file_meta
+    ADD CONSTRAINT file_meta_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: resource resource_pkey; Type: CONSTRAINT; Schema: universer; Owner: postgres
 --
 
 ALTER TABLE ONLY universer.resource
     ADD CONSTRAINT resource_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sched_task sched_task_pkey; Type: CONSTRAINT; Schema: universer; Owner: postgres
+--
+
+ALTER TABLE ONLY universer.sched_task
+    ADD CONSTRAINT sched_task_pkey PRIMARY KEY (id);
 
 
 --
@@ -421,6 +657,34 @@ ALTER TABLE ONLY universer.worksheet
 --
 
 CREATE INDEX idx_changeset_deleted_at ON universer.changeset USING btree (deleted_at);
+
+
+--
+-- Name: sched_task_task_id_uindex; Type: INDEX; Schema: universer; Owner: postgres
+--
+
+CREATE UNIQUE INDEX sched_task_task_id_uindex ON universer.sched_task USING btree (task_id);
+
+
+--
+-- Name: uniq_file_block_block_id; Type: INDEX; Schema: universer; Owner: postgres
+--
+
+CREATE UNIQUE INDEX uniq_file_block_block_id ON universer.file_block USING btree (block_id);
+
+
+--
+-- Name: uniq_file_block_object_key; Type: INDEX; Schema: universer; Owner: postgres
+--
+
+CREATE UNIQUE INDEX uniq_file_block_object_key ON universer.file_block USING btree (object_key);
+
+
+--
+-- Name: uniq_file_meta_file_id; Type: INDEX; Schema: universer; Owner: postgres
+--
+
+CREATE UNIQUE INDEX uniq_file_meta_file_id ON universer.file_meta USING btree (file_id);
 
 
 --
