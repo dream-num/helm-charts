@@ -5,8 +5,8 @@ cp ./configs/config.yaml.template ./configs/config.yaml
 while IFS='=' read -r name value ; do
     # Replace variable with value. 
     sed -i 's|${'"${name}"'}|'"${value}"'|' ./configs/config.yaml
-done < <(envsubst '$POSTGRES_PASSWORD $RABBITMQ_PASSWORD $CLICKHOUSE_PASSWORD $UNIVERSER_ADMIN_PASSWORD $GRAFANA_PASSWORD' \
-    '$S3_USER $S3_PASSWORD $S3_ENDPOINT $S3_ENDPOINT_PUBLIC'< .env.dev)
+done < <(envsubst '$POSTGRES_PASSWORD $RABBITMQ_PASSWORD $CLICKHOUSE_PASSWORD $UNIVERSER_ADMIN_PASSWORD $GRAFANA_PASSWORD \
+    $S3_USER $S3_PASSWORD $S3_REGION $S3_ENDPOINT $S3_ENDPOINT_PUBLIC'< .env.dev)
 
 docker compose -f docker-compose.dev.yaml down
 

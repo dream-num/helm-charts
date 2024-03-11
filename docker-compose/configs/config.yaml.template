@@ -25,7 +25,7 @@ data:
   s3:
     accessKeyID: "${S3_USER}"
     accessKeySecret: "${S3_PASSWORD}"
-    region: ""
+    region: "${S3_REGION}"
     endpoint: "${S3_ENDPOINT}"
     endpointPublic: "${S3_ENDPOINT_PUBLIC}"
     usePathStyle: true
