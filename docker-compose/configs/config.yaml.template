@@ -28,7 +28,7 @@ data:
     region: "${S3_REGION}"
     endpoint: "${S3_ENDPOINT}"
     endpointPublic: "${S3_ENDPOINT_PUBLIC}"
-    usePathStyle: true
+    usePathStyle: ${S3_PATH_STYLE}
     presignExpires: 3600s
 service:
   transform:
