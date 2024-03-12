@@ -15,7 +15,7 @@ echo $REGISTRY_PASSWORD | docker login univer-acr-registry.cn-shenzhen.cr.aliyun
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/universer:latest
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration:latest
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration-demo:latest
-docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-worker:latest
+docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/worker-exchange:latest
 
 docker compose -f docker-compose.dev.yaml --env-file .env.dev up $SERVICE -d
 

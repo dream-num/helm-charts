@@ -20,7 +20,7 @@ jobs:
         S3_REGION: "oss-cn-shenzhen"
         S3_ENDPOINT: "https://oss-cn-shenzhen-internal.aliyuncs.com"
         S3_ENDPOINT_PUBLIC: "https://oss-cn-shenzhen.aliyuncs.com"
-        SERVICE: "universer collaboration-server collaboration-demo univer-postgres univer-rabbitmq univer-temporal univer-redis"
+        SERVICE: "universer collaboration-server collaboration-demo univer-postgres univer-rabbitmq univer-temporal univer-redis univer-worker-exchange"
       with:
         host: ${{ vars.EN_HOST }}
         username: ${{ vars.EN_HOST_USERNAME }}

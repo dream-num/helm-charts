@@ -50,6 +50,7 @@ services:
 
   collaboration-demo:
     restart: always
+    container_name: collaboration-demo
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration-demo:${COLLABORATION_DEMO_VERSION}
     ports:
       - 3010:3010
@@ -115,6 +116,7 @@ services:
       - com.univer.app=clickhouse
 
   univer-temporal:
+    container_name: univer-temporal
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/temporal:${TEMPORAL_VERSION}
     environment:
       - DB=postgresql
@@ -136,25 +138,41 @@ services:
     labels:
       - com.univer.app=temporal
 
-  univer-worker:
+  # univer-worker:
+  #   restart: always
+  #   image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-worker:${UNIVER_WORKER_VERSION}
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - /tmp/univers:/tmp/univers
+  #   configs:
+  #     - source: conf
+  #       target: /app/configs/config.yaml
+  #   environment:
+  #     - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16,univer-temporal
+  #   depends_on:
+  #     - univer-temporal
+  #   networks:
+  #     - univer
+  #   labels:
+  #     - com.univer.app=worker
+
+  univer-worker-exchange:
     restart: always
-    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-worker:${UNIVER_WORKER_VERSION}
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /tmp/univers:/tmp/univers
-    configs:
-      - source: conf
-        target: /app/configs/config.yaml
+    container_name: univer-worker-exchange
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/worker-exchange:${UNIVER_WORKER_EXCHANGE_VERSION}
     environment:
       - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16,univer-temporal
+      - TEMPORAL_SERVER=univer-temporal:7233
+      - TEMPORAL_NAMESPACE=default
     depends_on:
       - univer-temporal
     networks:
       - univer
     labels:
-      - com.univer.app=worker
+      - com.univer.app=worker-exchange
 
   univer-loki:
+    container_name: univer-loki
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/loki:${LOKI_VERSION}
     expose:
       - 3100
@@ -170,6 +188,7 @@ services:
       - com.univer.app=loki
 
   univer-promtail:
+    container_name: univer-promtail
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/promtail:${PROMTAIL_VERSION}
     volumes:
       - ./loki/promtail:/etc/promtail:ro
@@ -183,6 +202,7 @@ services:
       - com.univer.app=promtail
 
   univer-grafana:
+    container_name: univer-grafana
     environment:
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
@@ -219,6 +239,7 @@ services:
 
   univer-redis:
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/redis:7.0.15-debian-11-r3
+    container_name: univer-reids
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     expose:

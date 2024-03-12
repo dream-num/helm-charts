@@ -106,6 +106,21 @@ services:
     volumes:
       - minio-data:/bitnami/minio/data
 
+  univer-worker-exchange:
+    restart: always
+    container_name: univer-worker-exchange
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/worker-exchange:${UNIVER_WORKER_EXCHANGE_VERSION}
+    environment:
+      - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16,univer-temporal
+      - TEMPORAL_SERVER=univer-temporal:7233
+      - TEMPORAL_NAMESPACE=default
+    depends_on:
+      - univer-temporal
+    networks:
+      - univer
+    labels:
+      - com.univer.app=worker-exchange
+
 networks:
   univer:
     name: unvier-prod
