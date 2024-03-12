@@ -18,7 +18,7 @@ jobs:
         S3_USER: "${{ secrets.S3_ACCESS_KEY_ID }}"
         S3_PASSWORD: "${{ secrets.S3_ACCESS_KEY_SECRET }}"
         S3_REGION: "oss-cn-shenzhen"
-        S3_ENDPOINT: "https://oss-cn-shenzhen-internal.aliyuncs.com"
+        S3_ENDPOINT: "https://oss-cn-shenzhen.aliyuncs.com"
         S3_ENDPOINT_PUBLIC: "https://oss-cn-shenzhen.aliyuncs.com"
         SERVICE: "universer collaboration-server collaboration-demo univer-postgres univer-rabbitmq univer-temporal univer-redis univer-worker-exchange"
       with:
