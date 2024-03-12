@@ -9,16 +9,16 @@ data:
   database:
     driver: postgresql
     database: {{ .Values.config.postgresql.database }}
-    dsn: host={{ .Values.config.postgresql.host }} port={{ .Values.config.postgresql.port }} dbname={{ .Values.config.postgresql.database }} user={{ .Values.config.postgresql.username }} password={{ .Values.config.postgresql.password }} sslmode=disable TimeZone=Asia/Shanghai
+    dsn: host={{ tpl .Values.config.postgresql.host . }} port={{ .Values.config.postgresql.port }} dbname={{ .Values.config.postgresql.database }} user={{ .Values.config.postgresql.username }} password={{ .Values.config.postgresql.password }} sslmode=disable TimeZone=Asia/Shanghai
   rabbitmq:
-    addr: amqp://{{ .Values.config.rabbitmq.username }}:{{ .Values.config.rabbitmq.password }}@{{ .Values.config.rabbitmq.host }}:{{ .Values.config.rabbitmq.port }}/
+    addr: amqp://{{ .Values.config.rabbitmq.username }}:{{ .Values.config.rabbitmq.password }}@{{ tpl .Values.config.rabbitmq.host . }}:{{ .Values.config.rabbitmq.port }}/
   clickhouse:
     dsn: clickhouse://clickhouse:clickhouse@clickhouse:9000/univer?dial_timeout=10s&read_timeout=20s
   temporal:
-    addr: {{ .Values.config.temporal.addr }}
+    addr: {{ tpl .Values.config.temporal.addr . }}
     namespace: {{ .Values.config.temporal.namespace }}
   redis:
-    addr: {{ .Values.config.redis.addr }}
+    addr: {{ tpl .Values.config.redis.addr . }}
     read_timeout: 0.2s
     write_timeout: 0.2s
   s3:
@@ -31,13 +31,13 @@ data:
     presignExpires: {{ .Values.config.s3.presignExpires }}
 service:
   transform:
-    addr: "{{ .Values.config.transform.host }}:{{ .Values.config.transform.port }}"
+    addr: "{{ tpl .Values.config.transform.host . }}:{{ .Values.config.transform.port }}"
     timeout: 10s
   apply:
-    addr: "{{ .Values.config.apply.host }}:{{ .Values.config.apply.port }}"
+    addr: "{{ tpl .Values.config.apply.host . }}:{{ .Values.config.apply.port }}"
     timeout: 10s
   node_snapshot:
-    addr: "{{ .Values.config.node_snapshot.host }}:{{ .Values.config.node_snapshot.port }}"
+    addr: "{{ tpl .Values.config.node_snapshot.host . }}:{{ .Values.config.node_snapshot.port }}"
     timeout: 10s
 admin: 
 {{- if .Values.config.admin -}}

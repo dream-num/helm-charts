@@ -2,6 +2,8 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+global: {}
+
 replicaCount: 1
 
 image:
@@ -9,7 +11,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "41dce0e"
+  tag: "fc58b96"
 
 imagePullSecrets: []
 nameOverride: ""

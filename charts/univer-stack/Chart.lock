@@ -1,0 +1,27 @@
+dependencies:
+- name: universer
+  repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
+  version: 0.1.0
+- name: collaboration-server
+  repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
+  version: 0.1.0
+- name: worker
+  repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
+  version: 0.1.0
+- name: temporal
+  repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
+  version: 0.33.0
+- name: postgresql
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 13.4.3
+- name: redis
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 18.11.0
+- name: rabbitmq
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 12.9.0
+- name: minio
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 13.3.1
+digest: sha256:54b78cca625ad1f429166a2960836d9ced06cc27b2569dc03de0fab9401e2b4b
+generated: "2024-03-12T19:22:42.572502788+08:00"

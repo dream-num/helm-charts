@@ -28,13 +28,13 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: {{ include "common.images.image" .Values }}
+          image: {{ include "common.images.image" (dict "imageRoot" .Values.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
             - name: TEMPORAL_SERVER
-              value: {{ .Values.temporalServer.host | quote }}
+              value: {{ tpl .Values.temporalServer.host . | quote }}
             - name: TEMPORAL_NAMESPACE
               value: {{ .Values.temporalServer.namespace | quote }}
       {{- with .Values.nodeSelector }}
