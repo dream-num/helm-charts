@@ -59,8 +59,10 @@ spec:
               value: {{ tpl .Values.config.univerServer . }}
             - name: URL_OF_SNAPSHOT_SERVICE
               value: {{ tpl .Values.config.snapshotServer . }}
-            - name: SAVE_SNAPSHOT_INTERVAL
-              value: {{ .Values.config.saveSnapshotInterval | quote }}
+            - name: SAVE_SHEET_SNAPSHOT_INTERVAL
+              value: {{ .Values.config.saveSheetSnapshotInterval | quote }}
+            - name: SAVE_DOC_SNAPSHOT_INTERVAL
+              value: {{ .Values.config.saveDocSnapshotInterval | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

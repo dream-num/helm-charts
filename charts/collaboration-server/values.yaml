@@ -38,7 +38,8 @@ service:
 config:
   univerServer: universer:8000
   snapshotServer: universer:9000
-  saveSnapshotInterval: 3
+  saveSheetSnapshotInterval: 5
+  saveDocSnapshotInterval: 50
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
