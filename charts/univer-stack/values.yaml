@@ -5,8 +5,14 @@
 global: {}
 
 universer:
-  enabled: true
   fullnameOverride: universer
+  ingress:
+    enabled: true
+    hosts:
+      - host: "univer.example.com"
+        paths:
+          - path: /universer-api/
+            pathType: Prefix
   config:
     postgresql:
       host: postgresql
@@ -35,12 +41,12 @@ universer:
       accessKeySecret: minioadmin
       region: ""
       endpoint: http://minio:9000
-      endpointPublic: http://minio:9000
+      endpointPublic: http://minio.example.com
       usePathStyle: true
       presignExpires: 3600s
     temporal:
       addr: temporal-frontend:7233
-      namespace: default
+      namespace: univer
     auth:
       enabled: false
       oidc:
@@ -57,10 +63,21 @@ collaboration-server:
     snapshotServer: universer:9000
     saveSnapshotInterval: 3
 
+collaboration-demo:
+  enabled: true
+  fullnameOverride: collaboration-demo
+  ingress:
+    enabled: true
+    hosts:
+      - host: "univer.example.com"
+        paths:
+          - path: /
+            pathType: Prefix
+
 worker:
   temporalServer:
     host: temporal-frontend:7233
-    namespace: default
+    namespace: univer
 
 temporal:
   enabled: true
@@ -148,3 +165,42 @@ minio:
     rootUser: admin
     rootPassword: minioadmin
   defaultBuckets: "univer"
+  apiIngress:
+    enabled: true
+    hosts:
+      - host: "minio.example.com"
+        paths:
+          - path: /
+            pathType: Prefix
+
+istio-base:
+  defaultRevision: default
+
+istio-istiod:
+  meshConfig:
+    accessLogFile: /dev/stdout
+    accessLogFormat: |
+      [%START_TIME%] "%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%" %RESPONSE_CODE% %RESPONSE_FLAGS% %BYTES_RECEIVED% %BYTES_SENT% %DURATION% %RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)% "%REQ(X-FORWARDED-FOR)%" %DOWNSTREAM_REMOTE_ADDRESS_WITHOUT_PORT% "%REQ(USER-AGENT)%" "RID:%REQ(X-REQUEST-ID)%" "FID:%REQ(X-FEATURE-ID)%" "UID:%REQ(X-UNIT-ID)%" "%REQ(:AUTHORITY)%" "%UPSTREAM_HOST%"
+    enablePrometheusMerge: true
+    enableTracing: true
+    defaultConfig:
+      tracing:
+        sampling: 50.0
+      proxyMetadata:
+        EXIT_ON_ZERO_ACTIVE_CONNECTIONS: "true"
+  istio_cni:
+    enabled: false
+
+istio-cni:
+  enabled: false
+
+istio-gateway:
+  enabled: false
+  name: istio-ingress
+  imagePullPolicy: IfNotPresent
+
+istio-virtualservicemerge:
+  fullnameOverride: istio-virtualservicemerge
+
+tags:
+  istio: false
