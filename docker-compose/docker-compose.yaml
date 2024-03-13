@@ -2,11 +2,9 @@ version: '3'
 services:
   universer:
     restart: always
-    container_name: universer
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer:${UNIVERSER_VERSION}
-    ports:
-      - 8000:8000
     expose:
+      - 8000
       - 9000
     environment:
       - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-temporal,collaboration-server,univer-minio
@@ -21,6 +19,20 @@ services:
       - univer
     labels:
       - com.univer.app=universer
+    deploy:
+      replicas: 2
+      endpoint_mode: dnsrr
+
+  lb:
+    image: nginx:alpine-slim
+    ports:
+     - 8000:8000
+    networks:
+      - univer
+    depends_on:
+      - universer
+    volumes:
+      - ./nginx:/etc/nginx/conf.d/
 
   collaboration-server:
     restart: always
@@ -88,6 +100,29 @@ services:
       - com.univer.app=redis
     volumes:
       - redis-data:/bitnami/redis/data
+
+  univer-temporal:
+    container_name: univer-temporal
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/temporal:${TEMPORAL_VERSION}
+    environment:
+      - DB=postgresql
+      - POSTGRES_SEEDS=${POSTGRES_HOST}
+      - DB_PORT=${POSTGRES_PORT}
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PWD=${POSTGRES_PASSWORD}
+      - TEMPORAL_CLI_SHOW_STACKS=1
+      - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16
+    volumes:
+      - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
+    expose:
+      - 7233
+    depends_on:
+      - univer-postgres
+    networks:
+      - univer
+    labels:
+      - com.univer.app=temporal
   
   univer-minio:
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/minio:${MINIO_VERSION}
@@ -109,9 +144,9 @@ services:
   univer-worker-exchange:
     restart: always
     container_name: univer-worker-exchange
-    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/worker-exchange:${UNIVER_WORKER_EXCHANGE_VERSION}
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/worker-exchange:${UNIVER_WORKER_EXCHANGE_VERSION}
     environment:
-      - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16,univer-temporal
+      - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-temporal
       - TEMPORAL_SERVER=univer-temporal:7233
       - TEMPORAL_NAMESPACE=default
     depends_on:
