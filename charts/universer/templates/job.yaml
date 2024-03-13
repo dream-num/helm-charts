@@ -23,7 +23,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: {{ include "common.images.image" .Values.job }}
+          image: {{ include "common.images.image" (dict "imageRoot" .Values.job.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.job.image.pullPolicy }}
           env:
             - name: PGPASSWORD

@@ -53,16 +53,21 @@ app.kubernetes.io/name: {{ include "collaboration-demo.name" . }}
 {{/* vim: set filetype=mustache: */}}
 {{/*
 Return the proper image name
-{{ include "common.images.image" ( dict "image" .Values.path.to.the.image ) }}
+{{ include "common.images.image" ( dict "imageRoot" .Values.path.to.the.image "global" .Values.global ) }}
 */}}
 {{- define "common.images.image" -}}
-{{- $registryName := .image.registry -}}
-{{- $repositoryName := .image.repository -}}
+{{- $registryName := .imageRoot.registry -}}
+{{- $repositoryName := .imageRoot.repository -}}
 {{- $separator := ":" -}}
-{{- $termination := .image.tag | toString -}}
-{{- if .image.digest }}
+{{- $termination := .imageRoot.tag | toString -}}
+{{- if .global }}
+    {{- if .global.imageRegistry }}
+     {{- $registryName = .global.imageRegistry -}}
+    {{- end -}}
+{{- end -}}
+{{- if .imageRoot.digest }}
     {{- $separator = "@" -}}
-    {{- $termination = .image.digest | toString -}}
+    {{- $termination = .imageRoot.digest | toString -}}
 {{- end -}}
 {{- if $registryName }}
     {{- printf "%s/%s%s%s" $registryName $repositoryName $separator $termination -}}

@@ -1,0 +1,206 @@
+# Default values for univer-stack.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global: {}
+
+universer:
+  fullnameOverride: universer
+  ingress:
+    enabled: true
+    hosts:
+      - host: "univer.example.com"
+        paths:
+          - path: /universer-api/
+            pathType: Prefix
+  config:
+    postgresql:
+      host: postgresql
+      port: 5432
+      database: univer
+      username: postgres
+      password: postgres
+    rabbitmq:
+      host: rabbitmq
+      port: 5672
+      username: guest
+      password: guest
+    redis:
+      addr: redis-master:6379
+    transform:
+      host: collaboration-server
+      port: 5001
+    apply:
+      host: collaboration-server
+      port: 5002
+    node_snapshot:
+      host: collaboration-server
+      port: 5001
+    s3:
+      accessKeyID: admin
+      accessKeySecret: minioadmin
+      region: ""
+      endpoint: http://minio:9000
+      endpointPublic: http://minio.example.com
+      usePathStyle: true
+      presignExpires: 3600s
+    temporal:
+      addr: temporal-frontend:7233
+      namespace: univer
+    auth:
+      enabled: false
+      oidc:
+        issuer: https://accounts.google.com
+        clientID: "xxxx"
+        clientSecret: "xxxxxxxxxx"
+        redirectURL: "http://example.com/auth/callback"
+        cookieDomain: "abc.example.com"
+
+collaboration-server:
+  fullnameOverride: collaboration-server
+  config:
+    univerServer: universer:8000
+    snapshotServer: universer:9000
+    saveSnapshotInterval: 3
+
+collaboration-demo:
+  enabled: true
+  fullnameOverride: collaboration-demo
+  ingress:
+    enabled: true
+    hosts:
+      - host: "univer.example.com"
+        paths:
+          - path: /
+            pathType: Prefix
+
+worker:
+  temporalServer:
+    host: temporal-frontend:7233
+    namespace: univer
+
+temporal:
+  enabled: true
+  fullnameOverride: temporal
+  server:
+    config:
+      persistence:
+        default:
+          driver: "sql"
+          sql:
+            driver: "postgres12"
+            host: postgresql
+            port: 5432
+            database: temporal
+            user: postgres
+            password: postgres
+            maxConns: 20
+            maxConnLifetime: "1h"
+
+        visibility:
+          driver: "sql"
+          sql:
+            driver: "postgres12"
+            host: postgresql
+            port: 5432
+            database: temporal_visibility
+            user: postgres
+            password: postgres
+            maxConns: 20
+            maxConnLifetime: "1h"
+
+  cassandra:
+    enabled: false
+
+  mysql:
+    enabled: false
+
+  postgresql:
+    enabled: true
+
+  prometheus:
+    enabled: false
+
+  grafana:
+    enabled: false
+    
+  elasticsearch:
+    enabled: false
+
+  schema:
+    setup:
+      enabled: true
+    update:
+      enabled: true
+
+postgresql:
+  enabled: true
+  fullnameOverride: postgresql
+  global:
+    # storageClass: nas
+    postgresql:
+      auth:
+        postgresPassword: postgres
+        database: univer
+
+redis:
+  enabled: true
+  fullnameOverride: redis
+  architecture: standalone
+  auth:
+    enabled: false
+
+rabbitmq:
+  enabled: true
+  fullnameOverride: rabbitmq
+  auth:
+    username: guest
+    password: guest
+    securePassword: false
+
+minio:
+  enabled: true
+  fullnameOverride: minio
+  auth:
+    rootUser: admin
+    rootPassword: minioadmin
+  defaultBuckets: "univer"
+  apiIngress:
+    enabled: true
+    hosts:
+      - host: "minio.example.com"
+        paths:
+          - path: /
+            pathType: Prefix
+
+istio-base:
+  defaultRevision: default
+
+istio-istiod:
+  meshConfig:
+    accessLogFile: /dev/stdout
+    accessLogFormat: |
+      [%START_TIME%] "%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%" %RESPONSE_CODE% %RESPONSE_FLAGS% %BYTES_RECEIVED% %BYTES_SENT% %DURATION% %RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)% "%REQ(X-FORWARDED-FOR)%" %DOWNSTREAM_REMOTE_ADDRESS_WITHOUT_PORT% "%REQ(USER-AGENT)%" "RID:%REQ(X-REQUEST-ID)%" "FID:%REQ(X-FEATURE-ID)%" "UID:%REQ(X-UNIT-ID)%" "%REQ(:AUTHORITY)%" "%UPSTREAM_HOST%"
+    enablePrometheusMerge: true
+    enableTracing: true
+    defaultConfig:
+      tracing:
+        sampling: 50.0
+      proxyMetadata:
+        EXIT_ON_ZERO_ACTIVE_CONNECTIONS: "true"
+  istio_cni:
+    enabled: false
+
+istio-cni:
+  enabled: false
+
+istio-gateway:
+  enabled: false
+  name: istio-ingress
+  imagePullPolicy: IfNotPresent
+
+istio-virtualservicemerge:
+  fullnameOverride: istio-virtualservicemerge
+
+tags:
+  istio: false

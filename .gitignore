@@ -1,2 +1,5 @@
 configs/LICENSE
 configs/public_key.crt
+
+build/
+charts/*/charts

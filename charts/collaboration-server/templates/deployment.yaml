@@ -31,7 +31,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: {{ include "common.images.image" .Values }}
+          image: {{ include "common.images.image" (dict "imageRoot" .Values.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: transform
@@ -56,9 +56,9 @@ spec:
             - name: URL_OF_APPLY_SERVICE
               value: 0.0.0.0:{{ .Values.service.apply }}
             - name: URL_OF_UNIVERSER_SERVICE
-              value: {{ .Values.config.univerServer }}
+              value: {{ tpl .Values.config.univerServer . }}
             - name: URL_OF_SNAPSHOT_SERVICE
-              value: {{ .Values.config.snapshotServer }}
+              value: {{ tpl .Values.config.snapshotServer . }}
             - name: SAVE_SHEET_SNAPSHOT_INTERVAL
               value: {{ .Values.config.saveSheetSnapshotInterval | quote }}
             - name: SAVE_DOC_SNAPSHOT_INTERVAL
