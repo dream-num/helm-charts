@@ -18,14 +18,36 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/univers:/tmp/univers
     depends_on:
-      - univer-postgres
-      - univer-rabbitmq
-      # - univer-clickhouse
-      - univer-temporal
+      univer-postgres:
+        condition: service_started
+      univer-rabbitmq:
+        condition: service_started
+      univer-temporal:
+        condition: service_started
+      init-db:
+        condition: service_completed_successfully
     networks:
       - univer
     labels:
       - com.univer.app=universer
+
+  init-db:
+    container_name: init-db
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:${UNIVERSER_SQL_VERSION}
+    environment:
+      - HOST=${POSTGRES_HOST}
+      - PORT=${POSTGRES_PORT}
+      - USERNAME=${POSTGRES_USERNAME}
+      - PGPASSWORD=${POSTGRES_PASSWORD}
+      - DATABASE=${POSTGRES_DATABASE}
+      - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,${POSTGRES_HOST}
+    networks:
+      - univer
+    depends_on:
+      univer-postgres:
+          condition: service_started
+    labels:
+      - com.univer.app=init-db
 
   collaboration-server:
     restart: always
@@ -161,9 +183,9 @@ services:
     container_name: univer-worker-exchange
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/worker-exchange:${UNIVER_WORKER_EXCHANGE_VERSION}
     environment:
-      - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16,univer-temporal
-      - TEMPORAL_SERVER=univer-temporal:7233
-      - TEMPORAL_NAMESPACE=default
+      - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16,univer-temporal,universer
+      - TEMPORAL_SERVER=${TEMPORAL_HOST}:${TEMPORAL_PORT}
+      - TEMPORAL_NAMESPACE=${TEMPORAL_NAMESPACE}
     depends_on:
       - univer-temporal
     networks:

@@ -13,8 +13,16 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/univers:/tmp/univers
     depends_on:
-      - univer-postgres
-      - univer-rabbitmq
+      univer-postgres:
+        condition: service_started
+      univer-rabbitmq:
+        condition: service_started
+      univer-temporal:
+        condition: service_started
+      univer-redis:
+        condition: service_started
+      init-db:
+        condition: service_completed_successfully
     networks:
       - univer
     labels:
@@ -22,6 +30,24 @@ services:
     deploy:
       replicas: 2
       endpoint_mode: dnsrr
+
+  init-db:
+    container_name: init-db
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:${UNIVERSER_SQL_VERSION}
+    environment:
+      - HOST=${POSTGRES_HOST}
+      - PORT=${POSTGRES_PORT}
+      - USERNAME=${POSTGRES_USERNAME}
+      - PGPASSWORD=${POSTGRES_PASSWORD}
+      - DATABASE=${POSTGRES_DATABASE}
+      - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,${POSTGRES_HOST}
+    networks:
+      - univer
+    depends_on:
+      univer-postgres:
+          condition: service_started
+    labels:
+      - com.univer.app=init-db
 
   lb:
     image: nginx:alpine-slim
@@ -59,7 +85,7 @@ services:
     restart: always
     container_name: univer-postgres
     environment:
-      - POSTGRES_DB=${POSTGRES_DATABASE}
+      # - POSTGRES_DB=${POSTGRES_DATABASE}
       - POSTGRES_USER=${POSTGRES_USERNAME}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - PGDATA=/var/lib/postgresql/data/
@@ -67,7 +93,6 @@ services:
       - 5432
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./sql/postgresql:/docker-entrypoint-initdb.d
     networks:
       - univer
     labels:
@@ -146,9 +171,9 @@ services:
     container_name: univer-worker-exchange
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/worker-exchange:${UNIVER_WORKER_EXCHANGE_VERSION}
     environment:
-      - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-temporal
-      - TEMPORAL_SERVER=univer-temporal:7233
-      - TEMPORAL_NAMESPACE=default
+      - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-temporal,univer-minio,universer
+      - TEMPORAL_SERVER=${TEMPORAL_HOST}:${TEMPORAL_PORT}
+      - TEMPORAL_NAMESPACE=${TEMPORAL_NAMESPACE}
     depends_on:
       - univer-temporal
     networks:

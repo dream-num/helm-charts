@@ -21,7 +21,7 @@ jobs:
         S3_PATH_STYLE: "false"
         S3_ENDPOINT: "https://oss-cn-shenzhen.aliyuncs.com"
         S3_ENDPOINT_PUBLIC: "https://oss-cn-shenzhen.aliyuncs.com"
-        SERVICE: "universer collaboration-server collaboration-demo univer-postgres univer-rabbitmq univer-temporal univer-redis univer-worker-exchange"
+        SERVICE: "universer collaboration-server collaboration-demo univer-postgres univer-rabbitmq univer-temporal univer-redis univer-worker-exchange init-db"
       with:
         host: ${{ vars.EN_HOST }}
         username: ${{ vars.EN_HOST_USERNAME }}
