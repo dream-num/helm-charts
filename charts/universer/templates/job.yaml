@@ -26,31 +26,16 @@ spec:
           image: {{ include "common.images.image" (dict "imageRoot" .Values.job.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.job.image.pullPolicy }}
           env:
+            - name: HOST
+              value: {{ .Values.config.postgresql.host }}
+            - name: PORT
+              value: {{ .Values.config.postgresql.port | quote }}
+            - name: DATABASE
+              value: {{ .Values.config.postgresql.database }}
+            - name: USERNAME
+              value: {{ .Values.config.postgresql.username }}
             - name: PGPASSWORD
               value: {{ .Values.config.postgresql.password }}
-          volumeMounts:
-            - name: initd
-              mountPath: /data
-          command: 
-            - /bin/bash
-            - -c
-            - >-
-              echo "SELECT 'CREATE DATABASE {{ .Values.config.postgresql.database }}' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '{{ .Values.config.postgresql.database }}')\gexec" | \
-                psql -h {{ .Values.config.postgresql.host }} \
-                  -p {{ .Values.config.postgresql.port }} \
-                  -U {{ .Values.config.postgresql.username }};
-              
-              for file in /data/*; do
-                psql -h {{ .Values.config.postgresql.host }} \
-                  -p {{ .Values.config.postgresql.port }} \
-                  -U {{ .Values.config.postgresql.username }} \
-                  -d {{ .Values.config.postgresql.database }} \
-                  -f $file;
-              done
-      volumes:
-        - name: initd
-          configMap:
-            name: {{ include "universer.fullname" . }}-job-config
       restartPolicy: Never
   backoffLimit: 1
 
