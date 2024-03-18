@@ -120,7 +120,7 @@ license:
 job:
   image:
     registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
-    repository: release/postgresql-sql
+    repository: release/universer-sql
     pullPolicy: IfNotPresent
     tag: "0.0.1"
 
