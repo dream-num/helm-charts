@@ -59,7 +59,7 @@ services:
       - URL_OF_NODE_SNAPSHOT_SERVICE=0.0.0.0:5001
       - URL_OF_UNIVERSER_SERVICE=universer:8000
       - URL_OF_SNAPSHOT_SERVICE=universer:9000
-      - SAVE_SHEET_SNAPSHOT_INTERVAL=5
+      - SAVE_SHEET_SNAPSHOT_INTERVAL=50
       - SAVE_DOC_SNAPSHOT_INTERVAL=50
       - no_proxy=127.0.0.1,localhost,172.32.0.0/16,universer
     expose:
