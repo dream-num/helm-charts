@@ -50,6 +50,7 @@ services:
       - com.univer.app=init-db
 
   lb:
+    restart: always
     image: nginx:alpine-slim
     ports:
      - 8000:8000
@@ -113,6 +114,7 @@ services:
       - com.univer.app=rabbitmq
 
   univer-redis:
+    restart: always
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/redis:${REDIS_VERSION}
     container_name: univer-redis
     environment:
@@ -127,6 +129,7 @@ services:
       - redis-data:/bitnami/redis/data
 
   univer-temporal:
+    restart: always
     container_name: univer-temporal
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/temporal:${TEMPORAL_VERSION}
     environment:
@@ -150,15 +153,17 @@ services:
       - com.univer.app=temporal
   
   univer-minio:
+    restart: always
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/minio:${MINIO_VERSION}
     container_name: univer-minio
     environment:
       - MINIO_ROOT_USER=${S3_USER}
       - MINIO_ROOT_PASSWORD=${S3_PASSWORD}
       - MINIO_DEFAULT_BUCKETS=univer-staging
+    ports:
+      - 9000:9000
     expose:
       - 9000
-      - 9001
     networks:
       - univer
     labels:

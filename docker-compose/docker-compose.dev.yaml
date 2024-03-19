@@ -138,6 +138,7 @@ services:
       - com.univer.app=clickhouse
 
   univer-temporal:
+    restart: always
     container_name: univer-temporal
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/temporal:${TEMPORAL_VERSION}
     environment:
@@ -194,6 +195,7 @@ services:
       - com.univer.app=worker-exchange
 
   univer-loki:
+    restart: always
     container_name: univer-loki
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/loki:${LOKI_VERSION}
     expose:
@@ -210,6 +212,7 @@ services:
       - com.univer.app=loki
 
   univer-promtail:
+    restart: always
     container_name: univer-promtail
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/promtail:${PROMTAIL_VERSION}
     volumes:
@@ -224,6 +227,7 @@ services:
       - com.univer.app=promtail
 
   univer-grafana:
+    restart: always
     container_name: univer-grafana
     environment:
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
@@ -260,6 +264,7 @@ services:
       - com.univer.app=grafana
 
   univer-redis:
+    restart: always
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/redis:7.0.15-debian-11-r3
     container_name: univer-reids
     environment:
@@ -272,10 +277,6 @@ services:
       - com.univer.app=redis
     volumes:
       - redis-data:/bitnami/redis/data
-
-configs:
-  conf:
-    file: ./configs/config.yaml
 
 networks:
   univer:
