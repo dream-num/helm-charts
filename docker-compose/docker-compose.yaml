@@ -82,7 +82,7 @@ services:
       - com.univer.app=collaboration-server
 
   univer-postgres:
-    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/postgres:${POSTGRES_VERSION}
+    image: postgres:${POSTGRES_VERSION}
     restart: always
     container_name: univer-postgres
     environment:
@@ -102,7 +102,7 @@ services:
   univer-rabbitmq:
     restart: always
     container_name: univer-rabbitmq
-    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/rabbitmq:${RABBITMQ_VERSION}
+    image: rabbitmq:${RABBITMQ_VERSION}
     expose:
       - 5672
     environment:
@@ -115,7 +115,7 @@ services:
 
   univer-redis:
     restart: always
-    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/redis:${REDIS_VERSION}
+    image: bitnami/redis:${REDIS_VERSION}
     container_name: univer-redis
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
@@ -131,7 +131,7 @@ services:
   univer-temporal:
     restart: always
     container_name: univer-temporal
-    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/temporal:${TEMPORAL_VERSION}
+    image: temporalio/auto-setup:${TEMPORAL_VERSION}
     environment:
       - DB=postgresql
       - POSTGRES_SEEDS=${POSTGRES_HOST}
@@ -154,7 +154,7 @@ services:
   
   univer-minio:
     restart: always
-    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/minio:${MINIO_VERSION}
+    image: bitnami/minio:${MINIO_VERSION}
     container_name: univer-minio
     environment:
       - MINIO_ROOT_USER=${S3_USER}
