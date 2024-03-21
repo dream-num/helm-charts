@@ -15,6 +15,10 @@ universer:
             pathType: Prefix
   config:
     postgresql:
+      maxOpenConns: 100
+      maxIdleConns: 100
+      # minutes
+      connMaxLifetime: 60
       host: postgresql
       port: 5432
       database: univer

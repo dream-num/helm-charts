@@ -7,6 +7,9 @@ server:
     timeout: 10s
 data:
   database:
+    maxOpenConns: {{ .Values.config.postgresql.maxOpenConns }}
+    maxIdleConns: {{ .Values.config.postgresql.maxIdleConns }}
+    connMaxLifetime: {{ .Values.config.postgresql.connMaxLifetime }}
     driver: postgresql
     database: {{ .Values.config.postgresql.database }}
     dsn: host={{ tpl .Values.config.postgresql.host . }} port={{ .Values.config.postgresql.port }} dbname={{ .Values.config.postgresql.database }} user={{ .Values.config.postgresql.username }} password={{ .Values.config.postgresql.password }} sslmode=disable TimeZone=Asia/Shanghai
