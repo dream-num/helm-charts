@@ -7,6 +7,9 @@ server:
     timeout: 10s
 data:
   database:
+    maxOpenConns: 100
+    maxIdleConns: 100
+    connMaxLifetime: 60
     driver: postgresql
     database: ${POSTGRES_DATABASE}
     dsn: host=${POSTGRES_HOST} port=${POSTGRES_PORT} dbname=${POSTGRES_DATABASE} user=${POSTGRES_USERNAME} password=${POSTGRES_PASSWORD} sslmode=disable TimeZone=Asia/Shanghai
