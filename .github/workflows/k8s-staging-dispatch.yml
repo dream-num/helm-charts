@@ -139,7 +139,8 @@ jobs:
               --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/worker-${{ github.event.client_payload.target }}","tag":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
               --set-json 'temporalServer={"host":"temporal-frontend.temporal:7233","namespace":"staging"}' \
-              --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":1,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
+              --set-json 'resources={"requests":{"memory":"64Mi","cpu":"100m"},"limits":{"memory":"8Gi","cpu":"4000m"}}' \
+              --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":1,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["cpu-intensive"]}]}}]}}' \
               worker-${{ github.event.client_payload.target }} charts/worker
 
           elif [ "${{ github.event.client_payload.service }}" == "swagger-ui" ]; then 
