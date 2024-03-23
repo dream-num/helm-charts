@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "univer-stack.fullname" . }}-temporal-job
+  labels:
+    {{- include "univer-stack.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      {{- with .Values.univerStack.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.univerStack.securityContext | nindent 12 }}
+          image: {{ include "common.images.image" (dict "imageRoot" .Values.univerStack.temporalJob.image "global" .Values.global) }}
+          imagePullPolicy: {{ .Values.univerStack.temporalJob.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              temporal operator namespace describe {{ .Values.worker.temporalServer.namespace }} || temporal operator namespace create {{ .Values.worker.temporalServer.namespace }}
+          env:
+            - name: TEMPORAL_ADDRESS
+              value: {{ .Values.worker.temporalServer.host }}
+      restartPolicy: OnFailure
+  backoffLimit: {{ .Values.univerStack.temporalJob.backoffLimit }}

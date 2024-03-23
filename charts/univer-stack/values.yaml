@@ -2,10 +2,30 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-global: {}
+nameOverride: ""
+fullnameOverride: ""
+selectorLabels: {}
+
+univerStack:
+  imagePullSecrets: {}
+  securityContext: {}
+  temporalJob:
+    image:
+      registry: docker.io
+      repository: temporalio/admin-tools
+      tag: "1.22.4"
+      pullPolicy: IfNotPresent
+    backoffLimit: 100
+
+global: 
+  istioNamespace: "univer"
+  istioDefaultRevision: "univer"
 
 universer:
+  image:
+    tag: "latest"
   fullnameOverride: universer
+  replicaCount: 3
   ingress:
     enabled: true
     hosts:
@@ -43,9 +63,9 @@ universer:
     s3:
       accessKeyID: admin
       accessKeySecret: minioadmin
-      region: ""
+      region: "us-east-1"
       endpoint: http://minio:9000
-      endpointPublic: http://minio.example.com
+      endpointPublic: http://minio:9000
       usePathStyle: true
       presignExpires: 3600s
     temporal:
@@ -59,13 +79,20 @@ universer:
         clientSecret: "xxxxxxxxxx"
         redirectURL: "http://example.com/auth/callback"
         cookieDomain: "abc.example.com"
+  istio:
+    enabled: true
 
 collaboration-server:
+  image:
+    tag: "latest"
   fullnameOverride: collaboration-server
+  replicaCount: 3
   config:
     univerServer: universer:8000
     snapshotServer: universer:9000
     saveSnapshotInterval: 3
+  istio:
+    enabled: true 
 
 collaboration-demo:
   enabled: true
@@ -79,9 +106,25 @@ collaboration-demo:
             pathType: Prefix
 
 worker:
+  image:
+    repository: release/worker-exchange
+    tag: "latest"
   temporalServer:
     host: temporal-frontend:7233
     namespace: univer
+
+postgresql:
+  enabled: true
+  fullnameOverride: postgresql
+  global:
+    # storageClass: nas
+    postgresql:
+      auth:
+        postgresPassword: postgres
+        database: univer
+  commonAnnotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "-1"
 
 temporal:
   enabled: true
@@ -137,16 +180,6 @@ temporal:
     update:
       enabled: true
 
-postgresql:
-  enabled: true
-  fullnameOverride: postgresql
-  global:
-    # storageClass: nas
-    postgresql:
-      auth:
-        postgresPassword: postgres
-        database: univer
-
 redis:
   enabled: true
   fullnameOverride: redis
@@ -168,19 +201,19 @@ minio:
   auth:
     rootUser: admin
     rootPassword: minioadmin
-  defaultBuckets: "univer"
+  defaultBuckets: "univer-staging"
+  persistence:
+    annotations: 
+      helm.sh/resource-policy: "keep"
   apiIngress:
     enabled: true
-    hosts:
-      - host: "minio.example.com"
-        paths:
-          - path: /
-            pathType: Prefix
+    hostname: "minio.example.com"
 
 istio-base:
-  defaultRevision: default
+  defaultRevision: univer
 
 istio-istiod:
+  revision: univer
   meshConfig:
     accessLogFile: /dev/stdout
     accessLogFormat: |
@@ -195,8 +228,7 @@ istio-istiod:
   istio_cni:
     enabled: false
 
-istio-cni:
-  enabled: false
+istio-cni: {}
 
 istio-gateway:
   enabled: false
@@ -204,7 +236,8 @@ istio-gateway:
   imagePullPolicy: IfNotPresent
 
 istio-virtualservicemerge:
+  enabled: false
   fullnameOverride: istio-virtualservicemerge
 
 tags:
-  istio: false
+  istio: true

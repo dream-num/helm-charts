@@ -20,6 +20,10 @@ spec:
       labels:
         {{- include "collaboration-server.selectorLabels" . | nindent 8 }}
         {{- include "collaboration-server.istio.labels" . | nindent 8 }}
+        sidecar.istio.io/inject: "{{ .Values.istio.enabled }}"
+        {{- if .Values.istio.enabled }}
+        istio.io/rev: "{{ .Values.global.istioDefaultRevision }}"
+        {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
