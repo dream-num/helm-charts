@@ -12,7 +12,7 @@ jobs:
     - uses: appleboy/ssh-action@v1.0.0
       env:
         REGISTRY_USERNAME: "${{ secrets.REGISTRY_USERNAME }}"
-        REGISTRY_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
+        REGISTRY_PASSWORD: "${{ secrets.REGISTRY_PASSWORD }}"
         POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
         RABBITMQ_PASSWORD: "${{ secrets.RABBITMQ_PASSWORD }}"
         S3_USER: "${{ secrets.S3_ACCESS_KEY_ID }}"
