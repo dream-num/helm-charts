@@ -44,8 +44,8 @@ jobs:
             git pull; \
           fi;
 
-          echo -e "$LICENSE" > $local_dir/docker-compose/LICENSE;
-          echo -e "$PUBLIC_KEY" > $local_dir/docker-compose/public_key.crt;
+          echo -e "$LICENSE" > $local_dir/docker-compose/configs/LICENSE;
+          echo -e "$PUBLIC_KEY" > $local_dir/docker-compose/configs/public_key.crt;
 
           ls $local_dir/docker-compose;
 
