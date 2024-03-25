@@ -10,7 +10,9 @@ done < <(envsubst '$POSTGRES_PASSWORD $RABBITMQ_PASSWORD $CLICKHOUSE_PASSWORD $U
 
 docker compose -f docker-compose.dev.yaml down
 
-echo $REGISTRY_PASSWORD | docker login univer-acr-registry.cn-shenzhen.cr.aliyuncs.com -u $REGISTRY_USERNAME --password-stdin
+echo "docker login ..."
+# echo $REGISTRY_PASSWORD | docker login univer-acr-registry.cn-shenzhen.cr.aliyuncs.com -u $REGISTRY_USERNAME --password-stdin
+docker login -u "${REGISTRY_USERNAME}" -p "${REGISTRY_PASSWORD}" univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
 
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/universer:latest
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-collaboration:latest
