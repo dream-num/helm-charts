@@ -22,12 +22,14 @@ jobs:
         S3_ENDPOINT: "https://oss-cn-shenzhen.aliyuncs.com"
         S3_ENDPOINT_PUBLIC: "https://oss-cn-shenzhen.aliyuncs.com"
         SERVICE: "universer collaboration-server collaboration-demo univer-postgres univer-rabbitmq univer-temporal univer-redis univer-worker-exchange init-db"
+        LICENSE: "${{ secrets.LICENSE }}"
+        PUBLIC_KEY: "${{ secrets.PUBLIC_KEY }}"
       with:
         host: ${{ vars.EN_HOST }}
         username: ${{ vars.EN_HOST_USERNAME }}
         password: ${{ secrets.EN_HOST_PASSWORD }}
         script_stop: true
-        envs: REGISTRY_USERNAME,REGISTRY_PASSWORD,POSTGRES_PASSWORD,RABBITMQ_PASSWORD,S3_USER,S3_PASSWORD,S3_REGION,S3_PATH_STYLE,S3_ENDPOINT,S3_ENDPOINT_PUBLIC,SERVICE
+        envs: REGISTRY_USERNAME,REGISTRY_PASSWORD,POSTGRES_PASSWORD,RABBITMQ_PASSWORD,S3_USER,S3_PASSWORD,S3_REGION,S3_PATH_STYLE,S3_ENDPOINT,S3_ENDPOINT_PUBLIC,SERVICE,LICENSE,PUBLIC_KEY
         script: |
           local_dir=~/helm-charts;
 
@@ -41,6 +43,9 @@ jobs:
             cd $local_dir; \
             git pull; \
           fi;
+
+          echo -e "$LICENSE" > $local_dir/docker-compose/LICENSE;
+          echo -e "$PUBLIC_KEY" > $local_dir/docker-compose/public_key.crt;
 
           ls $local_dir/docker-compose;
 
