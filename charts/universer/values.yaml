@@ -106,6 +106,7 @@ config:
     endpointPublic: https://oss-cn-shenzhen.aliyuncs.com
     usePathStyle: false
     presignExpires: 3600s
+    defaultBucket: univer
   temporal:
     addr: univer-temporal:7233
     namespace: default

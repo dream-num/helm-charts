@@ -68,6 +68,7 @@ universer:
       endpointPublic: http://minio:9000
       usePathStyle: true
       presignExpires: 3600s
+      defaultBucket: univer
     temporal:
       addr: temporal-frontend:7233
       namespace: univer
@@ -201,7 +202,7 @@ minio:
   auth:
     rootUser: admin
     rootPassword: minioadmin
-  defaultBuckets: "univer-staging"
+  defaultBuckets: univer
   persistence:
     annotations: 
       helm.sh/resource-policy: "keep"

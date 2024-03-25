@@ -159,7 +159,7 @@ services:
     environment:
       - MINIO_ROOT_USER=${S3_USER}
       - MINIO_ROOT_PASSWORD=${S3_PASSWORD}
-      - MINIO_DEFAULT_BUCKETS=univer-staging
+      - MINIO_DEFAULT_BUCKETS=${S3_DEFAULT_BUCKET}
     ports:
       - 9000:9000
     expose:

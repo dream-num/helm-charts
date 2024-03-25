@@ -32,6 +32,7 @@ data:
     endpointPublic: {{ .Values.config.s3.endpointPublic }}
     usePathStyle: {{ .Values.config.s3.usePathStyle }}
     presignExpires: {{ .Values.config.s3.presignExpires }}
+    defaultBucket: {{ .Values.config.s3.defaultBucket }}
 service:
   transform:
     addr: "{{ tpl .Values.config.transform.host . }}:{{ .Values.config.transform.port }}"
