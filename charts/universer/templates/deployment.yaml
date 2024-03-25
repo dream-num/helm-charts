@@ -20,6 +20,11 @@ spec:
       labels:
         {{- include "universer.selectorLabels" . | nindent 8 }}
         {{- include "universer.istio.labels" . | nindent 8 }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum | trunc 63 }}
+        sidecar.istio.io/inject: "{{ .Values.istio.enabled }}"
+        {{- if .Values.istio.enabled }}
+        istio.io/rev: "{{ .Values.global.istioDefaultRevision }}"
+        {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

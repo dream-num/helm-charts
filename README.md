@@ -1,7 +1,10 @@
 
 # Helm charts
 
-A collection of helm charts for various applications. Use for reference or install using helm.
+The univer server deploy use in k8s and docker compose.
+
+- [EN](./README.md)
+- [CN](./README-CN.md)
 
 
 ## Install by docker compose
@@ -13,23 +16,17 @@ A collection of helm charts for various applications. Use for reference or insta
 
 1. Install [helm](https://helm.sh/docs/intro/install/).
 
-2. Clone this repository.
+2. Delpoy service.
 ```bash
-git clone https://github.com/dream-num/helm-charts.git
+helm install -n univer --create-namespace \
+    --set global.istioNamespace="univer" \
+    univer-stack oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts/univer-stack
 ```
 
-3. Ask `developer@univer.ai` or [Discord](https://discord.gg/z3NKNT6D2f) for get `LICENSE` and `public_key.crt` file to try out.
-
-4. Put `LICENSE` and `public_key.crt` file to ./configs folder.
-   
-5. Run install charts.
+3. Set dns resolve to try demo.
 ```bash
-helm install -n univer collaboration-server charts/collaboration-server --create-namespace 
+# you can edit your local hosts file to simple resolve dns.
+# default domain is: univer.example.com
 
-helm install -n univer \
-    --set-file license.LICENSE=./configs/LICENSE \
-    --set-file license.publicKey=./configs/public_key.crt \
-    --set-json 'config.postgresql={"host":"postgresql","port":5432,"database":"univer","username":"postgres","password":"postgres"}' \
-    --set-json 'config.rabbitmq={"host":"rabbitmq","port":5672,"username":"guest","password":"guest"}' \
-    universer charts/universer --create-namespace
+open: http://univer.example.com
 ```

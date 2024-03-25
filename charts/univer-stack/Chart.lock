@@ -8,12 +8,6 @@ dependencies:
 - name: collaboration-demo
   repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
   version: 0.1.0
-- name: worker
-  repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
-  version: 0.1.0
-- name: temporal
-  repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
-  version: 0.33.0
 - name: postgresql
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 13.4.3
@@ -26,6 +20,12 @@ dependencies:
 - name: minio
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 13.3.1
+- name: temporal
+  repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
+  version: 0.33.0
+- name: worker
+  repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
+  version: 0.1.0
 - name: base
   repository: https://istio-release.storage.googleapis.com/charts
   version: 1.20.1
@@ -41,5 +41,5 @@ dependencies:
 - name: virtualservicemerge
   repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
   version: 0.1.0
-digest: sha256:31154020845b8b4753f22011bfc00f8ff467b611eeb1c97ac183c5c05c41813c
-generated: "2024-03-13T16:10:01.553797302+08:00"
+digest: sha256:04207f46459104136fa4b5ba8b8e3ab220f56c912b385d0b61a5be0b1478ce7e
+generated: "2024-03-23T17:31:59.446500856+08:00"

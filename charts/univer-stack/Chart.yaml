@@ -34,13 +34,6 @@ dependencies:
     version: 0.1.0
     repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
     condition: collaboration-demo.enabled
-  - name: worker
-    version: 0.1.0
-    repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
-  - name: temporal
-    version: 0.33.0
-    repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
-    condition: temporal.enabled
   - name: postgresql
     version: 13.4.3
     repository: oci://registry-1.docker.io/bitnamicharts
@@ -57,6 +50,13 @@ dependencies:
     version: 13.3.1
     repository: oci://registry-1.docker.io/bitnamicharts
     condition: minio.enabled
+  - name: temporal
+    version: 0.33.0
+    repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
+    condition: temporal.enabled
+  - name: worker
+    version: 0.1.0
+    repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
   - name: base
     version: 1.20.1
     repository: https://istio-release.storage.googleapis.com/charts
@@ -72,7 +72,7 @@ dependencies:
   - name: cni
     version: 1.20.1
     repository: https://istio-release.storage.googleapis.com/charts
-    condition: istio-cni.enabled
+    condition: istio-istiod.istio_cni.enabled
     tags:
       - "istio"
     alias: istio-cni
@@ -86,6 +86,7 @@ dependencies:
   - name: virtualservicemerge
     version: 0.1.0
     repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
+    condition: istio-virtualservicemerge.enabled
     tags:
       - "istio"
     alias: istio-virtualservicemerge
