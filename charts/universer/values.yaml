@@ -118,6 +118,12 @@ config:
       clientSecret: "xxxxxxxxxx"
       redirectURL: "http://example.com/auth/callback"
       cookieDomain: "abc.example.com"
+  apiLimit:
+    method:
+      tokens: 600
+      interval: 30s
+    ip: {}
+    perMethod: {}
 
 license:
   LICENSE: ""
