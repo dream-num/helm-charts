@@ -38,8 +38,7 @@ bash run.sh
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
                
 docker run --net=unvier-prod --rm --name univer-collaboration-lite \
-  -p 3010:3010 \
-  univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
+  -p 3010:3010 univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
 
 # Open URL: http://localhost:3010
 ```
@@ -49,3 +48,13 @@ docker run --net=unvier-prod --rm --name univer-collaboration-lite \
 | service            | port | description             |
 | ------------------ | ---- | ----------------------- |
 | universer          | 8000 | api http server         |
+| minio              | 19000 | s3 object storage server |
+
+## [Q&A](https://www.univer.ai/pro/enterprises/trial-version/)
+1. How to deal "Save as" error？
+```
+Replace localhost with the local IP for S3_ENDPOINT_PUBLIC config in .env file, it make people can use Download as in local area network.
+
+# Example: S3_ENDPOINT_PUBLIC=http://127.0.0.1:9000
+# Replace to: S3_ENDPOINT_PUBLIC=http://192.168.50.172:9000
+```
