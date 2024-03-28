@@ -56,5 +56,5 @@ docker run --net=unvier-prod --rm --name univer-collaboration-lite \
 Replace localhost with the local IP for S3_ENDPOINT_PUBLIC config in .env file, it make people can use Download as in local area network.
 
 # Example: S3_ENDPOINT_PUBLIC=http://127.0.0.1:9000
-# Replace to: S3_ENDPOINT_PUBLIC=http://192.168.50.172:9000
+# Replace to: S3_ENDPOINT_PUBLIC=http://192.168.50.172:19000
 ```
