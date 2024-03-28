@@ -12,7 +12,7 @@ image:
   repository: release/univer-collaboration
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "d9d8b14"
+  tag: "5114cbf"
 
 imagePullSecrets: []
 nameOverride: ""

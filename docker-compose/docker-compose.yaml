@@ -161,7 +161,7 @@ services:
       - MINIO_ROOT_PASSWORD=${S3_PASSWORD}
       - MINIO_DEFAULT_BUCKETS=${S3_DEFAULT_BUCKET}
     ports:
-      - 9000:9000
+      - 19000:9000
     expose:
       - 9000
     networks:

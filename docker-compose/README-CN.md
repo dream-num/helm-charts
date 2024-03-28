@@ -38,8 +38,7 @@ bash run.sh
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
                
 docker run --net=unvier-prod --rm --name univer-collaboration-lite \
-  -p 3010:3010 \
-  univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
+  -p 3010:3010 univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
 
 # Open URL: http://localhost:3010
 ```
@@ -49,3 +48,13 @@ docker run --net=unvier-prod --rm --name univer-collaboration-lite \
 | service            | port | description             |
 | ------------------ | ---- | ----------------------- |
 | universer          | 8000 | api http server         |
+| minio              | 19000 | s3 object storage server |
+
+## [Q&A](https://www.univer.ai/pro/zh-cn/enterprises/trial-version/)
+1. 怎么解决文件“另存为”保存失败问题？
+```
+替换 .env 文件的 S3_ENDPOINT_PUBLIC 为本机 ip，才能使局域网内另存为功能正常。
+
+# 如 S3_ENDPOINT_PUBLIC=http://univer-minio:9000
+# 替换为 S3_ENDPOINT_PUBLIC=http://192.168.50.172:9000
+```
