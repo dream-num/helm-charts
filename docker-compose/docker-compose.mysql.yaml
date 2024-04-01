@@ -2,7 +2,8 @@ version: '3'
 services:
   universer:
     restart: always
-    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer:${UNIVERSER_VERSION}
+    # image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer:${UNIVERSER_VERSION}
+    image: universer:dev
     expose:
       - 8000
       - 9000
@@ -13,7 +14,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/univers:/tmp/univers
     depends_on:
-      univer-postgres:
+      univer-mysql:
         condition: service_started
       univer-rabbitmq:
         condition: service_started
@@ -33,7 +34,7 @@ services:
 
   init-db:
     container_name: init-db
-    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:${UNIVERSER_SQL_VERSION}
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:${UNIVERSER_SQL_VERSION}-mysql
     environment:
       - HOST=${DATABASE_HOST}
       - PORT=${DATABASE_PORT}
@@ -44,7 +45,7 @@ services:
     networks:
       - univer
     depends_on:
-      univer-postgres:
+      univer-mysql:
         condition: service_started
     labels:
       - com.univer.app=init-db
@@ -81,22 +82,20 @@ services:
     labels:
       - com.univer.app=collaboration-server
 
-  univer-postgres:
-    image: postgres:${POSTGRES_VERSION}
+  univer-mysql:
+    image: mysql:${MYSQL_VERSION}
     restart: always
-    container_name: univer-postgres
+    container_name: univer-mysql
     environment:
-      - POSTGRES_USER=${DATABASE_USERNAME}
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-      - PGDATA=/var/lib/postgresql/data/
+      - MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD}
     expose:
-      - 5432
+      - 3306
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - mysql-data:/var/lib/mysql
     networks:
       - univer
     labels:
-      - com.univer.app=postgres
+      - com.univer.app=mysql
 
   univer-rabbitmq:
     restart: always
@@ -132,12 +131,12 @@ services:
     container_name: univer-temporal
     image: temporalio/auto-setup:${TEMPORAL_VERSION}
     environment:
-      - DB=postgresql
-      - POSTGRES_SEEDS=${DATABASE_HOST}
+      - DB=mysql
+      - MYSQL_SEEDS=${DATABASE_HOST}
       - DB_PORT=${DATABASE_PORT}
       - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
-      - POSTGRES_USER=${DATABASE_USERNAME}
-      - POSTGRES_PWD=${DATABASE_PASSWORD}
+      - MYSQL_USER=${DATABASE_USERNAME}
+      - MYSQL_PWD=${DATABASE_PASSWORD}
       - TEMPORAL_CLI_SHOW_STACKS=1
       - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16
     volumes:
@@ -145,7 +144,7 @@ services:
     expose:
       - 7233
     depends_on:
-      - univer-postgres
+      - univer-mysql
     networks:
       - univer
     labels:
@@ -194,8 +193,8 @@ networks:
        - subnet: 172.30.0.0/16
 
 volumes:
-  postgres-data:
-    name: univer-prod-postgres-data
+  mysql-data:
+    name: univer-prod-mysql-data
   redis-data:
     name: univer-prod-redis-data
   minio-data:
