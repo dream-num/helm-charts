@@ -71,14 +71,15 @@ tolerations: []
 affinity: {}
 
 config:
-  postgresql:
+  database:
     maxOpenConns: 100
     maxIdleConns: 100
     # minutes
     connMaxLifetime: 60
+    driver: postgresql
     host: postgresql
     port: 5432
-    database: univer
+    dbname: univer
     username: postgres
     password: postgres
   rabbitmq:
@@ -134,7 +135,7 @@ job:
     registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
     repository: release/universer-sql
     pullPolicy: IfNotPresent
-    tag: "0.0.2"
+    tag: "0.0.3"
 
 istio:
   enabled: false

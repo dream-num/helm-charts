@@ -21,6 +21,9 @@ Univer 服务的 k8s 和 docker compose 部署方法。
 helm install -n univer --create-namespace \
     --set global.istioNamespace="univer" \
     univer-stack oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts/univer-stack
+
+kubectl rollout restart -n univer deployment/collaboration-server
+kubectl rollout restart -n univer deployment/universer
 ```
 
 3. 解析 DNS 并开始试用.

@@ -15,7 +15,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.1.0
+version: 0.1.1
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
@@ -25,7 +25,7 @@ appVersion: "1.16.0"
 
 dependencies:
   - name: universer
-    version: 0.1.0
+    version: 0.1.1
     repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
   - name: collaboration-server
     version: 0.1.0
@@ -38,6 +38,10 @@ dependencies:
     version: 13.4.3
     repository: oci://registry-1.docker.io/bitnamicharts
     condition: postgresql.enabled
+  - name: mysql
+    version: 9.18.2
+    repository: oci://registry-1.docker.io/bitnamicharts
+    condition: mysql.enabled
   - name: redis
     version: 18.11.0
     repository: oci://registry-1.docker.io/bitnamicharts

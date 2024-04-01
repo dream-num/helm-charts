@@ -21,6 +21,9 @@ The univer server deploy use in k8s and docker compose.
 helm install -n univer --create-namespace \
     --set global.istioNamespace="univer" \
     univer-stack oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts/univer-stack
+
+kubectl rollout restart -n univer deployment/collaboration-server
+kubectl rollout restart -n univer deployment/universer
 ```
 
 3. Set dns resolve to try demo.

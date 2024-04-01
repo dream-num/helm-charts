@@ -7,12 +7,12 @@ server:
     timeout: 10s
 data:
   database:
-    maxOpenConns: {{ .Values.config.postgresql.maxOpenConns }}
-    maxIdleConns: {{ .Values.config.postgresql.maxIdleConns }}
-    connMaxLifetime: {{ .Values.config.postgresql.connMaxLifetime }}
-    driver: postgresql
-    database: {{ .Values.config.postgresql.database }}
-    dsn: host={{ tpl .Values.config.postgresql.host . }} port={{ .Values.config.postgresql.port }} dbname={{ .Values.config.postgresql.database }} user={{ .Values.config.postgresql.username }} password={{ .Values.config.postgresql.password }} sslmode=disable TimeZone=Asia/Shanghai
+    maxOpenConns: {{ .Values.config.database.maxOpenConns }}
+    maxIdleConns: {{ .Values.config.database.maxIdleConns }}
+    connMaxLifetime: {{ .Values.config.database.connMaxLifetime }}
+    driver: {{ .Values.config.database.driver }}
+    database: {{ .Values.config.database.dbname }}
+    dsn: {{ include "universer.database.dsn" .Values.config.database }}
   rabbitmq:
     addr: amqp://{{ .Values.config.rabbitmq.username }}:{{ .Values.config.rabbitmq.password }}@{{ tpl .Values.config.rabbitmq.host . }}:{{ .Values.config.rabbitmq.port }}/
   clickhouse:
