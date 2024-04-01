@@ -1,7 +1,7 @@
 dependencies:
 - name: universer
   repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
-  version: 0.1.0
+  version: 0.1.1
 - name: collaboration-server
   repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
   version: 0.1.0
@@ -11,6 +11,9 @@ dependencies:
 - name: postgresql
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 13.4.3
+- name: mysql
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 9.18.2
 - name: redis
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 18.11.0
@@ -41,5 +44,5 @@ dependencies:
 - name: virtualservicemerge
   repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
   version: 0.1.0
-digest: sha256:04207f46459104136fa4b5ba8b8e3ab220f56c912b385d0b61a5be0b1478ce7e
-generated: "2024-03-23T17:31:59.446500856+08:00"
+digest: sha256:5563c18cc4c2b4a37174f95c8c22f25baa61f4bd2af74013b72f28d322cd1c58
+generated: "2024-04-01T14:40:00.160518512+08:00"

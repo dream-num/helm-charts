@@ -37,12 +37,12 @@ universer:
       maxIdleConns: 100
       # minutes
       connMaxLifetime: 60
-      driver: postgresql
-      host: postgresql
-      port: 5432
+      driver: mysql
+      host: mysql
+      port: 3306
       dbname: univer
-      username: postgres
-      password: postgres
+      username: root
+      password: mysql
     rabbitmq:
       host: rabbitmq
       port: 5672
@@ -112,20 +112,18 @@ worker:
     namespace: univer
 
 postgresql:
+  enabled: false
+
+mysql:
   enabled: true
-  fullnameOverride: postgresql
-  global:
-    # storageClass: nas
-    postgresql:
-      auth:
-        postgresPassword: postgres
-        database: univer
+  fullnameOverride: mysql
+  architecture: standalone
+  auth:
+    rootPassword: mysql
+    createDatabase: false
   commonAnnotations:
     "helm.sh/hook": pre-install
     "helm.sh/hook-weight": "-1"
-
-mysql:
-  enabled: false
 
 temporal:
   enabled: true
@@ -136,24 +134,24 @@ temporal:
         default:
           driver: "sql"
           sql:
-            driver: "postgres12"
-            host: postgresql
-            port: 5432
+            driver: "mysql8"
+            host: mysql
+            port: 3306
             database: temporal
-            user: postgres
-            password: postgres
+            user: root
+            password: mysql
             maxConns: 20
             maxConnLifetime: "1h"
 
         visibility:
           driver: "sql"
           sql:
-            driver: "postgres12"
-            host: postgresql
-            port: 5432
+            driver: "mysql8"
+            host: mysql
+            port: 3306
             database: temporal_visibility
-            user: postgres
-            password: postgres
+            user: root
+            password: mysql
             maxConns: 20
             maxConnLifetime: "1h"
 
@@ -161,10 +159,10 @@ temporal:
     enabled: false
 
   mysql:
-    enabled: false
+    enabled: true
 
   postgresql:
-    enabled: true
+    enabled: false
 
   prometheus:
     enabled: false

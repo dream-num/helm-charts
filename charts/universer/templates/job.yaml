@@ -1,3 +1,8 @@
+{{ $driver := .Values.config.database.driver }}
+{{ $imageRoot := .Values.job.image }}
+{{- if ne $driver "postgresql" -}}
+{{ $imageRoot = (dict "registry" $imageRoot.registry "repository" $imageRoot.repository "pullPolicy" $imageRoot.pullPolicy "tag" (printf "%s-%s" $imageRoot.tag $driver)) }}
+{{- end -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -23,19 +28,21 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: {{ include "common.images.image" (dict "imageRoot" .Values.job.image "global" .Values.global) }}
+          image: {{ include "common.images.image" (dict "imageRoot" $imageRoot "global" .Values.global) }}
           imagePullPolicy: {{ .Values.job.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
           env:
             - name: HOST
-              value: {{ .Values.config.postgresql.host }}
+              value: {{ .Values.config.database.host }}
             - name: PORT
-              value: {{ .Values.config.postgresql.port | quote }}
+              value: {{ .Values.config.database.port | quote }}
             - name: DATABASE
-              value: {{ .Values.config.postgresql.database }}
+              value: {{ .Values.config.database.dbname }}
             - name: USERNAME
-              value: {{ .Values.config.postgresql.username }}
-            - name: PGPASSWORD
-              value: {{ .Values.config.postgresql.password }}
+              value: {{ .Values.config.database.username }}
+            - name: PASSWORD
+              value: {{ .Values.config.database.password }}
       restartPolicy: Never
   backoffLimit: 1
 
