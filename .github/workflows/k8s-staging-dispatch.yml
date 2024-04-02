@@ -35,8 +35,8 @@ jobs:
             
             helm --kubeconfig ./kubeconfig upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
               --set replicaCount=3 \
-              --set config.postgresql.password="${{ secrets.POSTGRES_PASSWORD }}" \
-              --set config.postgresql.host="postgresql.database" \
+              --set config.database.password="${{ secrets.POSTGRES_PASSWORD }}" \
+              --set config.database.host="postgresql.database" \
               --set config.rabbitmq.password="${{ secrets.RABBITMQ_PASSWORD }}" \
               --set config.redis.addr="redis-master.database.svc.cluster.local:6379" \
               --set-json 'config.admin=[{"user":"admin","password":"${{ secrets.UNIVERSER_ADMIN_PASSWORD }}"}]' \
