@@ -1,5 +1,8 @@
 #!/bin/bash
 
+DATABASE_DSN='host=${DATABASE_HOST} port=${DATABASE_PORT} dbname=${DATABASE_DBNAME} user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} sslmode=disable TimeZone=Asia/Shanghai'
+sed -i  -e 's|${DATABASE_DSN}|'"${DATABASE_DSN}"'|' ./configs/config.yaml
+
 cp ./configs/config.yaml.template ./configs/config.yaml
 
 while IFS='=' read -r name value ; do
