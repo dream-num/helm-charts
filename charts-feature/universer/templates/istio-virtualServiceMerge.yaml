@@ -13,6 +13,10 @@ spec:
           - headers:
               x-feature-id:
                 exact: {{ .Values.istio.version  | quote }}
+            {{- if .Values.istio.featureGateway.enabled }}
+            authority:
+              exact: {{ .Values.istio.featureGateway.host }}
+            {{- end }}
         route:
           - destination:
               host: universer
