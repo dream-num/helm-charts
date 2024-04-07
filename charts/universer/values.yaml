@@ -152,3 +152,16 @@ istio:
     tls:
       enabled: false
       credentialName: ""
+  
+  featureGateway:
+    enabled: false
+    host: univer.feature
+
+    # select istio ingress gateway. for example
+    # ingressSelector:
+    #   istio: ingressgateway
+    ingressSelector: {}
+
+    tls:
+      enabled: false
+      credentialName: ""
