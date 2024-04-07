@@ -27,6 +27,7 @@ jobs:
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
               --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":50,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
+              --set-json 'istio.featureGateway={"enabled":true,"host":"${{ secrets.K8S_UNIVER_FEATURE_HOST }}"}' \
               universer-${{ github.event.client_payload.feature }} charts-feature/universer
 
           elif [ "${{ github.event.client_payload.service }}" == "collaboration-server" ]; then 
@@ -47,6 +48,7 @@ jobs:
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
               --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":50,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
+              --set-json 'istio.featureGateway={"enabled":true,"host":"${{ secrets.K8S_UNIVER_FEATURE_HOST }}"}' \
               collaboration-demo-${{ github.event.client_payload.feature }} charts-feature/collaboration-demo
 
           fi

@@ -53,3 +53,7 @@ affinity: {}
 
 istio:
   version: "v1"
+
+  featureGateway:
+    enabled: false
+    host: univer.feature
