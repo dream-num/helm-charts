@@ -16,20 +16,29 @@ if [! $DOCKER_COMPOSE version] &> /dev/null; then
 fi
 
 COMPOSE_FILE="docker-compose.yaml"
-if [ "$DATABASE_DRIVER" == "mysql" ]; then
-    COMPOSE_FILE="docker-compose.mysql.yaml"
-fi
-
 ENV_FILE=".env"
+DATABASE_DSN='host=${DATABASE_HOST} port=${DATABASE_PORT} dbname=${DATABASE_DBNAME} user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} sslmode=disable TimeZone=Asia/Shanghai'
 
-prepare() {
+choose_compose_file() {
     . $ENV_FILE
 
-    DATABASE_DSN='host=${DATABASE_HOST} port=${DATABASE_PORT} dbname=${DATABASE_DBNAME} user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} sslmode=disable TimeZone=Asia/Shanghai'
-    if [ "$DATABASE_DRIVER" == "mysql" ]; then
+    case "$DATABASE_DRIVER" in
+    "mysql")
         DATABASE_DSN='${DATABASE_USERNAME}:${DATABASE_PASSWORD}@tcp(${DATABASE_HOST}:${DATABASE_PORT})/${DATABASE_DBNAME}?charset=utf8mb4\&parseTime=True\&loc=Local'
-    fi
+        COMPOSE_FILE="docker-compose.mysql.yaml"
+    ;;
+    "dameng")
+        DATABASE_DSN='dm://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}?autoCommit=true'
+        COMPOSE_FILE="docker-compose.db.yaml"
+    ;;
+    "gaussdb")
+        DATABASE_DSN='host=${DATABASE_HOST} port=${DATABASE_PORT} dbname=${DATABASE_DBNAME} user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} sslmode=disable TimeZone=Asia/Shanghai'
+        COMPOSE_FILE="docker-compose.db.yaml"
+    ;;
+    esac
+}
 
+init_config() {
     cp ./configs/config.yaml.template ./configs/config.yaml
     $SED -e 's|${DATABASE_DSN}|'"${DATABASE_DSN}"'|' ./configs/config.yaml
 
@@ -98,7 +107,8 @@ case "$command" in
         $SED -e 's|UNIVERSER_VERSION=.*|UNIVERSER_VERSION='"${univer_version}"'|' .env.enterprise
     fi
     echo "Staring the service..."
-    prepare
+    choose_compose_file
+    init_config
     start
     ;;
   "stop")
@@ -110,6 +120,7 @@ case "$command" in
             ;;
         esac
     done
+    choose_compose_file
     stop
     ;;
   "" | "restart")
@@ -128,7 +139,8 @@ case "$command" in
     if [ -f .env.enterprise ] && [ "${univer_version}" != "" ] ; then
         $SED -e 's|UNIVERSER_VERSION=.*|UNIVERSER_VERSION='"${univer_version}"'|' .env.enterprise
     fi
-    prepare
+    choose_compose_file
+    init_config
     stop
     start
     ;;
