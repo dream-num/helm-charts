@@ -168,7 +168,7 @@ services:
     labels:
       - com.univer.app=minio
     volumes:
-      - minio-data:/bitnami/minio/data
+      - minio-data:/data
 
   univer-worker-exchange:
     restart: always
