@@ -38,9 +38,6 @@ spec:
           image: {{ include "common.images.image" (dict "imageRoot" .Values.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - name: transform
-              containerPort: {{ .Values.service.transform }}
-              protocol: TCP
             - name: apply
               containerPort: {{ .Values.service.apply }}
               protocol: TCP
@@ -55,8 +52,6 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
-            - name: URL_OF_TRANSFORM_SERVICE
-              value: 0.0.0.0:{{ .Values.service.transform }}
             - name: URL_OF_APPLY_SERVICE
               value: 0.0.0.0:{{ .Values.service.apply }}
             - name: URL_OF_UNIVERSER_SERVICE

@@ -7,10 +7,6 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.transform }}
-      targetPort: transform
-      protocol: TCP
-      name: grpc-transform
     - port: {{ .Values.service.apply }}
       targetPort: apply
       protocol: TCP

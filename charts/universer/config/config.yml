@@ -34,9 +34,6 @@ data:
     presignExpires: {{ .Values.config.s3.presignExpires }}
     defaultBucket: {{ .Values.config.s3.defaultBucket }}
 service:
-  transform:
-    addr: "{{ tpl .Values.config.transform.host . }}:{{ .Values.config.transform.port }}"
-    timeout: 10s
   apply:
     addr: "{{ tpl .Values.config.apply.host . }}:{{ .Values.config.apply.port }}"
     timeout: 10s

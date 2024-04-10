@@ -20,14 +20,3 @@ spec:
               port: 
                 number: {{ .Values.service.apply }}
               subset: {{ .Values.istio.version  | quote }}
-      - match:
-          - headers:
-              x-feature-id:
-                exact: {{ .Values.istio.version  | quote }}
-            port: {{ .Values.service.transform }}
-        route:
-          - destination:
-              host: collaboration-server
-              port: 
-                number: {{ .Values.service.transform }}
-              subset: {{ .Values.istio.version  | quote }}

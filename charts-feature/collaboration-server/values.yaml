@@ -30,7 +30,6 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  transform: 5001
   apply: 5002
 
 config:

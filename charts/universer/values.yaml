@@ -89,15 +89,9 @@ config:
     password: guest
   redis:
     addr: redis:6379
-  transform:
-    host: collaboration-server
-    port: 5001
   apply:
     host: collaboration-server
     port: 5002
-  node_snapshot:
-    host: collaboration-server
-    port: 5001
   admin: []
   s3:
     accessKeyID: ""
