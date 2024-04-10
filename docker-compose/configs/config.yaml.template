@@ -34,14 +34,8 @@ data:
     presignExpires: 3600s
     defaultBucket: "${S3_DEFAULT_BUCKET}"
 service:
-  transform:
-    addr: collaboration-server:5001
-    timeout: 10s
   apply:
     addr: collaboration-server:5002
-    timeout: 10s
-  node_snapshot:
-    addr: collaboration-server:5001
     timeout: 10s
 admin:
   - user: ${UNIVERSER_ADMIN_USERNAME}

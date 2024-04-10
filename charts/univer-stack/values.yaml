@@ -50,15 +50,9 @@ universer:
       password: guest
     redis:
       addr: redis-master:6379
-    transform:
-      host: collaboration-server
-      port: 5001
     apply:
       host: collaboration-server
       port: 5002
-    node_snapshot:
-      host: collaboration-server
-      port: 5001
     s3:
       accessKeyID: admin
       accessKeySecret: minioadmin
