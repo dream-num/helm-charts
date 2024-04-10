@@ -13,8 +13,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/univers:/tmp/univers
     depends_on:
-      univer-postgres:
-        condition: service_started
       univer-rabbitmq:
         condition: service_started
       univer-temporal:
@@ -33,7 +31,7 @@ services:
 
   init-db:
     container_name: init-db
-    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:${UNIVERSER_SQL_VERSION}
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:${UNIVERSER_SQL_VERSION}-${DATABASE_DRIVER}
     environment:
       - HOST=${DATABASE_HOST}
       - PORT=${DATABASE_PORT}
@@ -43,9 +41,6 @@ services:
       - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,${DATABASE_HOST}
     networks:
       - univer
-    depends_on:
-      univer-postgres:
-        condition: service_started
     labels:
       - com.univer.app=init-db
 
@@ -81,23 +76,6 @@ services:
     labels:
       - com.univer.app=collaboration-server
 
-  univer-postgres:
-    image: postgres:${POSTGRES_VERSION}
-    restart: always
-    container_name: univer-postgres
-    environment:
-      - POSTGRES_USER=${DATABASE_USERNAME}
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-      - PGDATA=/var/lib/postgresql/data/
-    expose:
-      - 5432
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      - univer
-    labels:
-      - com.univer.app=postgres
-
   univer-rabbitmq:
     restart: always
     container_name: univer-rabbitmq
@@ -127,17 +105,34 @@ services:
     volumes:
       - redis-data:/bitnami/redis/data
 
+  univer-temporal-postgres:
+    image: postgres:${POSTGRES_VERSION}
+    restart: always
+    container_name: univer-temporal-postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - PGDATA=/var/lib/postgresql/data/
+    expose:
+      - 5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - univer
+    labels:
+      - com.univer.app=postgres
+
   univer-temporal:
     restart: always
     container_name: univer-temporal
     image: temporalio/auto-setup:${TEMPORAL_VERSION}
     environment:
       - DB=postgresql
-      - POSTGRES_SEEDS=${DATABASE_HOST}
-      - DB_PORT=${DATABASE_PORT}
+      - POSTGRES_SEEDS=univer-temporal-postgres
+      - DB_PORT=5432
       - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
-      - POSTGRES_USER=${DATABASE_USERNAME}
-      - POSTGRES_PWD=${DATABASE_PASSWORD}
+      - POSTGRES_USER=postgres
+      - POSTGRES_PWD=postgres
       - TEMPORAL_CLI_SHOW_STACKS=1
       - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16
     volumes:
@@ -145,7 +140,7 @@ services:
     expose:
       - 7233
     depends_on:
-      - univer-postgres
+      - univer-temporal-postgres
     networks:
       - univer
     labels:
