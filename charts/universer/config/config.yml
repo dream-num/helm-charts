@@ -37,9 +37,6 @@ service:
   apply:
     addr: "{{ tpl .Values.config.apply.host . }}:{{ .Values.config.apply.port }}"
     timeout: 10s
-  node_snapshot:
-    addr: "{{ tpl .Values.config.node_snapshot.host . }}:{{ .Values.config.node_snapshot.port }}"
-    timeout: 10s
 apiLimit:
   method:
     tokens: {{ .Values.config.apiLimit.method.tokens }}
