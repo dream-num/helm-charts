@@ -65,3 +65,7 @@ auth:
   oidc:
     {{- toYaml . | nindent 4 }}
   {{- end }}
+  {{- with .Values.config.auth.oauth2 }}
+  oauth2:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}

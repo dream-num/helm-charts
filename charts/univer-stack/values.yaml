@@ -67,12 +67,6 @@ universer:
       namespace: univer
     auth:
       enabled: false
-      oidc:
-        issuer: https://accounts.google.com
-        clientID: "xxxx"
-        clientSecret: "xxxxxxxxxx"
-        redirectURL: "http://example.com/auth/callback"
-        cookieDomain: "abc.example.com"
   istio:
     enabled: true
 

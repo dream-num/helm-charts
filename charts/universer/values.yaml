@@ -108,11 +108,26 @@ config:
   auth:
     enabled: false
     oidc:
+      enabled: false
       issuer: https://accounts.google.com
       clientID: "xxxx"
       clientSecret: "xxxxxxxxxx"
-      redirectURL: "http://example.com/auth/callback"
+      redirectURL: "http://example.com/oidc/callback"
       cookieDomain: "abc.example.com"
+    oauth2:
+      enabled: false
+      clientID: "xxxx"
+      clientSecret: "xxxxxxxxxx"
+      redirectURL: "http://example.com/oauth2/callback"
+      cookieDomain: "abc.example.com"
+      authURL: "http://localhost:8081/oauth/authorize"
+      tokenURL: "http://localhost:8081/oauth/token"
+      apiURL: "http://localhost:8081/oauth/userinfo"
+      scopes: "all"
+      openidPath: "id"
+      emailPath: "email"
+      namePath: "name"
+      avatarPath: "avatar"
   apiLimit:
     method:
       tokens: 600
@@ -129,7 +144,7 @@ job:
     registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
     repository: release/universer-sql
     pullPolicy: IfNotPresent
-    tag: "0.0.3"
+    tag: "0.0.5"
 
 istio:
   enabled: false
