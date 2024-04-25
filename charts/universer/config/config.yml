@@ -69,3 +69,12 @@ auth:
   oauth2:
     {{- toYaml . | nindent 4 }}
   {{- end }}
+sentryConfig:
+  {{- with .Values.config.sentryConfig.dsn }}
+  dsn: {{ . }}
+  {{- else }}
+  dsn: ""
+  {{- end }}
+  debug: false
+  enableTracing: true
+  TracesSampleRate: 1.0

@@ -48,3 +48,8 @@ apiLimit:
   method:
     tokens: 600
     interval: 30s
+sentryConfig:
+  dsn: ${SENTRY_DSN}
+  debug: false
+  enableTracing: true
+  TracesSampleRate: 1.0
