@@ -134,6 +134,8 @@ config:
       interval: 30s
     ip: {}
     perMethod: {}
+  sentryConfig:
+    dsn: "https://sentry.io/"
 
 license:
   LICENSE: ""
