@@ -74,6 +74,7 @@ services:
       - no_proxy=127.0.0.1,localhost,172.30.0.0/16,universer
     expose:
       - 5002
+      - 9090
     networks:
       - univer
     labels:
@@ -278,8 +279,10 @@ services:
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
+      - /var/run/docker.sock:/var/run/docker.sock
     labels:
       - com.univer.app=prometheus
+
   redis-exporter:
     image: oliver006/redis_exporter:${REDIS_EXPORTER_VERSION}
     ports:
