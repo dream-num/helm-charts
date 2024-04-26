@@ -270,7 +270,7 @@ services:
     container_name: univer-prometheus
     image: bitnami/prometheus:latest
     expose:
-      - 9090
+      - 9090:9090
     environment:
       - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16
     networks:
@@ -295,7 +295,7 @@ services:
   postgres-exporter:
     image: quay.io/prometheuscommunity/postgres-exporter
     ports:
-      - "9187:9187"
+      - 9187
     networks:
       - univer
     environment:
@@ -304,7 +304,7 @@ services:
   rabbitmq-exporter:
     image: kbudde/rabbitmq-exporter
     ports:
-      - 9419:9419
+      - 9419
     networks: 
       - univer
     environment:
