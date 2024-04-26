@@ -74,6 +74,7 @@ services:
       - no_proxy=127.0.0.1,localhost,172.30.0.0/16,universer
     expose:
       - 5002
+      - 9090
     networks:
       - univer
     labels:
@@ -102,6 +103,7 @@ services:
     image: rabbitmq:${RABBITMQ_VERSION}
     expose:
       - 5672
+      - 15672
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
@@ -184,9 +186,141 @@ services:
     labels:
       - com.univer.app=worker-exchange
 
+  univer-loki:
+    restart: always
+    container_name: univer-loki
+    image: grafana/loki:${LOKI_VERSION}
+    expose:
+      - 3100
+    environment:
+      - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16
+    command: -config.file=/etc/loki/config.yaml
+    networks:
+      - univer
+    volumes:
+      - ./loki/loki:/etc/loki:ro
+      - loki-data:/loki
+    labels:
+      - com.univer.app=loki
+
+  univer-promtail:
+    restart: always
+    container_name: univer-promtail
+    image: grafana/promtail:${PROMTAIL_VERSION}
+    volumes:
+      - ./loki/promtail:/etc/promtail:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16,univer-loki
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - univer
+    labels:
+      - com.univer.app=promtail
+
+  univer-grafana:
+    restart: always
+    container_name: univer-grafana
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16,univer-loki
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /etc/grafana/provisioning/datasources
+        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+        apiVersion: 1
+        datasources:
+        - name: Loki
+          type: loki
+          access: proxy
+          orgId: 1
+          url: http://univer-loki:3100
+          basicAuth: false
+          isDefault: false
+          version: 1
+          editable: false    
+        - name: Prometheus
+          type: prometheus
+          access: proxy
+          orgId: 1
+          url: http://univer-prometheus:9090
+          basicAuth: false
+          isDefault: true
+          version: 1
+          editable: false
+        EOF
+        /run.sh
+    image: grafana/grafana:${GRAFANA_VERSION}
+    ports:
+      - 3000:3000
+    volumes:
+      - ./loki/grafana/grafana.ini:/etc/grafana/grafana.ini:ro
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+    networks:
+      - univer
+    labels:
+      - com.univer.app=grafana
+
+  univer-prometheus:
+    restart: always
+    container_name: univer-prometheus
+    image: bitnami/prometheus:${PROMETHEUS_VERSION}
+    ports:
+      - 9090:9090
+    environment:
+      - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16
+    networks:
+      - univer
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - com.univer.app=prometheus
+
+  redis-exporter:
+    image: oliver006/redis_exporter:${REDIS_EXPORTER_VERSION}
+    ports:
+      - 9121
+    networks:
+      - univer
+    command:
+      - "-redis.addr=redis://univer-redis:6379"
+    depends_on:
+      init-db:
+        condition: service_completed_successfully
+
+  postgres-exporter:
+    image: bitnami/postgres-exporter:${POSTGRES_EXPORTER_VERSION}
+    ports:
+      - 9187
+    networks:
+      - univer
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/postgres?sslmode=disable"
+
+  rabbitmq-exporter:
+    image: kbudde/rabbitmq-exporter:${RABBITMQ_EXPORTER_VERSION}
+    expose:
+      - 9419
+    networks: 
+      - univer
+    environment:
+      RABBIT_URL: http://${RABBITMQ_HOST}:${RABBITMQ_HTTPPORT}
+      RABBIT_USER: ${RABBITMQ_USERNAME}
+      RABBIT_PASSWORD: ${RABBITMQ_PASSWORD}
+      RABBIT_CAPABILITIES: compat
+    depends_on:
+      - univer-rabbitmq
+
 networks:
   univer:
-    name: unvier-prod
+    name: univer-prod
     driver: bridge
     ipam:
      config:
@@ -199,4 +333,8 @@ volumes:
     name: univer-prod-redis-data
   minio-data:
     name: univer-prod-minio-data
+  loki-data:
+    name: univer-prod-loki-data
+  prometheus-data:
+    name: univer-prod-prometheus-data
 

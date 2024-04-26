@@ -1,0 +1,44 @@
+    global:
+      scrape_interval: 15s
+
+    scrape_configs:
+      - job_name: 'collaboration'
+        docker_sd_configs:
+        - host: unix:///var/run/docker.sock
+        relabel_configs:
+          - source_labels: [__meta_docker_container_name]
+            regex: '(.*collaboration-server.*)'
+            action: keep
+          - source_labels: [__meta_docker_container_name]
+            regex: '(.*)'
+            target_label: instance
+            replacement: '${1}:9090'
+        metrics_path: /metrics
+      - job_name: 'universer'
+        docker_sd_configs:
+        - host: unix:///var/run/docker.sock
+        relabel_configs:
+          - source_labels: [__meta_docker_container_name]
+            regex: '(.*universer.*)'
+            action: keep
+          - source_labels: [__meta_docker_container_name]
+            regex: '(.*)'
+            target_label: instance
+            replacement: '${1}:8000'
+        metrics_path: /universer-api/metrics
+      - job_name: 'temporal-worker'
+        static_configs:
+          - targets: ['univer-worker-exchange:9090']
+        metrics_path: /metrics
+      - job_name: 'postgresql'
+        static_configs:
+          - targets: ['postgres-exporter:9187']
+        metrics_path: /metrics
+      - job_name: 'rabbitmq'
+        static_configs:
+          - targets: ['rabbitmq-exporter:9419']
+        metrics_path: /metrics
+      - job_name: 'redis'
+        static_configs:
+          - targets: ['redis-exporter:9121']
+        metrics_path: /metrics

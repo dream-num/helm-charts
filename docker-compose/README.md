@@ -37,7 +37,7 @@ bash run.sh
 ```bash
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
                
-docker run --net=unvier-prod --rm --name univer-collaboration-lite \
+docker run --net=univer-prod --rm --name univer-collaboration-lite \
   -p 3010:3010 univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
 
 # Open URL: http://localhost:3010
