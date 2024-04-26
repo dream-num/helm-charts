@@ -102,6 +102,7 @@ services:
     image: rabbitmq:${RABBITMQ_VERSION}
     expose:
       - 5672
+      - 15672
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
@@ -254,9 +255,11 @@ services:
         /run.sh
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/grafana:${GRAFANA_VERSION}
     ports:
-      - 10004:3000
+      - 3000:3000
     volumes:
       - ./loki/grafana/grafana.ini:/etc/grafana/grafana.ini:ro
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
     networks:
       - univer
     labels:
@@ -285,6 +288,9 @@ services:
       - univer
     command:
       - "-redis.addr=redis://univer-redis:6379"
+    depends_on:
+      init-db:
+        condition: service_completed_successfully
 
   postgres-exporter:
     image: quay.io/prometheuscommunity/postgres-exporter
@@ -298,11 +304,16 @@ services:
   rabbitmq-exporter:
     image: kbudde/rabbitmq-exporter
     ports:
-      - "9419:9419"
-    networks:
+      - 9419:9419
+    networks: 
       - univer
     environment:
-      RABBIT_URL: "http://${RABBITMQ_HOST}:${RABBITMQ_HTTPPORT}"
+      RABBIT_URL: http://${RABBITMQ_HOST}:${RABBITMQ_HTTPPORT}
+      RABBIT_USER: ${RABBITMQ_USERNAME}
+      RABBIT_PASSWORD: ${RABBITMQ_PASSWORD}
+      RABBIT_CAPABILITIES: compat
+    depends_on:
+      - univer-rabbitmq
 
 networks:
   univer:
