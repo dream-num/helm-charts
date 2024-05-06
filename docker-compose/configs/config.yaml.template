@@ -22,8 +22,8 @@ data:
     namespace: ${TEMPORAL_NAMESPACE}
   redis:
     addr: univer-redis:6379
-    read_timeout: 0.2s
-    write_timeout: 0.2s
+    read_timeout: 1s
+    write_timeout: 1s
   s3:
     accessKeyID: "${S3_USER}"
     accessKeySecret: "${S3_PASSWORD}"
