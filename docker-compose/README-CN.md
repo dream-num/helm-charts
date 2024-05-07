@@ -45,10 +45,11 @@ docker run --net=univer-prod --rm --name univer-collaboration-lite \
 
 ## Use port
 
-| service            | port | description             |
-| ------------------ | ---- | ----------------------- |
-| universer          | 8000 | api http server         |
-| minio              | 19000 | s3 object storage server |
+| service   | port  | description              |
+| --------- | ----- | ------------------------ |
+| universer | 8000  | api http server          |
+| minio     | 19000 | s3 object storage server |
+| grafana   | 13000  | grafana dashboard server |
 
 ## [Q&A](https://www.univer.ai/pro/zh-cn/enterprises/trial-version/)
 1. 怎么解决文件“另存为”保存失败问题？
@@ -57,4 +58,10 @@ docker run --net=univer-prod --rm --name univer-collaboration-lite \
 
 # 如 S3_ENDPOINT_PUBLIC=http://univer-minio:9000
 # 替换为 S3_ENDPOINT_PUBLIC=http://192.168.50.172:19000
+```
+
+2. 怎么启动可观测性组件？
+```
+在 .env 文件中去掉下行的注释：
+# COMPOSE_PROFILES=observability
 ```
