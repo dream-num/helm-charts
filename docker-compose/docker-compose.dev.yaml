@@ -282,6 +282,10 @@ services:
       - dataSourceName="user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} host=${DATABASE_HOST} port=${DATABASE_PORT} dbname=casdoor sslmode=disable"
     ports:
       - 10005:8000
+    networks:
+      - univer
+    labels:
+      - com.univer.app=casdoor
 
 networks:
   univer:
