@@ -85,7 +85,7 @@ services:
     restart: always
     container_name: univer-postgres
     environment:
-      - POSTGRES_USER=${DATABASE_DBNAME}
+      - POSTGRES_USER=${DATABASE_USERNAME}
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
       - PGDATA=/var/lib/postgresql/data/
     ports:
@@ -275,11 +275,12 @@ services:
       - redis-data:/bitnami/redis/data
 
   univer-casdoor:
+    restart: always
     image: casbin/casdoor:v1.610.0
     container_name: univer-casdoor
     environment:
-      - driverName=postgres
-      - dataSourceName="user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} host=${DATABASE_HOST} port=${DATABASE_PORT} dbname=casdoor sslmode=disable"
+      driverName: postgres
+      dataSourceName: "user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} host=${DATABASE_HOST} port=${DATABASE_PORT} dbname=casdoor sslmode=disable"
     ports:
       - 10005:8000
     networks:
