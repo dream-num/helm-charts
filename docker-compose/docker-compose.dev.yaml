@@ -274,6 +274,15 @@ services:
     volumes:
       - redis-data:/bitnami/redis/data
 
+  univer-casdoor:
+    image: casbin/casdoor:v1.610.0
+    container_name: univer-casdoor
+    environment:
+      - driverName=postgres
+      - dataSourceName="user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} host=${DATABASE_HOST} port=${DATABASE_PORT} dbname=casdoor sslmode=disable"
+    ports:
+      - 10005:8000
+
 networks:
   univer:
     driver: bridge
