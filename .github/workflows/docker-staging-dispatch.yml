@@ -22,7 +22,7 @@ jobs:
         S3_ENDPOINT: "https://oss-us-west-1-internal.aliyuncs.com"
         S3_ENDPOINT_PUBLIC: "https://oss-us-west-1.aliyuncs.com"
         S3_DEFAULT_BUCKET: "univer-ai-staging"
-        SERVICE: "universer collaboration-server collaboration-demo univer-postgres univer-rabbitmq univer-temporal univer-redis univer-worker-exchange init-db"
+        SERVICE: "universer collaboration-server collaboration-demo univer-postgres univer-rabbitmq univer-temporal univer-redis univer-worker-exchange init-db univer-casdoor"
         LICENSE: "${{ secrets.LICENSE }}"
         PUBLIC_KEY: "${{ secrets.PUBLIC_KEY }}"
       with:
