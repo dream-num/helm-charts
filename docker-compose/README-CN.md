@@ -65,3 +65,11 @@ docker run --net=univer-prod --rm --name univer-collaboration-lite \
 在 .env 文件中去掉下行的注释：
 # COMPOSE_PROFILES=observability
 ```
+
+3. 怎么解决端口冲突？
+```
+在 .env 文件中修改端口:
+HOST_NGINX_PORT=8000
+HOST_MINIO_PORT=19000
+HOST_GRAFANA_PORT=13000
+```

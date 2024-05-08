@@ -65,3 +65,11 @@ Replace localhost with the local IP for S3_ENDPOINT_PUBLIC config in .env file, 
 uncomment the following line in .env file:
 # COMPOSE_PROFILES=observability
 ```
+
+3. How to deal with host port conflict?
+```
+# change the host ports in .env file:
+HOST_NGINX_PORT=8000
+HOST_MINIO_PORT=19000
+HOST_GRAFANA_PORT=13000
+```
