@@ -53,7 +53,7 @@ services:
     restart: always
     image: nginx:alpine-slim
     ports:
-     - 8000:8000
+     - ${HOST_NGINX_PORT}:8000
     networks:
       - univer
     depends_on:
@@ -161,7 +161,7 @@ services:
       - MINIO_DEFAULT_BUCKETS=${S3_DEFAULT_BUCKET}
       - MINIO_DATA_DIR=/data
     ports:
-      - 19000:9000
+      - ${HOST_MINIO_PORT}:9000
     expose:
       - 9000
     networks:
@@ -202,6 +202,8 @@ services:
       - loki-data:/loki
     labels:
       - com.univer.app=loki
+    profiles:
+      - observability
 
   univer-promtail:
     restart: always
@@ -217,6 +219,8 @@ services:
       - univer
     labels:
       - com.univer.app=promtail
+    profiles:
+      - observability
 
   univer-grafana:
     restart: always
@@ -225,7 +229,7 @@ services:
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
-      - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16,univer-loki
+      - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16,univer-loki,univer-prometheus
     entrypoint:
       - sh
       - -euc
@@ -256,7 +260,7 @@ services:
         /run.sh
     image: grafana/grafana:${GRAFANA_VERSION}
     ports:
-      - 3000:3000
+      - ${HOST_GRAFANA_PORT}:3000
     volumes:
       - ./loki/grafana/grafana.ini:/etc/grafana/grafana.ini:ro
       - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
@@ -265,13 +269,16 @@ services:
       - univer
     labels:
       - com.univer.app=grafana
+    profiles:
+      - observability
 
   univer-prometheus:
     restart: always
     container_name: univer-prometheus
     image: bitnami/prometheus:${PROMETHEUS_VERSION}
-    ports:
-      - 9090:9090
+    user: root
+    expose:
+      - 9090
     environment:
       - NO_PROXY=127.0.0.1,localhost,172.32.0.0/16
     networks:
@@ -279,13 +286,15 @@ services:
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:rw
     labels:
       - com.univer.app=prometheus
+    profiles:
+      - observability
 
   redis-exporter:
     image: oliver006/redis_exporter:${REDIS_EXPORTER_VERSION}
-    ports:
+    expose:
       - 9121
     networks:
       - univer
@@ -294,15 +303,19 @@ services:
     depends_on:
       init-db:
         condition: service_completed_successfully
+    profiles:
+      - observability
 
   postgres-exporter:
     image: bitnami/postgres-exporter:${POSTGRES_EXPORTER_VERSION}
-    ports:
+    expose:
       - 9187
     networks:
       - univer
     environment:
       DATA_SOURCE_NAME: "postgresql://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/postgres?sslmode=disable"
+    profiles:
+      - observability
 
   rabbitmq-exporter:
     image: kbudde/rabbitmq-exporter:${RABBITMQ_EXPORTER_VERSION}
@@ -317,6 +330,8 @@ services:
       RABBIT_CAPABILITIES: compat
     depends_on:
       - univer-rabbitmq
+    profiles:
+      - observability
 
 networks:
   univer:

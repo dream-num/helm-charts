@@ -48,7 +48,7 @@ services:
     restart: always
     image: nginx:alpine-slim
     ports:
-     - 8000:8000
+     - ${HOST_NGINX_PORT}:8000
     networks:
       - univer
     depends_on:
@@ -154,7 +154,7 @@ services:
       - MINIO_DEFAULT_BUCKETS=${S3_DEFAULT_BUCKET}
       - MINIO_DATA_DIR=/data
     ports:
-      - 19000:9000
+      - ${HOST_MINIO_PORT}:9000
     expose:
       - 9000
     networks:
@@ -181,7 +181,7 @@ services:
 
 networks:
   univer:
-    name: unvier-prod
+    name: univer-prod
     driver: bridge
     ipam:
      config:
