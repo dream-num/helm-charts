@@ -43,7 +43,14 @@ admin:
 extra:
   celldataMaxSize: 10485760 # 单位字节，10M
 auth:
-  enabled: false
+  enabled: ${AUTH_ENABLED}
+  oidc:
+    enabled: ${AUTH_OIDC_ENABLED}
+    issuer: ${AUTH_OIDC_ISSUER}
+    clientID: ${AUTH_OIDC_CLIENT_ID}
+    clientSecret: ${AUTH_OIDC_CLIENT_SECRET}
+    redirectURL: ${AUTH_OIDC_CALLBACK_URL}
+    cookieDomain: ${AUTH_OIDC_COOKIE_DOMAIN}
 apiLimit:
   method:
     tokens: 600
