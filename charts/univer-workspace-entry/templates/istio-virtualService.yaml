@@ -1,0 +1,61 @@
+{{- if .Values.istio.enabled -}}
+{{- if and (not .Values.ingress.enabled) .Values.istio.gateway.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "univer-workspace-entry.fullname" . }}-gws
+  labels:
+    {{- include "univer-workspace-entry.labels" . | nindent 4 }}
+spec:
+  hosts:
+  - {{ .Values.istio.gateway.host | quote }}
+  gateways:
+  - univer
+  http:
+  - match:
+      - uri:
+          prefix: "/workspace/"
+    delegate:
+      name: {{ include "univer-workspace-entry.fullname" . }}
+    headers:
+      request:
+        remove: [ x-feature-id ]
+{{ end }}
+---
+{{- if and (not .Values.ingress.enabled) .Values.istio.featureGateway.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "univer-workspace-entry.fullname" . }}-feat-gws
+  labels:
+    {{- include "univer-workspace-entry.labels" . | nindent 4 }}
+spec:
+  hosts:
+  - {{ .Values.istio.featureGateway.host | quote }}
+  gateways:
+  - univer-feature
+  http:
+  - match:
+      - uri:
+          prefix: "/workspace/"
+    delegate:
+      name: {{ include "univer-workspace-entry.fullname" . }}
+{{- end }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "univer-workspace-entry.fullname" . }}
+  labels:
+    {{- include "univer-workspace-entry.labels" . | nindent 4 }}
+spec:
+  hosts:
+    - {{ include "univer-workspace-entry.fullname" . | quote }}
+  http:
+    - route:
+        - destination:
+            host: {{ include "univer-workspace-entry.fullname" . }}
+            port: 
+              number: {{ .Values.service.port }}
+            subset: default
+{{- end -}}
