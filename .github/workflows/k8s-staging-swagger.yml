@@ -42,9 +42,11 @@ jobs:
         run: |
           urls=""
           cd charts/swagger-ui/config && \
-          for file in *; do name=${file%%.*}; urls="$urls{\"name\":\"$name\",\"url\":\"$file\"},"; done && \
-          cd -
-          urls=$(cur -c -1 $urls)
+            for file in *; do name=${file%%.*}; urls="$urls{\"name\":\"$name\",\"url\":\"$file\"},"; done && \
+            cd -
+          echo "urls before: $urls"
+          urls=$(cut -c -1 $urls)
+          echo "urls after: $urls"
           echo "URLS=$(echo ${urls})" >> $GITHUB_ENV
 
       - name: HelmInstallSwagger
