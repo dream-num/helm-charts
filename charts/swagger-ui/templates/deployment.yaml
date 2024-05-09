@@ -42,7 +42,8 @@ spec:
             - name: SWAGGER_JSON 
               value: /etc/swagger/openapi.yaml
             - name: URLS
-              value: {{ .Values.config.urls }}
+              value: |
+                {{- .Values.config.urls | nindent 16 }}
             - name: PORT
               value: {{ .Values.service.port | quote }}
           livenessProbe:
