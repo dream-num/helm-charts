@@ -5,4 +5,4 @@ metadata:
   labels:
     {{- include "swagger-ui.labels" . | nindent 4 }}
 data:
-{{ (.Files.Glob "config/openapi.yaml").AsConfig | indent 2 }}
+{{ (.Files.Glob "config/*.yaml").AsConfig | indent 2 }}
