@@ -93,3 +93,10 @@ istio:
   auth:
     user: admin
     password: "123456"
+
+config:
+  urls: |
+    [{
+      "name": "openapi",
+      "url": "openapi.yaml"
+    }]
