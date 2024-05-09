@@ -35,7 +35,7 @@ jobs:
             for file in *; do kubectl --kubeconfig /tmp/kubeconfig get cm -n swagger swagger-ui -o go-template --template="{{index .data \"$file\"}}" > $file; done && \
             ls -la && \
             echo "Downloading $filename" && \
-            curl -o "${filename}" "https://${{ secrets.GH_TOKEN }}@raw.githubusercontent.com/dream-num/univer-protocol/${{ github.event.client_payload.branch }}/openapi.yaml" \
+            curl -o $filename "https://${{ secrets.GH_TOKEN }}@raw.githubusercontent.com/dream-num/univer-protocol/${{ github.event.client_payload.branch }}/openapi.yaml" && \
             cd -
       
       - name: Set swagger urls param
