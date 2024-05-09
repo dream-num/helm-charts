@@ -45,7 +45,7 @@ jobs:
             for file in *; do name=${file%%.*}; urls="$urls{\"name\":\"$name\",\"url\":\"$file\"},"; done && \
             cd -
           echo "urls before: $urls"
-          urls=$(cut -c -1 $urls)
+          urls=$(echo $urls | cut -c -1)
           echo "urls after: $urls"
           echo "URLS=$(echo ${urls})" >> $GITHUB_ENV
 
