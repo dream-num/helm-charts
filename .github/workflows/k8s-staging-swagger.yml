@@ -42,7 +42,7 @@ jobs:
         run: |
           urls=""
           cd charts/swagger-ui/config && \
-            for file in *; do name=${file%%.*}; urls="$urls{\"name\":\"$name\",\"url\":\"$file\"},"; done && \
+            for file in *; do name=${file%%.*}; urls="$urls{\\\"name\":\\\"$name\\\",\\\"url\\\":\\\"$file\\\"},"; done && \
             cd -
           echo "urls before: $urls"
           urls=[$(echo $urls | sed 's/.\{1\}$//')]
