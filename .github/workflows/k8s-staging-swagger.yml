@@ -23,7 +23,7 @@ jobs:
         with:
           version: v3.12.0
 
-      - name: DownloadSwaggerJson
+      - name: PrepareSwaggerJson
         run: |
           filename=$(basename ${{ github.event.client_payload.branch }}).yaml
           if [ $filename == "main.yaml" ]; then
@@ -33,10 +33,14 @@ jobs:
             cd charts/swagger-ui/config && \
             kubectl --kubeconfig /tmp/kubeconfig get cm -n swagger swagger-ui -o go-template --template='{{range $key,$value := .data}}{{println $key}}{{end}}' | xargs touch  && \
             for file in *; do kubectl --kubeconfig /tmp/kubeconfig get cm -n swagger swagger-ui -o go-template --template="{{index .data \"$file\"}}" > $file; done && \
-            ls -la && \
+            ls -la
+          if [ "${{ github.event.client_payload.action }}" == "push" ]; then
             echo "Downloading $filename" && \
-            curl -o $filename "https://${{ secrets.GH_TOKEN }}@raw.githubusercontent.com/dream-num/univer-protocol/${{ github.event.client_payload.branch }}/openapi.yaml" && \
-            cd -
+              curl -o $filename "https://${{ secrets.GH_TOKEN }}@raw.githubusercontent.com/dream-num/univer-protocol/${{ github.event.client_payload.branch }}/openapi.yaml"
+          elif [ "${{ github.event.client_payload.action }}" == "delete" ]; then
+            echo "Delete $filename" && rm $filename
+          fi
+          cd -
       
       - name: Set swagger urls param
         run: |
