@@ -29,4 +29,8 @@ jobs:
 
             helm --kubeconfig ./kubeconfig uninstall -n ${{ vars.K8S_NAMESPACE }} collaboration-demo-${{ github.event.client_payload.feature }}
 
+          elif [ "${{ github.event.client_payload.service }}" == "univer-workspace-entry" ]; then 
+
+            helm --kubeconfig ./kubeconfig uninstall -n ${{ vars.K8S_NAMESPACE }} univer-workspace-entry-${{ github.event.client_payload.feature }}
+
           fi

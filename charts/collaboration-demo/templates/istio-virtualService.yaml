@@ -12,7 +12,14 @@ spec:
   gateways:
   - univer
   http:
-  - delegate:
+  - match:
+      - uri:
+          prefix: "/doc/"
+      - uri:
+          prefix: "/sheet/"
+      - uri:
+          prefix: "/slide/"
+    delegate:
       name: {{ include "collaboration-demo.fullname" . }}
     headers:
       request:
@@ -32,7 +39,14 @@ spec:
   gateways:
   - univer-feature
   http:
-  - delegate:
+  - match:
+      - uri:
+          prefix: "/doc/"
+      - uri:
+          prefix: "/sheet/"
+      - uri:
+          prefix: "/slide/"
+    delegate:
       name: {{ include "collaboration-demo.fullname" . }}
 {{- end }}
 ---

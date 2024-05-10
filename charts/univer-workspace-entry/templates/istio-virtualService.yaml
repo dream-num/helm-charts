@@ -12,10 +12,7 @@ spec:
   gateways:
   - univer
   http:
-  - match:
-      - uri:
-          prefix: "/workspace/"
-    delegate:
+  - delegate:
       name: {{ include "univer-workspace-entry.fullname" . }}
     headers:
       request:
@@ -35,10 +32,7 @@ spec:
   gateways:
   - univer-feature
   http:
-  - match:
-      - uri:
-          prefix: "/workspace/"
-    delegate:
+  - delegate:
       name: {{ include "univer-workspace-entry.fullname" . }}
 {{- end }}
 ---
