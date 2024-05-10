@@ -1,0 +1,14 @@
+{{- if .Values.istio.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: {{ include "univer-workspace-entry.fullname" . }}
+  labels:
+    {{- include "univer-workspace-entry.labels" . | nindent 4 }}
+spec:
+  host: {{ include "univer-workspace-entry.fullname" . }}
+  subsets:
+  - name: default
+    labels:
+      version: default
+{{- end -}}

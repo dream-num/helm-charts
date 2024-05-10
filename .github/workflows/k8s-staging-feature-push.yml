@@ -51,4 +51,15 @@ jobs:
               --set-json 'istio.featureGateway={"enabled":true,"host":"${{ secrets.K8S_UNIVER_FEATURE_HOST }}"}' \
               collaboration-demo-${{ github.event.client_payload.feature }} charts-feature/collaboration-demo
 
+          elif [ "${{ github.event.client_payload.service }}" == "univer-workspace-entry" ]; then
+            
+            helm --kubeconfig ./kubeconfig upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
+              --set istio.version="${{ github.event.client_payload.feature }}" \
+              --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/univer-workspace-entry","tag":"${{ github.event.client_payload.tag }}"}' \
+              --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
+              --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
+              --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":50,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
+              --set-json 'istio.featureGateway={"enabled":true,"host":"${{ secrets.K8S_UNIVER_FEATURE_HOST }}"}' \
+              univer-workspace-entry-${{ github.event.client_payload.feature }} charts-feature/univer-workspace-entry
+
           fi
