@@ -43,8 +43,10 @@ metadata:
   labels:
     {{- include "univer-workspace-entry.labels" . | nindent 4 }}
 spec:
+  {{- if and (not .Values.istio.gateway.enabled) (not .Values.istio.featureGateway.enabled) }}
   hosts:
     - {{ include "univer-workspace-entry.fullname" . | quote }}
+  {{- end }}
   http:
     - route:
         - destination:
