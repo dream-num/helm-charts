@@ -12,7 +12,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 9af2019 # VERSION
+  tag: 53cff73 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
