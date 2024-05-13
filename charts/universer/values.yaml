@@ -129,6 +129,9 @@ config:
       emailPath: "email"
       namePath: "name"
       avatarPath: "avatar"
+    anonymous:
+      enabled: false
+      cookieDomain: "abc.example.com"
   apiLimit:
     method:
       tokens: 600

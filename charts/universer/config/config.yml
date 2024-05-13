@@ -70,6 +70,10 @@ auth:
   oauth2:
     {{- toYaml . | nindent 4 }}
   {{- end }}
+  {{- with .Values.config.auth.anonymous }}
+  anonymous:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 sentryConfig:
   {{- with .Values.config.sentryConfig.dsn }}
   dsn: {{ . }}
