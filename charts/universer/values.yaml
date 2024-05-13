@@ -109,6 +109,7 @@ config:
     enabled: false
     oidc:
       enabled: false
+      univerEnabled: false
       issuer: https://accounts.google.com
       clientID: "xxxx"
       clientSecret: "xxxxxxxxxx"
