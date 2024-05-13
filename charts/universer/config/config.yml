@@ -61,6 +61,7 @@ extra:
   celldataMaxSize: 10485760 # 单位字节，10M
 auth:
   enabled: {{ .Values.config.auth.enabled }}
+  univerEnabled: {{ .Values.config.auth.univerEnabled }}
   {{- with .Values.config.auth.oidc }}
   oidc:
     {{- toYaml . | nindent 4 }}
