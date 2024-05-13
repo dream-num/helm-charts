@@ -13,7 +13,6 @@ spec:
           - headers:
               x-feature-id:
                 exact: {{ .Values.istio.version | quote }}
-            port: {{ .Values.service.port }}
             {{- if .Values.istio.featureGateway.enabled }}
             authority:
               exact: {{ .Values.istio.featureGateway.host }}
