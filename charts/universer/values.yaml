@@ -107,9 +107,9 @@ config:
     namespace: default
   auth:
     enabled: false
+    univerEnabled: false
     oidc:
       enabled: false
-      univerEnabled: false
       issuer: https://accounts.google.com
       clientID: "xxxx"
       clientSecret: "xxxxxxxxxx"
