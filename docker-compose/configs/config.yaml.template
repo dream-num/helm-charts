@@ -44,6 +44,7 @@ extra:
   celldataMaxSize: 10485760 # 单位字节，10M
 auth:
   enabled: ${AUTH_ENABLED}
+  univerEnabled: ${UNIVER_ENABLED}
   oidc:
     enabled: ${AUTH_OIDC_ENABLED}
     issuer: ${AUTH_OIDC_ISSUER}
