@@ -52,7 +52,7 @@ jobs:
               --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":1,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
               universer charts/universer
           
-          if [ "${{ github.event.client_payload.service }}" == "license" ]; then
+          elif [ "${{ github.event.client_payload.service }}" == "license" ]; then
              helm --kubeconfig ./kubeconfig upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
               --set replicaCount=2 \
               --set config.database.password="${{ secrets.POSTGRES_PASSWORD }}" \
