@@ -1,0 +1,81 @@
+server:
+  http:
+    addr: 0.0.0.0:{{ .Values.service.http }}
+    timeout: 10s
+data:
+  database:
+    maxOpenConns: {{ .Values.config.database.maxOpenConns }}
+    maxIdleConns: {{ .Values.config.database.maxIdleConns }}
+    connMaxLifetime: {{ .Values.config.database.connMaxLifetime }}
+    driver: {{ .Values.config.database.driver }}
+    database: {{ .Values.config.database.dbname }}
+    dsn: {{ include "universer.database.dsn" .Values.config.database }}
+  redis:
+    addr: {{ tpl .Values.config.redis.addr . }}
+    read_timeout: 1s
+    write_timeout: 1s
+  s3:
+    accessKeyID: {{ .Values.config.s3.accessKeyID }}
+    accessKeySecret: {{ .Values.config.s3.accessKeySecret }}
+    region: {{ .Values.config.s3.region }}
+    endpoint: {{ .Values.config.s3.endpoint }}
+    endpointPublic: {{ .Values.config.s3.endpointPublic }}
+    usePathStyle: {{ .Values.config.s3.usePathStyle }}
+    presignExpires: {{ .Values.config.s3.presignExpires }}
+    defaultBucket: {{ .Values.config.s3.defaultBucket }}
+apiLimit:
+  method:
+    tokens: {{ .Values.config.apiLimit.method.tokens }}
+    interval: {{ .Values.config.apiLimit.method.interval }}
+  {{- with .Values.config.apiLimit.ip }}
+  ip:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.config.apiLimit.perMethod }}
+  perMethod:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+admin: 
+{{- if .Values.config.admin -}}
+  {{- range .Values.config.admin }}
+  - user: {{ .user }}
+    password: {{ .password }}
+  {{- end }}
+{{- else }} []
+{{- end }}
+extra:
+  celldataMaxSize: 10485760 # 单位字节，10M
+auth:
+  enabled: {{ .Values.config.auth.enabled }}
+  univerEnabled: {{ .Values.config.auth.univerEnabled }}
+  {{- with .Values.config.auth.oidc }}
+  oidc:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.config.auth.oauth2 }}
+  oauth2:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.config.auth.anonymous }}
+  anonymous:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.config.auth.permission }}
+  permission:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+usip:
+  enabled: {{ .Values.config.usip.enabled }}
+  {{- with .Values.config.usip.uri }}
+  uri:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+sentryConfig:
+  {{- with .Values.config.sentryConfig.dsn }}
+  dsn: {{ . }}
+  {{- else }}
+  dsn: ""
+  {{- end }}
+  debug: false
+  enableTracing: true
+  TracesSampleRate: 1.0
