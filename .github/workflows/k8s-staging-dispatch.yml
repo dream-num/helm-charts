@@ -27,8 +27,6 @@ jobs:
           echo -e "${{ secrets.KUBECONFIG }}" >> ./kubeconfig
 
           if [ "${{ github.event.client_payload.service }}" == "universer" ]; then
-
-        # universer server
             helm --kubeconfig ./kubeconfig upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
               --set replicaCount=3 \
               --set config.database.password="${{ secrets.POSTGRES_PASSWORD }}" \
@@ -54,7 +52,7 @@ jobs:
               --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":1,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
               universer charts/universer
           
-          # license server  
+          if [ "${{ github.event.client_payload.service }}" == "license" ]; then
              helm --kubeconfig ./kubeconfig upgrade --install -n ${{ vars.K8S_NAMESPACE }} --create-namespace \
               --set replicaCount=2 \
               --set config.database.password="${{ secrets.POSTGRES_PASSWORD }}" \
