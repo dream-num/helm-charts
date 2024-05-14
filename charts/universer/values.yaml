@@ -159,7 +159,7 @@ job:
     registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
     repository: release/universer-sql
     pullPolicy: IfNotPresent
-    tag: "0.0.5"
+    tag: "0.0.6"
 
 istio:
   enabled: false
