@@ -62,6 +62,7 @@ extra:
 auth:
   enabled: {{ .Values.config.auth.enabled }}
   univerEnabled: {{ .Values.config.auth.univerEnabled }}
+  cookieDomain: {{ .Values.config.auth.cookieDomain }}
   {{- with .Values.config.auth.oidc }}
   oidc:
     {{- toYaml . | nindent 4 }}

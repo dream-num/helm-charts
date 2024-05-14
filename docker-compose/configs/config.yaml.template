@@ -45,13 +45,13 @@ extra:
 auth:
   enabled: ${AUTH_ENABLED}
   univerEnabled: ${UNIVER_ENABLED}
+  cookieDomain: ${AUTH_COOKIE_DOMAIN}
   oidc:
     enabled: ${AUTH_OIDC_ENABLED}
     issuer: ${AUTH_OIDC_ISSUER}
     clientID: ${AUTH_OIDC_CLIENT_ID}
     clientSecret: ${AUTH_OIDC_CLIENT_SECRET}
     redirectURL: ${AUTH_OIDC_CALLBACK_URL}
-    cookieDomain: ${AUTH_OIDC_COOKIE_DOMAIN}
 apiLimit:
   method:
     tokens: 600

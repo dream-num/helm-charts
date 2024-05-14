@@ -108,19 +108,20 @@ config:
   auth:
     enabled: false
     univerEnabled: false
+    cookieDomain: "abc.example.com"
     oidc:
       enabled: false
       issuer: https://accounts.google.com
       clientID: "xxxx"
       clientSecret: "xxxxxxxxxx"
       redirectURL: "http://example.com/oidc/callback"
-      cookieDomain: "abc.example.com"
+      cookieDomain: "abc.example.com" # deprecated
     oauth2:
       enabled: false
       clientID: "xxxx"
       clientSecret: "xxxxxxxxxx"
       redirectURL: "http://example.com/oauth2/callback"
-      cookieDomain: "abc.example.com"
+      cookieDomain: "abc.example.com" # deprecated
       authURL: "http://localhost:8081/oauth/authorize"
       tokenURL: "http://localhost:8081/oauth/token"
       apiURL: "http://localhost:8081/oauth/userinfo"
@@ -131,7 +132,6 @@ config:
       avatarPath: "avatar"
     anonymous:
       enabled: false
-      cookieDomain: "abc.example.com"
     permission:
       enabled: false
   apiLimit:
