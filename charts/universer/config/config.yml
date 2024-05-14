@@ -74,6 +74,16 @@ auth:
   anonymous:
     {{- toYaml . | nindent 4 }}
   {{- end }}
+  {{- with .Values.config.auth.permission }}
+  permission:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+usip:
+  enabled: {{ .Values.config.usip.enabled }}
+  {{- with .Values.config.usip.uri }}
+  uri:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 sentryConfig:
   {{- with .Values.config.sentryConfig.dsn }}
   dsn: {{ . }}

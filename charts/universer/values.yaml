@@ -132,6 +132,8 @@ config:
     anonymous:
       enabled: false
       cookieDomain: "abc.example.com"
+    permission:
+      enabled: false
   apiLimit:
     method:
       tokens: 600
@@ -140,6 +142,13 @@ config:
     perMethod: {}
   sentryConfig:
     dsn: "https://sentry.io/"
+  usip:
+    enabled: false
+    uri:
+      userInfo: "http://usip:8080/userinfo"
+      collaborators: "http://usip:8080/collaborators"
+      role: "http://usip:8080/role"
+      credential: "http://usip:8080/credential"
 
 license:
   LICENSE: ""
