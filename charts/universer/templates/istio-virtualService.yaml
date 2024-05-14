@@ -15,8 +15,6 @@ spec:
   - match:
       - uri:
           prefix: "/universer-api/"
-      - uri:
-          prefix: "/license-manage-api/"
     delegate:
       name: {{ include "universer.fullname" . }}-api
     headers:

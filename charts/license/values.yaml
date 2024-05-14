@@ -1,4 +1,4 @@
-# Default values for universer.
+# Default values for license.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -9,12 +9,13 @@ replicaCount: 1
 
 image:
   registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
-  repository: release/universer
+  repository: univer/universer-license
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 53cff73 # VERSION
+  tag: "latest" # VERSION
 
-imagePullSecrets: []
+imagePullSecrets:
+  - name: regcred
 nameOverride: ""
 fullnameOverride: ""
 
@@ -33,8 +34,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  http: 8000
-  grpc: 9000
+  http: 8001
 
 ingress:
   enabled: false
@@ -82,16 +82,8 @@ config:
     dbname: univer
     username: postgres
     password: postgres
-  rabbitmq:
-    host: rabbitmq
-    port: 5672
-    username: guest
-    password: guest
   redis:
     addr: redis:6379
-  apply:
-    host: collaboration-server
-    port: 5002
   admin: []
   s3:
     accessKeyID: ""
@@ -102,9 +94,6 @@ config:
     usePathStyle: false
     presignExpires: 3600s
     defaultBucket: univer
-  temporal:
-    addr: univer-temporal:7233
-    namespace: default
   auth:
     enabled: false
     univerEnabled: false
@@ -154,38 +143,31 @@ license:
   LICENSE: ""
   publicKey: ""
 
-job:
-  image:
-    registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
-    repository: release/universer-sql
-    pullPolicy: IfNotPresent
-    tag: "0.0.6"
-
 istio:
-  enabled: false
+  enabled: true
   
   gateway:
-    enabled: false
-    host: univer.private
+    enabled: true
+    host: staging.univer.plus
 
     # select istio ingress gateway. for example
     # ingressSelector:
     #   istio: ingressgateway
-    ingressSelector: {}
+    ingressSelector: {"istio":"ingress"}
 
     tls:
-      enabled: false
-      credentialName: ""
+      enabled: true
+      credentialName: "staging-host-credential"
   
   featureGateway:
-    enabled: false
-    host: univer.feature
+    enabled: true
+    host: dev.univer.plus
 
     # select istio ingress gateway. for example
     # ingressSelector:
     #   istio: ingressgateway
-    ingressSelector: {}
+    ingressSelector: {"istio":"ingress"}
 
     tls:
-      enabled: false
-      credentialName: ""
+      enabled: true
+      credentialName: "dev-host-credential"
