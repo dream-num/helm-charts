@@ -66,7 +66,7 @@ jobs:
               --set config.sentryConfig.dsn="${{  secrets.SENTRY_DNS  }}" \
               --set-json 'config.auth={"enabled":true,"univerEnabled":false,"oidc":{"enabled":true,"issuer":"${{ secrets.OIDC_ISSUER }}","clientID":"${{ secrets.OIDC_CLIENT_ID }}","clientSecret":"${{ secrets.OIDC_CLIENT_SECRET }}","redirectURL":"${{ secrets.OIDC_REDIRECT_URL }}","cookieDomain":"${{ secrets.COOKIE_DOMAIN }}"},"anonymous":{"enabled":true,"cookieDomain":"${{ secrets.COOKIE_DOMAIN }}"},"permission":{"enabled":true}}' \
               --set-json 'license={"LICENSE":"${{ secrets.LICENSE }}","publicKey":"${{ secrets.PUBLIC_KEY }}"}' \
-              --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/universer","tag":"${{ github.event.client_payload.tag }}"}' \
+              --set-json 'image={"registry":"${{ vars.REGISTRY }}","repository":"univer/universer-license","tag":"${{ github.event.client_payload.tag }}"}' \
               --set job.image.registry="${{ vars.REGISTRY }}" \
               --set-json 'imagePullSecrets=[{"name":"regcred"}]' \
               --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
