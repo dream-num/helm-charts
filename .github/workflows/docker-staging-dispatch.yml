@@ -58,6 +58,8 @@ jobs:
 
           cd $local_dir/docker-compose;
 
+          sed -i 's|auth:\n  enabled: false|auth:\n  enabled: true|' ./configs/config.yaml
+          
           bash run.dev.sh;
 
           exit;
