@@ -19,6 +19,8 @@ spec:
           prefix: "/sheet/"
       - uri:
           prefix: "/slide/"
+      - uri:
+          prefix: "/ot/"
     delegate:
       name: {{ include "collaboration-demo.fullname" . }}
     headers:
@@ -46,6 +48,8 @@ spec:
           prefix: "/sheet/"
       - uri:
           prefix: "/slide/"
+      - uri:
+          prefix: "/ot/"
     delegate:
       name: {{ include "collaboration-demo.fullname" . }}
 {{- end }}
