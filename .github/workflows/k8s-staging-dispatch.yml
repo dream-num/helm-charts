@@ -175,6 +175,7 @@ jobs:
               --set-json 'istio.gateway={"enabled":true,"host":"${{ secrets.K8S_UNIVER_HOST }}","ingressSelector":{"istio":"ingress"},"tls":{"enabled":true,"credentialName":"staging-host-credential"}}' \
               --set-json 'istio.featureGateway={"enabled":true,"host":"${{ secrets.K8S_UNIVER_FEATURE_HOST }}","ingressSelector":{"istio":"ingress"},"tls":{"enabled":true,"credentialName":"dev-host-credential"}}' \
               --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":1,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
+              --set env.UNIVERSER_COOKIE_DOMAIN="${{ secrets.COOKIE_DOMAIN }}" \
               univer-workspace-entry charts/univer-workspace-entry
 
           fi

@@ -108,3 +108,8 @@ istio:
     tls:
       enabled: false
       credentialName: ""
+env:
+  # Cookie domain for auth
+  # clear this value to disable auth
+  UNIVERSER_COOKIE_DOMAIN: ""
+  UNIVERSER_HOST: "universer"
