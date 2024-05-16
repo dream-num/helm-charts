@@ -33,6 +33,11 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: {{ include "common.images.image" .Values }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: UNIVERSER_COOKIE_DOMAIN
+              value: {{ .Values.env.UNIVERSER_COOKIE_DOMAIN | quote }}
+            - name: UNIVERSER_HOST
+              value: {{ .Values.env.UNIVERSER_HOST | quote }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
