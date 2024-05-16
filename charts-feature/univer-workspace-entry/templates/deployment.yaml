@@ -37,6 +37,11 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          env:
+            - name: UNIVERSER_COOKIE_DOMAIN
+              value: {{ .Values.env.UNIVERSER_COOKIE_DOMAIN | quote }}
+            - name: UNIVERSER_HOST
+              value: {{ .Values.env.UNIVERSER_HOST | quote }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}

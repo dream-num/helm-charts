@@ -86,3 +86,7 @@ istio:
   featureGateway:
     enabled: false
     host: univer.feature
+
+env:
+  UNIVERSER_COOKIE_DOMAIN: ""
+  UNIVERSER_HOST: "universer"
