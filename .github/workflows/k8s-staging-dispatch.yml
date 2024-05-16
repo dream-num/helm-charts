@@ -269,4 +269,4 @@ jobs:
 
             docker rm univer-workspace-entry
 
-            docker run -d --name univer-workspace-entry -p 3000:3000 univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-workspace-entry:${{ github.event.client_payload.tag }}
+            docker run -d --name univer-workspace-entry -p 3000:3000 -e UNIVERSER_COOKIE_DOMAIN=${{secrets.AI_AUTH_COOKIE_DOMAIN}} univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/univer/univer-workspace-entry:${{ github.event.client_payload.tag }}
