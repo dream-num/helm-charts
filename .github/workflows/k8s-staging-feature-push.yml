@@ -60,6 +60,7 @@ jobs:
               --set-json 'podAnnotations={"image-version":"${{ github.event.client_payload.tag }}"}' \
               --set-json 'affinity={"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"weight":50,"preference":{"matchExpressions":[{"key":"univer.ai/instance-type","operator":"In","values":["biz-intensive"]}]}}]}}' \
               --set-json 'istio.featureGateway={"enabled":true,"host":"${{ secrets.K8S_UNIVER_FEATURE_HOST }}"}' \
+              --set env.UNIVERSER_COOKIE_DOMAIN="${{ secrets.COOKIE_DOMAIN }}" \
               univer-workspace-entry-${{ github.event.client_payload.feature }} charts-feature/univer-workspace-entry
 
           fi
