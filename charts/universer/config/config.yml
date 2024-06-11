@@ -38,16 +38,8 @@ service:
     addr: "{{ tpl .Values.config.apply.host . }}:{{ .Values.config.apply.port }}"
     timeout: 10s
 apiLimit:
-  method:
-    tokens: {{ .Values.config.apiLimit.method.tokens }}
-    interval: {{ .Values.config.apiLimit.method.interval }}
-  {{- with .Values.config.apiLimit.ip }}
-  ip:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-  {{- with .Values.config.apiLimit.perMethod }}
-  perMethod:
-    {{- toYaml . | nindent 4 }}
+  {{- with .Values.config.apiLimit }}
+  {{- toYaml . | nindent 2 }}
   {{- end }}
 admin: 
 {{- if .Values.config.admin -}}
