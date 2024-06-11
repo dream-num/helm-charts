@@ -1,0 +1,36 @@
+name: 🎇 Update Repository
+
+on:
+  workflow_dispatch:
+    
+
+jobs:
+  update:
+    name: UpdateRepository
+    runs-on: arc-runner-set
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/checkout@v3
+      with:
+        repository: dream-num/helm-chart-private
+        path: /tmp/
+        token: ${{ secrets.GH_TOKEN }}
+    
+    - name: UpdateRepository
+      uses: technote-space/create-pr-action@v2
+      with:
+        EXECUTE_COMMANDS: |
+          rm -rf docker-compose
+          rm -rf charts/*
+          mv /tmp/helm-chart-private/docker-compose .
+          mv /tmp/helm-chart-private/charts/collaboration-demo charts/
+          mv /tmp/helm-chart-private/charts/collaboration-server charts/
+          mv /tmp/helm-chart-private/charts/univer-stack charts/
+          mv /tmp/helm-chart-private/charts/universer charts/
+          mv /tmp/helm-chart-private/charts/worker charts/
+        COMMIT_MESSAGE: 'chore: update repository'
+        COMMIT_NAME: 'GitHub Actions'
+        PR_BRANCH_PREFIX: 'create-pr-action/'
+        PR_BRANCH_NAME: 'update-repository-${PR_ID}'
+        PR_TITLE: 'chore: update repository'
