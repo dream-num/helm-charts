@@ -12,7 +12,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: bd3748f # VERSION
+  tag: 53cff73 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -52,17 +52,17 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-resources: {}
+resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+  requests:
+    cpu: 50m
+    memory: 50Mi
 
 nodeSelector: {}
 
@@ -140,6 +140,10 @@ config:
       interval: 30s
     ip: {}
     perMethod: {}
+    user:
+      tokens: 300
+      interval: 30s
+    perMethodUser: {}
   sentryConfig:
     dsn: "https://sentry.io/"
   usip:
@@ -159,14 +163,15 @@ job:
     registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
     repository: release/universer-sql
     pullPolicy: IfNotPresent
-    tag: "0.0.6"
+    tag: "0.0.7"
 
 istio:
   enabled: false
   
   gateway:
     enabled: false
-    host: univer.private
+    hosts:
+    - univer.private
 
     # select istio ingress gateway. for example
     # ingressSelector:
@@ -179,7 +184,8 @@ istio:
   
   featureGateway:
     enabled: false
-    host: univer.feature
+    hosts:
+    - univer.feature
 
     # select istio ingress gateway. for example
     # ingressSelector:

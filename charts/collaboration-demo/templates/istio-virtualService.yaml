@@ -8,7 +8,9 @@ metadata:
     {{- include "collaboration-demo.labels" . | nindent 4 }}
 spec:
   hosts:
-  - {{ .Values.istio.gateway.host | quote }}
+  {{- range .Values.istio.gateway.hosts }}
+  - {{ . | quote }}
+  {{- end }}
   gateways:
   - univer
   http:
@@ -37,7 +39,9 @@ metadata:
     {{- include "collaboration-demo.labels" . | nindent 4 }}
 spec:
   hosts:
-  - {{ .Values.istio.featureGateway.host | quote }}
+  {{- range .Values.istio.featureGateway.hosts }}
+  - {{ . | quote }}
+  {{- end }}
   gateways:
   - univer-feature
   http:

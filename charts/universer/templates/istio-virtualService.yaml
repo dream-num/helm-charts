@@ -8,10 +8,19 @@ metadata:
     {{- include "universer.labels" . | nindent 4 }}
 spec:
   hosts:
-  - {{ .Values.istio.gateway.host | quote }}
+  {{- range .Values.istio.gateway.hosts }}
+  - {{ . | quote }}
+  {{- end }}
   gateways:
   - univer
   http:
+  - match:
+      - uri:
+          regex: "^/universer-api/metrics"
+    directResponse:
+      status: 403
+      body:
+        string: "Forbbiden"
   - match:
       - uri:
           prefix: "/universer-api/"
@@ -31,20 +40,20 @@ metadata:
     {{- include "universer.labels" . | nindent 4 }}
 spec:
   hosts:
-  - {{ .Values.istio.featureGateway.host | quote }}
+  {{- range .Values.istio.featureGateway.hosts }}
+  - {{ . | quote }}
+  {{- end }}
   gateways:
   - univer-feature
   http:
   - match:
       - uri:
           prefix: "/universer-api/"
-      - uri:
-          prefix: "/license-manage-api/"
     delegate:
       name: {{ include "universer.fullname" . }}-api
 {{- end }}
 ---
-{{- if and (not .Values.ingress.enabled) (or .Values.istio.gateway.enabled .Values.istio.featureGateway.enabled) -}}
+{{- if and (not .Values.ingress.enabled) (or .Values.istio.gateway.enabled .Values.istio.featureGateway.enabled) }}
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
