@@ -17,20 +17,21 @@ if ! docker info > /dev/null 2>&1; then
     exit 1
 fi
 
-# check wget and curl command
-if ! [ -x "$(command -v wget)" ]; then
-    echo "Error: wget is not installed." >&2
-    exit 1
-fi
-
+# check curl command
 if ! [ -x "$(command -v curl)" ]; then
     echo "Error: curl is not installed." >&2
     exit 1
 fi
 
+# check unzip command
+if ! [ -x "$(command -v unzip)" ]; then
+    echo "Error: unzip is not installed." >&2
+    exit 1
+fi
+
 mkdir -p docker-compose \
     && cd docker-compose \
-    && wget https://release-univer.oss-cn-shenzhen.aliyuncs.com/release-demo/docker-compose.zip -O univer.zip \
+    && curl -o univer.zip https://release-univer.oss-cn-shenzhen.aliyuncs.com/release-demo/docker-compose.zip \
     && unzip univer.zip \
     && rm univer.zip \
     && if [ -f ../license.zip ]; then cp ../license.zip . && unzip license.zip -d configs && rm license.zip; fi \
