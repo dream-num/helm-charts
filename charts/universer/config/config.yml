@@ -86,3 +86,17 @@ sentryConfig:
   debug: false
   enableTracing: true
   TracesSampleRate: 1.0
+dataProtectionConf:
+  enableProtection: {{ .Values.config.dataProtectionConf.enableProtection }}
+  dataKeyRotate: {{ .Values.config.dataProtectionConf.dataKeyRotate }}
+  {{- if eq .Values.config.dataProtectionConf.kmsServiceName "aws" }}
+  awskms:
+    accessKeyID: {{ .Values.config.dataProtectionConf.awskms.accessKeyID }}
+    accessKeySecret: {{ .Values.config.dataProtectionConf.awskms.accessKeySecret }}
+    region: {{ .Values.config.dataProtectionConf.awskms.region }}
+    kmsKeyID: {{ .Values.config.dataProtectionConf.awskms.kmsKeyID }}
+  {{- else if eq .Values.config.dataProtectionConf.kmsServiceName "local" }}
+  localKMS:
+    cmkAlias: {{ .Values.config.dataProtectionConf.localKMS.cmkAlias }}
+    cmkBase64: {{ .Values.config.dataProtectionConf.localKMS.cmkBase64 }}
+  {{- end }}

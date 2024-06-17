@@ -30,8 +30,8 @@ spec:
       request:
         remove: [ x-feature-id ]
 {{ end }}
----
 {{- if and (not .Values.ingress.enabled) .Values.istio.featureGateway.enabled -}}
+---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
@@ -52,8 +52,8 @@ spec:
     delegate:
       name: {{ include "universer.fullname" . }}-api
 {{- end }}
----
 {{- if and (not .Values.ingress.enabled) (or .Values.istio.gateway.enabled .Values.istio.featureGateway.enabled) }}
+---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
