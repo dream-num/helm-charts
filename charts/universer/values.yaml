@@ -12,7 +12,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: b495d93 # VERSION
+  tag: bd3748f # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -145,7 +145,7 @@ config:
       interval: 30s
     perMethodUser: {}
   sentryConfig:
-    dsn: "https://sentry.io/"
+    dsn: ""
   usip:
     enabled: false
     uri:
@@ -153,6 +153,18 @@ config:
       collaborators: "http://usip:8080/collaborators"
       role: "http://usip:8080/role"
       credential: "http://usip:8080/credential"
+  dataProtectionConf:
+    enableProtection: false
+    kmsServiceName: "none"
+    dataKeyRotate: 5s
+    localKMS:
+      cmkAlias: alias/name
+      cmkBase64: "key base64"
+    awskms:
+      accessKeyID: ""
+      accessKeySecret: ""
+      region: ""
+      kmsKeyID: "cmkid or alias"
 
 license:
   LICENSE: ""
@@ -163,7 +175,7 @@ job:
     registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
     repository: release/universer-sql
     pullPolicy: IfNotPresent
-    tag: "0.0.7"
+    tag: "0.0.8"
 
 istio:
   enabled: false
