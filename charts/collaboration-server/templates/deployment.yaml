@@ -62,6 +62,8 @@ spec:
               value: {{ .Values.config.saveSheetSnapshotInterval | quote }}
             - name: SAVE_DOC_SNAPSHOT_INTERVAL
               value: {{ .Values.config.saveDocSnapshotInterval | quote }}
+            - name: ENABLE_MUTATION_APPLY_INTERCEPTOR
+              value: {{ .Values.config.enableMutationApplyInterceptor | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

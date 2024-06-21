@@ -157,6 +157,7 @@ config:
     enableProtection: false
     kmsServiceName: "none"
     dataKeyRotate: 5s
+    dataKeyCacheExpiration: 30s
     localKMS:
       cmkAlias: alias/name
       cmkBase64: "key base64"
@@ -184,26 +185,12 @@ istio:
     enabled: false
     hosts:
     - univer.private
-
-    # select istio ingress gateway. for example
-    # ingressSelector:
-    #   istio: ingressgateway
-    ingressSelector: {}
-
-    tls:
-      enabled: false
-      credentialName: ""
+    gateways:
+    - univer
   
   featureGateway:
     enabled: false
     hosts:
     - univer.feature
-
-    # select istio ingress gateway. for example
-    # ingressSelector:
-    #   istio: ingressgateway
-    ingressSelector: {}
-
-    tls:
-      enabled: false
-      credentialName: ""
+    gateways:
+    - univer-feature

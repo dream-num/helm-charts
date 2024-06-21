@@ -89,6 +89,7 @@ sentryConfig:
 dataProtectionConf:
   enableProtection: {{ .Values.config.dataProtectionConf.enableProtection }}
   dataKeyRotate: {{ .Values.config.dataProtectionConf.dataKeyRotate }}
+  dataKeyCacheExpiration: {{ .Values.config.dataProtectionConf.dataKeyCacheExpiration }}
   {{- if eq .Values.config.dataProtectionConf.kmsServiceName "aws" }}
   awskms:
     accessKeyID: {{ .Values.config.dataProtectionConf.awskms.accessKeyID }}
