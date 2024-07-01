@@ -29,20 +29,25 @@ if ! [ -x "$(command -v unzip)" ]; then
     exit 1
 fi
 
-read -p "enter your email: " email
+echo "Please leave your email to subscribe to our upgrade notifications."
+read -p "Enter your email: " email
 if [ -z "$email" ]; then
-    echo "Error: email is required." >&2
+    echo "⚠️ Email cannot be empty. Please enter a valid email address." >&2
     exit 1
 fi
 
-read -p "enter license.zip absolute path if you have: " license
+read -p "Enter the path for license.zip or press Enter to continue: " license
+
+if [ -f "$license" ]; then
+    mkdir -p docker-compose/configs
+    unzip -q "$license" -d docker-compose/configs
+fi
 
 mkdir -p docker-compose \
     && cd docker-compose \
     && curl -s -o univer.zip https://release-univer.oss-cn-shenzhen.aliyuncs.com/release-demo/docker-compose.zip \
     && unzip -q univer.zip \
     && rm univer.zip \
-    && if [ -f "$license" ]; then unzip -q "$license" -d configs; fi \
     && bash run.sh
 
 curl -s "https://univer.ai/license-manage-api/license/deploy-access?email=${email}" > /dev/null 2>&1
