@@ -29,13 +29,23 @@ if ! [ -x "$(command -v unzip)" ]; then
     exit 1
 fi
 
+read -p "enter your email: " email
+if [ -z "$email" ]; then
+    echo "Error: email is required." >&2
+    exit 1
+fi
+
+read -p "enter license.zip absolute path if you have: " license
+
 mkdir -p docker-compose \
     && cd docker-compose \
-    && curl -o univer.zip https://release-univer.oss-cn-shenzhen.aliyuncs.com/release-demo/docker-compose.zip \
-    && unzip univer.zip \
+    && curl -s -o univer.zip https://release-univer.oss-cn-shenzhen.aliyuncs.com/release-demo/docker-compose.zip \
+    && unzip -q univer.zip \
     && rm univer.zip \
-    && if [ -f ../license.zip ]; then cp ../license.zip . && unzip license.zip -d configs && rm license.zip; fi \
+    && if [ -f "$license" ]; then unzip -q "$license" -d configs; fi \
     && bash run.sh
+
+curl -s "https://univer.ai/license-manage-api/license/deploy-access?email=${email}" > /dev/null 2>&1
 
 # check universer start by 8000 port in loop
 for i in {1..100}; do
