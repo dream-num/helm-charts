@@ -1,16 +1,29 @@
-name: Sync to OSS
+name: 🔄 Sync to OSS
 
 on:
   workflow_dispatch:
+    inputs:
+      branch:
+        description: 'git branch(if not set, will use action trigger branch)'
+        required: false
+        default: ''
 
 jobs:
   update:
     name: Sync to OSS
-    runs-on: arc-runner-set
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - name: manual Checkout
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.inputs.branch }}
+      if: ${{ github.event.inputs.branch != '' }}
 
-    - name: zip docker-compose.yml
+    - name: default Checkout
+      uses: actions/checkout@v4
+      if: ${{ github.event.inputs.branch == '' }}
+
+    - name: zip docker-compose.zip
       run: |
         cd docker-compose
         zip -r ~/docker-compose.zip .
@@ -19,8 +32,8 @@ jobs:
       uses: hexf00/upload-to-oss@v1
       with:
         source: '~/docker-compose.zip'
-        dest: 'test/test.zip'
-        bucket: ${{vars.OSS_BUCKET}}
+        dest: ${{secrets.OSS_DOCKER_ZIP_PATH}}
+        bucket: ${{secrets.OSS_BUCKET}}
         region: "oss-cn-shenzhen"
         accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
         accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
@@ -28,8 +41,8 @@ jobs:
       uses: hexf00/upload-to-oss@v1
       with:
         source: 'install.sh'
-        dest: 'test/install.sh'
-        bucket: ${{vars.OSS_BUCKET}}
+        dest: ${{secrets.OSS_INSTALL_SCRIPT_PATH}}
+        bucket: ${{secrets.OSS_BUCKET}}
         region: "oss-cn-shenzhen"
         accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
         accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
