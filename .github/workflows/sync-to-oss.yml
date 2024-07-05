@@ -1,0 +1,35 @@
+name: Sync to OSS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update:
+    name: Sync to OSS
+    runs-on: arc-runner-set
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: zip docker-compose.yml
+      run: |
+        cd docker-compose
+        zip -r ~/docker-compose.zip .
+
+    - name: Sync docker-compose.zip to OSS
+      uses: hexf00/upload-to-oss@v1
+      with:
+        source: '~/docker-compose.zip'
+        dest: 'test/test.zip'
+        bucket: ${{vars.OSS_BUCKET}}
+        region: "oss-cn-shenzhen"
+        accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
+        accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
+    - name: Sync install.sh to OSS
+      uses: hexf00/upload-to-oss@v1
+      with:
+        source: 'install.sh'
+        dest: 'test/install.sh'
+        bucket: ${{vars.OSS_BUCKET}}
+        region: "oss-cn-shenzhen"
+        accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
+        accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
