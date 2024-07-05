@@ -32,9 +32,10 @@ if ! [ -x "$(command -v unzip)" ]; then
 fi
 
 
-tokenFileName="${HOME}/.univer/deploy_token"
+tokenPath="${HOME}/.univer/"
+tokenFileName="${tokenPath}/deploy_token"
 getTokenURL="https://univer.ai/cli-auth"
-verifyTokenURL="https://univer.ai/license-manage-api/license/deploy-verify-token"
+verifyTokenURL="https://univer.ai/license-manage-api/cli-auth/verify-token"
 
 
 openURL() {
@@ -42,7 +43,7 @@ openURL() {
     local openCommand
 
     # Determine the appropriate command to open the URL based on the OS
-    if [[ "$(uname -r)" == *microsoftA* ]]; then
+    if [[ "$(uname -r)" == *microsoft* ]]; then
         # Assuming running under WSL
         openCommand="cmd.exe /c start"
     elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
@@ -83,7 +84,7 @@ openURL() {
 verifyToken() {
   reqToken=$1
   verbose=$2
-  response="$(curl -s -w "\n%{http_code}" ${verifyTokenURL} -d "token=${reqToken}")";
+  response="$(curl -s -w "\n%{http_code}" ${verifyTokenURL} -H 'X-Session-Token: '"${reqToken}" -d "token=${reqToken}&source=deploy")";
   http_body="$(echo "${response}" | head -n -1)";
   http_code="$(echo "${response}" | tail -n 1)";
 
@@ -113,7 +114,6 @@ getLicense(){
   done
 }
 
-getLicense
 
 token=""
 if [[ -s ${tokenFileName} ]]; then
@@ -134,11 +134,14 @@ if [ -z "$token" ]; then
   while true ; do
     read -r -p "> Paste your token here: " token
     if verifyToken "${token}" true; then
+      mkdir -p "${tokenPath}"
       echo -n "${token}" > "${tokenFileName}"
       break
     fi
   done
 fi
+
+getLicense
 
 mkdir -p docker-compose \
     && cd docker-compose \
