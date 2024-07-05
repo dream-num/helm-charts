@@ -7,6 +7,14 @@ on:
         description: 'git branch(if not set, will use action trigger branch)'
         required: false
         default: ''
+      sync-docker:
+        description: 'can sync docker-compose.zip'
+        required: false
+        default: 'true'
+      sync-install:
+        description: 'can sync install.sh'
+        required: false
+        default: 'true'
 
 jobs:
   update:
@@ -37,6 +45,7 @@ jobs:
         region: "oss-cn-shenzhen"
         accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
         accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
+      if: ${{ github.event.inputs.sync-docker == 'true' }}
     - name: Sync install.sh to OSS
       uses: hexf00/upload-to-oss@v1
       with:
@@ -46,3 +55,4 @@ jobs:
         region: "oss-cn-shenzhen"
         accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
         accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
+      if: ${{ github.event.inputs.sync-install == 'true' }}
