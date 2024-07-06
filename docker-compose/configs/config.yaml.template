@@ -62,3 +62,7 @@ sentryConfig:
   debug: false
   enableTracing: true
   TracesSampleRate: 1.0
+dataProtectionConf:
+  enableProtection: false
+  dataKeyRotate: 5s
+  dataKeyCacheExpiration: 30s
