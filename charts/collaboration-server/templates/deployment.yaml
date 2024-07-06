@@ -64,6 +64,15 @@ spec:
               value: {{ .Values.config.saveDocSnapshotInterval | quote }}
             - name: ENABLE_MUTATION_APPLY_INTERCEPTOR
               value: {{ .Values.config.enableMutationApplyInterceptor | quote }}
+            - name: SENTRY_DSN
+              value: {{ .Values.sentry.dsn | quote }}
+            - name: ENABLE_SENTRY
+              value: {{ .Values.sentry.enabled | quote }}
+            - name: SENTRY_TRACES_SAMPLE_RATE
+              value: {{ .Values.sentry.tracesSampleRate | quote }}
+            - name: SENTRY_ENVIRONMENT
+              value: {{ .Values.sentry.environment | quote }}
+              
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
