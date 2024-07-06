@@ -12,7 +12,7 @@ image:
   repository: release/univer-collaboration
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: d23138e # VERSION
+  tag: 6ec9ea7 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -30,6 +30,14 @@ securityContext: {}
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
   # runAsUser: 1000
+
+sentry:
+  # only enable sentry when sentry.enabled is true
+  enabled: false
+  dsn: ""
+  tracesSampleRate: 1.0
+  # like "staging" or "production"
+  environment: ""
 
 service:
   type: ClusterIP
