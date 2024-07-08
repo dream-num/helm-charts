@@ -85,7 +85,7 @@ verifyToken() {
   reqToken=$1
   verbose=$2
   response="$(curl -s -w "\n%{http_code}" ${verifyTokenURL} -H 'X-Session-Token: '"${reqToken}" -d "token=${reqToken}&source=deploy")";
-  http_body="$(echo "${response}" | head -n -1)";
+  # http_body="$(echo "${response}" | head -n -1)";
   http_code="$(echo "${response}" | tail -n 1)";
 
   if [[ "$http_code" -ne 200 ]] ; then
