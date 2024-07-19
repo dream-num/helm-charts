@@ -66,3 +66,20 @@ dataProtectionConf:
   enableProtection: false
   dataKeyRotate: 5s
   dataKeyCacheExpiration: 30s
+sesConfig:
+  accessKey: ""
+  accessSecret: ""
+  region: ""
+  templateName: ""
+  redirectURL: ""
+  loginErrorURL: ""
+usip:
+  enabled: ${USIP_ENBALED}
+  uri:
+    credential: ${USIP_URI_CREDENTIAL}
+    userinfo: ${USIP_URI_USERINFO}
+    role: ${USIP_URI_ROLE}
+    collaborators: ${USIP_URI_COLLABORATORS}
+postHogConf:
+  enabled: false
+

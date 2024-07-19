@@ -66,6 +66,9 @@ spec:
             - name: secret
               mountPath: /data/configs/public_key.crt
               subPath: public_key.crt
+            - name: secret
+              mountPath: /data/configs/casdoor.pem
+              subPath: casdoor.pem
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

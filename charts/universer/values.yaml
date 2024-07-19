@@ -12,7 +12,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 41a5a52 # VERSION
+  tag: bd3748f # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -109,6 +109,9 @@ config:
     enabled: false
     univerEnabled: false
     cookieDomain: "abc.example.com"
+    casdoorSDK:
+      organizationName: ""
+      applicationName: ""
     oidc:
       enabled: false
       issuer: https://accounts.google.com
@@ -166,10 +169,24 @@ config:
       accessKeySecret: ""
       region: ""
       kmsKeyID: "cmkid or alias"
+  sesConfig:
+    accessKey: ""
+    accessSecret: ""
+    region: ""
+    templateName: ""
+    redirectURL: "http://example.com/oidc/email-callback"
+    loginErrorURL: "http://example.com/fail"
+  postHogConf:
+    enabled: false
+    endpoint: ""
+    projectKey: ""
 
 license:
   LICENSE: ""
   publicKey: ""
+
+casdoorLicense:
+    publicKey: ""
 
 job:
   image:
