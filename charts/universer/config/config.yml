@@ -55,6 +55,10 @@ auth:
   enabled: {{ .Values.config.auth.enabled }}
   univerEnabled: {{ .Values.config.auth.univerEnabled }}
   cookieDomain: {{ .Values.config.auth.cookieDomain }}
+  {{- with .Values.config.auth.casdoorSDK }}
+  casdoorSDK:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   {{- with .Values.config.auth.oidc }}
   oidc:
     {{- toYaml . | nindent 4 }}
@@ -101,3 +105,14 @@ dataProtectionConf:
     cmkAlias: {{ .Values.config.dataProtectionConf.localKMS.cmkAlias }}
     cmkBase64: {{ .Values.config.dataProtectionConf.localKMS.cmkBase64 }}
   {{- end }}
+sesConfig:
+  accessKey: {{ .Values.config.sesConfig.accessKey }}
+  accessSecret: {{ .Values.config.sesConfig.accessSecret }}
+  region: {{ .Values.config.sesConfig.region }}
+  templateName: {{ .Values.config.sesConfig.templateName }}
+  redirectURL: {{ .Values.config.sesConfig.redirectURL }}
+  loginErrorURL: {{ .Values.config.sesConfig.loginErrorURL }}
+postHogConf:
+  enabled: {{ .Values.config.postHogConf.enabled}}
+  endpoint: {{ default "" .Values.config.postHogConf.endpoint}}
+  projectKey: {{ default "" .Values.config.postHogConf.projectKey}}
