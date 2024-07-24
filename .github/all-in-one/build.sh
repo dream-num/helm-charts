@@ -13,17 +13,17 @@ mkdir -p $dir \
 source ${dir}/.env
 
 echo "save univer image"
-# docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer:${UNIVERSER_VERSION}
-# docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:${UNIVERSER_SQL_VERSION}
-# docker pull nginx:alpine-slim
-# docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration:${COLLABORATION_SERVER_VERSION}
-# docker pull postgres:${POSTGRES_VERSION}
-# docker pull rabbitmq:${RABBITMQ_VERSION}
-# docker pull bitnami/redis:${REDIS_VERSION}
-# docker pull temporalio/auto-setup:${TEMPORAL_VERSION}
-# docker pull bitnami/minio:${MINIO_VERSION}
-# docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/worker-exchange:${UNIVER_WORKER_EXCHANGE_VERSION}
-# docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
+docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer:${UNIVERSER_VERSION}
+docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:${UNIVERSER_SQL_VERSION}
+docker pull nginx:alpine-slim
+docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration:${COLLABORATION_SERVER_VERSION}
+docker pull postgres:${POSTGRES_VERSION}
+docker pull rabbitmq:${RABBITMQ_VERSION}
+docker pull bitnami/redis:${REDIS_VERSION}
+docker pull temporalio/auto-setup:${TEMPORAL_VERSION}
+docker pull bitnami/minio:${MINIO_VERSION}
+docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/worker-exchange:${UNIVER_WORKER_EXCHANGE_VERSION}
+docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
 docker save \
     univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer:${UNIVERSER_VERSION} \
     univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:${UNIVERSER_SQL_VERSION} \
@@ -39,13 +39,13 @@ docker save \
     | gzip > univer-image.tar.gz
 
 echo "save observability image"
-# docker pull grafana/loki:${LOKI_VERSION}
-# docker pull grafana/promtail:${PROMTAIL_VERSION}
-# docker pull grafana/grafana:${GRAFANA_VERSION}
-# docker pull bitnami/prometheus:${PROMETHEUS_VERSION}
-# docker pull oliver006/redis_exporter:${REDIS_EXPORTER_VERSION}
-# docker pull bitnami/postgres-exporter:${POSTGRES_EXPORTER_VERSION}
-# docker pull kbudde/rabbitmq-exporter:${RABBITMQ_EXPORTER_VERSION}
+docker pull grafana/loki:${LOKI_VERSION}
+docker pull grafana/promtail:${PROMTAIL_VERSION}
+docker pull grafana/grafana:${GRAFANA_VERSION}
+docker pull bitnami/prometheus:${PROMETHEUS_VERSION}
+docker pull oliver006/redis_exporter:${REDIS_EXPORTER_VERSION}
+docker pull bitnami/postgres-exporter:${POSTGRES_EXPORTER_VERSION}
+docker pull kbudde/rabbitmq-exporter:${RABBITMQ_EXPORTER_VERSION}
 docker save \
     grafana/loki:${LOKI_VERSION} \
     grafana/promtail:${PROMTAIL_VERSION} \
