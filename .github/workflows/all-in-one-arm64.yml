@@ -27,3 +27,4 @@ jobs:
         region: "oss-cn-shenzhen"
         accessKeyId: ${{ secrets.S3_ACCESS_KEY_ID }}
         accessKeySecret: ${{ secrets.S3_ACCESS_KEY_SECRET }}
+        timeout: 1200s
