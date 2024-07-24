@@ -17,8 +17,6 @@ jobs:
         bash build.sh amd64
 
         ls -l
-
-        echo "ALLINONE_PATH=$(echo $PWD/all-in-one.$1.${UNIVERSER_VERSION}.tar)" >> $GITHUB_ENV
     
     - name: Sync all-in-one.tar to OSS
       uses: hexf00/upload-to-oss@v1
