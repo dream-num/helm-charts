@@ -61,3 +61,4 @@ rm -rf $dir
 tar -cvf all-in-one.$1.${UNIVERSER_VERSION}.tar univer-image.tar.gz observability-image.tar.gz univer.zip install.sh uninstall.sh
 
 echo "ALLINONE_PATH=$(echo $PWD/all-in-one.$1.${UNIVERSER_VERSION}.tar)" >> $GITHUB_ENV
+echo "ALLINONE_TAR=$(echo all-in-one.$1.${UNIVERSER_VERSION}.tar)" >> $GITHUB_ENV
