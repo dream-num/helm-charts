@@ -1,0 +1,31 @@
+name: 🌙 AllInOne ARM64
+
+on:
+  workflow_dispatch:
+    
+
+jobs:
+  deploy:
+    name: build
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - run: |
+        cp -r .github/all-in-one/ . && cd all-in-one
+
+        bash build.sh arm64
+
+        ls
+
+        echo "ALLINONE_PATH=$(echo $PWD/all-in-one.$1.${UNIVERSER_VERSION}.tar)" >> $GITHUB_ENV
+    
+    - name: Sync all-in-one.tar to OSS
+      uses: hexf00/upload-to-oss@v1
+      with:
+        source: '${{ env.ALLINONE_PATH }}'
+        dest: ${{ secrets.OSS_ALLINONE_PATH }}
+        bucket: ${{ secrets.OSS_BUCKET }}
+        region: "oss-cn-shenzhen"
+        accessKeyId: ${{ secrets.S3_ACCESS_KEY_ID }}
+        accessKeySecret: ${{ secrets.S3_ACCESS_KEY_SECRET }}
