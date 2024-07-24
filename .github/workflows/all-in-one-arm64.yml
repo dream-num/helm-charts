@@ -12,7 +12,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - run: |
-        cp -r .github/all-in-one/ . && cd all-in-one
+        cp -R .github/all-in-one . && cd all-in-one
 
         bash build.sh arm64
 
