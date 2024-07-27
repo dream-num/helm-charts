@@ -13,6 +13,7 @@ data:
     driver: ${DATABASE_DRIVER}
     database: ${DATABASE_DBNAME}
     dsn: ${DATABASE_DSN}
+    replicaDSN: ${DATABASE_REPLICA_DSN}
   rabbitmq:
     addr: amqp://${RABBITMQ_USERNAME}:${RABBITMQ_PASSWORD}@${RABBITMQ_HOST}:${RABBITMQ_PORT}/
   clickhouse:

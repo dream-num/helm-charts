@@ -12,7 +12,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.2.4 # VERSION
+  tag: bd3748f # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -82,6 +82,7 @@ config:
     dbname: univer
     username: postgres
     password: postgres
+    replicaHost: ""
   rabbitmq:
     host: rabbitmq
     port: 5672
@@ -89,6 +90,11 @@ config:
     password: guest
   redis:
     addr: redis:6379
+    read_timeout: 1s
+    write_timeout: 1s
+    sentinel:
+      enabled: false
+      masterName: ""
   apply:
     host: collaboration-server
     port: 5002
@@ -193,7 +199,7 @@ job:
     registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
     repository: release/universer-sql
     pullPolicy: IfNotPresent
-    tag: "0.0.8"
+    tag: "0.0.9"
 
 istio:
   enabled: false

@@ -18,6 +18,7 @@ fi
 COMPOSE_FILE="docker-compose.yaml"
 ENV_FILE=".env"
 DATABASE_DSN='host=${DATABASE_HOST} port=${DATABASE_PORT} dbname=${DATABASE_DBNAME} user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} sslmode=disable TimeZone=Asia/Shanghai'
+DATABASE_REPLICA_DSN=""
 
 choose_compose_file() {
     . $ENV_FILE
@@ -36,6 +37,23 @@ choose_compose_file() {
         COMPOSE_FILE="docker-compose.db.yaml"
     ;;
     esac
+
+    if [ "${DATABASE_REPLICA_HOST}" != "" ]; then
+        case "$DATABASE_DRIVER" in
+        "postgresql")
+            DATABASE_REPLICA_DSN='host=${DATABASE_REPLICA_HOST} port=${DATABASE_PORT} dbname=${DATABASE_DBNAME} user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} sslmode=disable TimeZone=Asia/Shanghai'
+        ;;
+        "mysql")
+            DATABASE_REPLICA_DSN='${DATABASE_USERNAME}:${DATABASE_PASSWORD}@tcp(${DATABASE_REPLICA_HOST}:${DATABASE_PORT})/${DATABASE_DBNAME}?charset=utf8mb4\&parseTime=True\&loc=Local'
+        ;;
+        "dameng")
+            DATABASE_REPLICA_DSN='dm://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_REPLICA_HOST}:${DATABASE_PORT}?autoCommit=true'
+        ;;
+        "gaussdb")
+            DATABASE_REPLICA_DSN='host=${DATABASE_REPLICA_HOST} port=${DATABASE_PORT} dbname=${DATABASE_DBNAME} user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} sslmode=disable TimeZone=Asia/Shanghai'
+        ;;
+        esac
+    fi
 }
 
 init_config() {

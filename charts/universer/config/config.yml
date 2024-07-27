@@ -13,6 +13,7 @@ data:
     driver: {{ .Values.config.database.driver }}
     database: {{ .Values.config.database.dbname }}
     dsn: {{ include "universer.database.dsn" .Values.config.database }}
+    replicaDSN: {{ include "universer.database.replicaDSN" .Values.config.database }}
   rabbitmq:
     addr: amqp://{{ .Values.config.rabbitmq.username }}:{{ .Values.config.rabbitmq.password }}@{{ tpl .Values.config.rabbitmq.host . }}:{{ .Values.config.rabbitmq.port }}/
   clickhouse:
@@ -20,10 +21,10 @@ data:
   temporal:
     addr: {{ tpl .Values.config.temporal.addr . }}
     namespace: {{ .Values.config.temporal.namespace }}
+  {{- with .Values.config.redis }}
   redis:
-    addr: {{ tpl .Values.config.redis.addr . }}
-    read_timeout: 1s
-    write_timeout: 1s
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   s3:
     accessKeyID: {{ .Values.config.s3.accessKeyID }}
     accessKeySecret: {{ .Values.config.s3.accessKeySecret }}
