@@ -65,3 +65,17 @@ version: default
 {{ fail "unknow database driver, should use postgresql or mysql." }}
 {{- end }}
 {{- end }}
+
+{{- define "universer.database.replicaDSN" -}}
+{{- if .replicaHost -}}
+{{- if eq .driver "postgresql" -}}
+{{- printf "host=%s port=%v user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai" .replicaHost .port .username .password .dbname -}}
+{{- else if eq .driver "mysql" -}}
+{{- printf "%s:%s@tcp(%s:%v)/%s?charset=utf8mb4&parseTime=True&loc=Local" .username .password .replicaHost .port .dbname -}}
+{{- else -}}
+{{ fail "unknow database driver, should use postgresql or mysql." }}
+{{- end }}
+{{- else -}}
+{{- printf "" -}}
+{{- end }}
+{{- end }}

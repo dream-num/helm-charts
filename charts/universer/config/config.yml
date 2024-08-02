@@ -13,6 +13,7 @@ data:
     driver: {{ .Values.config.database.driver }}
     database: {{ .Values.config.database.dbname }}
     dsn: {{ include "universer.database.dsn" .Values.config.database }}
+    replicaDSN: {{ include "universer.database.replicaDSN" .Values.config.database }}
   rabbitmq:
     addr: amqp://{{ .Values.config.rabbitmq.username }}:{{ .Values.config.rabbitmq.password }}@{{ tpl .Values.config.rabbitmq.host . }}:{{ .Values.config.rabbitmq.port }}/
   clickhouse:
@@ -20,10 +21,10 @@ data:
   temporal:
     addr: {{ tpl .Values.config.temporal.addr . }}
     namespace: {{ .Values.config.temporal.namespace }}
+  {{- with .Values.config.redis }}
   redis:
-    addr: {{ tpl .Values.config.redis.addr . }}
-    read_timeout: 1s
-    write_timeout: 1s
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   s3:
     accessKeyID: {{ .Values.config.s3.accessKeyID }}
     accessKeySecret: {{ .Values.config.s3.accessKeySecret }}
@@ -116,3 +117,24 @@ postHogConf:
   enabled: {{ .Values.config.postHogConf.enabled}}
   endpoint: {{ default "" .Values.config.postHogConf.endpoint}}
   projectKey: {{ default "" .Values.config.postHogConf.projectKey}}
+entitlementConf:
+  enable: {{ .Values.config.entitlementConf.enable }}
+  defaultEntiConf:
+    anonymousDefaultEntiId: {{ .Values.config.entitlementConf.defaultEntiConf.anonymousDefaultEntiId }}
+    registeredDefaultEntiId: {{ .Values.config.entitlementConf.defaultEntiConf.registeredDefaultEntiId }}
+  cronConf:
+    reportRetryCron: {{ .Values.config.entitlementConf.cronConf.reportRetryCron | quote }}
+    minRetryInterval: {{ .Values.config.entitlementConf.cronConf.minRetryInterval }}
+    retryRate: {{ .Values.config.entitlementConf.cronConf.retryRate }}
+    pendingSubCleanCron: {{ .Values.config.entitlementConf.cronConf.pendingSubCleanCron | quote }}
+    detectInterval: {{ .Values.config.entitlementConf.cronConf.detectInterval }}
+    cleanRate: {{ .Values.config.entitlementConf.cronConf.cleanRate }}
+  stripeConf:
+    apiPK: {{ .Values.config.entitlementConf.stripeConf.apiPK | quote }}
+    apiSK: {{ .Values.config.entitlementConf.stripeConf.apiSK | quote }}
+    whSK: {{ .Values.config.entitlementConf.stripeConf.whSK | quote }}
+    timeout: {{ .Values.config.entitlementConf.stripeConf.timeout }}
+workspace:
+{{- with .Values.config.workspace }}
+  {{- toYaml . | nindent 2 }}
+{{- end }}
