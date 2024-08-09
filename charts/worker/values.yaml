@@ -51,3 +51,10 @@ affinity: {}
 temporalServer:
   host: temporal-frontend.temporal:7233
   namespace: default
+temporalWorker:
+  importConcurrent: 1
+  exportConcurrent: 1
+  singleImportTimeout: 1200
+  totalImportTimeout: 3660
+  singleExportTimeout: 1200
+  totalExportTimeout: 3660

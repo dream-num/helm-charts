@@ -16,13 +16,15 @@ spec:
   - {{ . | quote }}
   {{- end }}
   http:
+  {{- range .Values.istio.forbbidenApi }}
   - match:
       - uri:
-          regex: "^/universer-api/metrics"
+          regex: {{ . | quote }}
     directResponse:
       status: 403
       body:
         string: "Forbbiden"
+  {{- end }}
   - match:
       - uri:
           prefix: "/universer-api/"
@@ -50,6 +52,15 @@ spec:
   - {{ . | quote }}
   {{- end }}
   http:
+  {{- range .Values.istio.forbbidenApi }}
+  - match:
+      - uri:
+          regex: {{ . | quote }}
+    directResponse:
+      status: 403
+      body:
+        string: "Forbbiden"
+  {{- end }}
   - match:
       - uri:
           prefix: "/universer-api/"
