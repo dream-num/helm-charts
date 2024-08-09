@@ -150,6 +150,7 @@ services:
   univer-minio:
     restart: always
     image: bitnami/minio:${MINIO_VERSION}
+    user: root
     container_name: univer-minio
     environment:
       - MINIO_ROOT_USER=${S3_USER}

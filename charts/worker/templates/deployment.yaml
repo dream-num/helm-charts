@@ -37,6 +37,18 @@ spec:
               value: {{ tpl .Values.temporalServer.host . | quote }}
             - name: TEMPORAL_NAMESPACE
               value: {{ .Values.temporalServer.namespace | quote }}
+            - name: IMPORT_CONCURRENT
+              value: {{ .Values.temporalWorker.importConcurrent | quote }}
+            - name: EXPORT_CONCURRENT
+              value: {{ .Values.temporalWorker.exportConcurrent | quote }}
+            - name: SINGLE_IMPORT_TIMEOUT
+              value: {{ .Values.temporalWorker.singleImportTimeout | quote }}
+            - name: TOTAL_IMPORT_TIMEOUT
+              value: {{ .Values.temporalWorker.totalImportTimeout | quote }}
+            - name: SINGLE_EXPORT_TIMEOUT
+              value: {{ .Values.temporalWorker.singleExportTimeout | quote }}
+            - name: TOTAL_EXPORT_TIMEOUT
+              value: {{ .Values.temporalWorker.totalExportTimeout | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
