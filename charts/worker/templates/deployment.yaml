@@ -49,6 +49,10 @@ spec:
               value: {{ .Values.temporalWorker.singleExportTimeout | quote }}
             - name: TOTAL_EXPORT_TIMEOUT
               value: {{ .Values.temporalWorker.totalExportTimeout | quote }}
+            - name: SERVICE_NAME
+              value: "exchange-worker"
+            - name: SERVICE_VERSION
+              value: {{ .Values.image.tag | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

@@ -69,6 +69,11 @@ spec:
             - name: secret
               mountPath: /data/configs/casdoor.pem
               subPath: casdoor.pem
+          env:
+            - name: SERVICE_NAME
+              value: "universer"
+            - name: SERVICE_VERSION
+              value: {{ .Values.image.tag | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
