@@ -8,6 +8,8 @@ services:
       - 9000
     environment:
       - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-temporal,collaboration-server,univer-minio
+      - SERVICE_NAME=universer
+      - SERVICE_VERSION=${UNIVERSER_VERSION}
     volumes:
       - ./configs:/data/configs
       - /var/run/docker.sock:/var/run/docker.sock
@@ -180,6 +182,8 @@ services:
       - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-temporal,univer-minio,universer
       - TEMPORAL_SERVER=${TEMPORAL_HOST}:${TEMPORAL_PORT}
       - TEMPORAL_NAMESPACE=${TEMPORAL_NAMESPACE}
+      - SERVICE_NAME=exchange-worker
+      - SERVICE_VERSION=${UNIVER_WORKER_EXCHANGE_VERSION}
     depends_on:
       - univer-temporal
     networks:
