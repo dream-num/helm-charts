@@ -2,10 +2,26 @@
 
 set -eu
 
-# check docker and docker-compose
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 if ! [ -x "$(command -v docker)" ]; then
-    echo "Error: docker is not installed." >&2
-    exit 1
+    echo "Docker is not installed."
+    read -p "Do you want to install Docker? (Y/n): " choice
+    choice=${choice:-Y}  # Default to 'Y' if no input is provided
+    case "$choice" in
+        y|Y )
+            # run get-docker script from local get-docker/get-docker.sh
+            bash $SCRIPT_DIR/get-docker/get-docker.sh
+            ;;
+        n|N )
+            echo "Installation aborted. Docker is required to proceed." >&2
+            exit 1
+            ;;
+        * )
+            echo "Invalid input. Installation aborted." >&2
+            exit 1
+            ;;
+    esac
 fi
 
 if ! [ -x "$(command -v docker-compose)" ] && ! [ -x "$(command -v docker compose)" ]; then
