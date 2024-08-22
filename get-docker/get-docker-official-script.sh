@@ -93,7 +93,7 @@ if [ -z "$CHANNEL" ]; then
 	CHANNEL=$DEFAULT_CHANNEL_VALUE
 fi
 
-DEFAULT_DOWNLOAD_URL="https://mirrors.tuna.tsinghua.edu.cn/docker-ce"
+DEFAULT_DOWNLOAD_URL="https://download.docker.com"
 if [ -z "$DOWNLOAD_URL" ]; then
 	DOWNLOAD_URL=$DEFAULT_DOWNLOAD_URL
 fi

@@ -61,8 +61,8 @@ get_docker_using_snap() {
     sudo snap disable docker && sudo snap enable docker
 }
 
-get_docker_unofficially() {
-    bash "$SCRIPT_DIR/get-docker-unofficial.sh" || { echo "Failed to install Docker using the unofficial script"; exit 1; }
+get_docker_from_aliyun() {
+    bash "$SCRIPT_DIR/get-docker-official-script.sh"  --mirror Aliyun || { echo "Failed to install Docker using the unofficial script"; exit 1; }
     join_docker_group
 }
 
@@ -74,10 +74,10 @@ if ! command_exists docker; then
         # Check if download.docker.com is reachable
         echo "download.docker.com is reachable. Installing Docker using the official script..."
         get_docker_officially
-    elif host_reachable mirrors.tuna.tsinghua.edu.cn; then
-        # Check if mirrors.tuna.tsinghua.edu.cn is reachable
-        echo "mirrors.tuna.tsinghua.edu.cn is reachable. Installing Docker using the unofficial script..."
-        get_docker_unofficially
+    elif host_reachable mirrors.aliyun.com; then
+        # Check if mirrors.aliyun.com is reachable
+        echo "mirrors.aliyun.com is reachable. Installing Docker using the unofficial script..."
+        get_docker_from_aliyun
     elif command_exists snap; then
         # Check if snap is installed
         echo "snap is installed. Using snap to install Docker..."
