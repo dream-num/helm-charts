@@ -12,7 +12,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.2.8 # VERSION
+  tag: 0.2.9 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -98,6 +98,7 @@ config:
     sentinel:
       enabled: false
       masterName: ""
+      sentinelAddr: ""
   apply:
     host: collaboration-server
     port: 5002
@@ -221,7 +222,7 @@ job:
     registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
     repository: release/universer-sql
     pullPolicy: IfNotPresent
-    tag: "0.0.10"
+    tag: "0.0.11"
 
 istio:
   enabled: false
