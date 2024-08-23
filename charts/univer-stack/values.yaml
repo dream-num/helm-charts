@@ -94,7 +94,7 @@ collaboration-demo:
 worker:
   image:
     repository: release/worker-exchange
-    tag: d3e00ea # VERSION
+    tag: 0.2.9 # VERSION
   temporalServer:
     host: temporal-frontend:7233
     namespace: univer
