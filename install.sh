@@ -29,6 +29,10 @@ if ! [ -x "$(command -v docker-compose)" ] && ! [ -x "$(command -v docker compos
     exit 1
 fi
 
+newgrp docker<<EONG
+    echo ""
+EONG
+
 # check docker daemon
 if ! docker info > /dev/null 2>&1; then
     echo "Error: docker daemon is not running." >&2
