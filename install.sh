@@ -11,7 +11,7 @@ if ! [ -x "$(command -v docker)" ]; then
     case "$choice" in
         y|Y )
             # run get-docker script from local get-docker/get-docker.sh
-            bash $SCRIPT_DIR/get-docker/get-docker.sh
+            bash $SCRIPT_DIR/get-docker/get-docker.sh || { echo "Failed to install Docker"; exit 1; }
             ;;
         n|N )
             echo "Installation aborted. Docker is required to proceed." >&2

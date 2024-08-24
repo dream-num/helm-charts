@@ -66,24 +66,30 @@ get_docker_from_aliyun() {
     join_docker_group
 }
 
-# Check if Docker is installed
-if ! command_exists docker; then
-    echo "Installing Docker..."
+do_install() {
+    # Check if Docker is installed
+    if ! command_exists docker; then
+        echo "Installing Docker..."
 
-    if host_reachable download.docker.com; then
-        # Check if download.docker.com is reachable
-        echo "download.docker.com is reachable. Installing Docker using the official script..."
-        get_docker_officially
-    elif host_reachable mirrors.aliyun.com; then
-        # Check if mirrors.aliyun.com is reachable
-        echo "mirrors.aliyun.com is reachable. Installing Docker using the unofficial script..."
-        get_docker_from_aliyun
-    elif command_exists snap; then
-        # Check if snap is installed
-        echo "snap is installed. Using snap to install Docker..."
-        get_docker_using_snap
-    else
-        echo "Unable to find a suitable method to help you install Docker. Your network seems unable to connect to the internet. "
-        echo "If you want to try offline deployment, please refer to https://docs.docker.com/engine/install/binaries/#install-daemon-and-client-binaries-on-linux for more information."
+        if host_reachable download.docker.com; then
+            # Check if download.docker.com is reachable
+            echo "download.docker.com is reachable. Installing Docker using the official script..."
+            get_docker_officially
+        elif host_reachable mirrors.aliyun.com; then
+            # Check if mirrors.aliyun.com is reachable
+            echo "mirrors.aliyun.com is reachable. Installing Docker using the from aliyun..."
+            get_docker_from_aliyun
+        elif command_exists snap; then
+            # Check if snap is installed
+            echo "snap is installed. Using snap to install Docker..."
+            get_docker_using_snap
+        else
+            echo "Unable to find a suitable method to help you install Docker. Your network seems unable to connect to the internet. "
+            echo "If you want to try offline deployment, please refer to https://docs.docker.com/engine/install/binaries/#install-daemon-and-client-binaries-on-linux for more information."
+        fi
+
+        echo "Docker has been installed."
     fi
-fi
+}
+
+do_install
