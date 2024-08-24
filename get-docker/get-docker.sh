@@ -34,20 +34,16 @@ join_docker_group() {
     fi
 
     # Apply group changes immediately
-    newgrp docker || { echo "Failed to apply new group settings"; exit 1; }
+    newgrp docker<<EONG
+    echo ""
+EONG
 }
 
 get_docker_officially() {
     # Download the official Docker installation script
-    curl -fsSL https://get.docker.com/ -o get-docker.sh || { echo "Failed to download Docker installation script"; exit 1; }
+    curl -fsSL https://get.docker.com/ | sh
 
-    # Inspect and run the installation script
-    less get-docker.sh  # Allow the user to review the script
-    sudo sh get-docker.sh || { echo "Failed to install Docker using the official script"; rm -f get-docker.sh; exit 1; }
     join_docker_group
-
-    # Clean up the downloaded script
-    rm -f get-docker.sh
 }
 
 get_docker_using_snap() {
@@ -62,7 +58,7 @@ get_docker_using_snap() {
 }
 
 get_docker_from_aliyun() {
-    bash "$SCRIPT_DIR/get-docker-official-script.sh"  --mirror Aliyun || { echo "Failed to install Docker using the unofficial script"; exit 1; }
+    bash "$SCRIPT_DIR/get-docker-official-script.sh"  --mirror Aliyun
     join_docker_group
 }
 
