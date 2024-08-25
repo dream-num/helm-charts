@@ -30,13 +30,13 @@ join_docker_group() {
 
     # Add the current user to the 'docker' group
     if ! groups "$USER" | grep &>/dev/null "\bdocker\b"; then
-        sudo adduser "$USER" docker || { echo "Failed to add user to docker group"; exit 1; }
+        sudo usermod -aG docker $USER
     fi
 
-    # Apply group changes immediately
-    newgrp docker<<EONG
-    echo ""
-EONG
+#     # Apply group changes immediately
+#     newgrp docker<<EONG
+#     echo ""
+# EONG
 }
 
 get_docker_officially() {

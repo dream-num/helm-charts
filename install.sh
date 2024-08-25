@@ -30,7 +30,7 @@ if ! [ -x "$(command -v docker-compose)" ] && ! [ -x "$(command -v docker compos
 fi
 
 newgrp docker<<EONG
-    echo ""
+    docker info
 EONG
 
 # check docker daemon
