@@ -21,8 +21,6 @@ DATABASE_DSN='host=${DATABASE_HOST} port=${DATABASE_PORT} dbname=${DATABASE_DBNA
 DATABASE_REPLICA_DSN=""
 
 choose_compose_file() {
-    . $ENV_FILE
-
     case "$DATABASE_DRIVER" in
     "mysql")
         DATABASE_DSN='${DATABASE_USERNAME}:${DATABASE_PASSWORD}@tcp(${DATABASE_HOST}:${DATABASE_PORT})/${DATABASE_DBNAME}?charset=utf8mb4\&parseTime=True\&loc=Local'
@@ -56,6 +54,38 @@ choose_compose_file() {
     fi
 }
 
+check_abroad_region() {
+    status_code=$(curl -o /dev/null -s -w "%{http_code}" --connect-timeout 5 -m 10 "https://www.google.com")
+    if [ $status_code -ne 200 ]; then
+        return 1
+    fi
+}
+
+check_docker_proxy() {
+    proxy=$(docker info -f '{{ .HTTPSProxy }}')
+    if [ "$proxy" == "" ]; then
+        return 1
+    fi
+}
+
+prepare_image() {
+    check_abroad_region
+    if [ $? -ne 0 ]; then
+        # not in abroad
+        check_docker_proxy
+        if [ $? -ne 0 ]; then
+            # not set proxy
+            $SED -e 's|image: nginx:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/nginx:|' $COMPOSE_FILE
+            $SED -e 's|image: postgres:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/postgres:|' $COMPOSE_FILE
+            $SED -e 's|image: rabbitmq:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/rabbitmq:|' $COMPOSE_FILE
+            $SED -e 's|image: bitnami/redis:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/redis:|' $COMPOSE_FILE
+            $SED -e 's|image: temporalio/auto-setup:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/temporal:|' $COMPOSE_FILE
+            $SED -e 's|image: bitnami/minio:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/minio:|' $COMPOSE_FILE
+            $SED -e 's|image: mysql:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/mysql:|' $COMPOSE_FILE
+        fi
+    fi
+}
+
 init_config() {
     cp ./configs/config.yaml.template ./configs/config.yaml
     $SED -e 's|${DATABASE_DSN}|'"${DATABASE_DSN}"'|' ./configs/config.yaml
@@ -85,6 +115,10 @@ load_image() {
     docker load -i $1 -q
     _file_name=$(basename $1)
     univer_version=${_file_name%.tar.gz}
+}
+
+_env() {
+    . $ENV_FILE
 }
 
 help() {
@@ -125,8 +159,10 @@ case "$command" in
         $SED -e 's|UNIVERSER_VERSION=.*|UNIVERSER_VERSION='"${univer_version}"'|' .env.enterprise
     fi
     echo "Staring the service..."
+    _env
     choose_compose_file
     init_config
+    prepare_image
     start
     ;;
   "stop")
@@ -157,9 +193,11 @@ case "$command" in
     if [ -f .env.enterprise ] && [ "${univer_version}" != "" ] ; then
         $SED -e 's|UNIVERSER_VERSION=.*|UNIVERSER_VERSION='"${univer_version}"'|' .env.enterprise
     fi
+    _env
     choose_compose_file
     init_config
     stop
+    prepare_image
     start
     ;;
   *)

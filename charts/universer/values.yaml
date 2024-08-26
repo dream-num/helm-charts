@@ -147,6 +147,8 @@ config:
       enabled: false
     permission:
       enabled: false
+    admin:
+      userIDs: []
   apiLimit:
     method:
       tokens: 600
