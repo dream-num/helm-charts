@@ -80,6 +80,11 @@ auth:
   permission:
     {{- toYaml . | nindent 4 }}
   {{- end }}
+  admin:
+    userIDs:
+    {{- range .Values.config.auth.admin.userIDs }}
+    - {{ . | quote }}
+    {{- end }}
 usip:
   enabled: {{ .Values.config.usip.enabled }}
   {{- with .Values.config.usip.uri }}
