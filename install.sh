@@ -12,9 +12,8 @@ if ! [ -x "$(command -v docker)" ]; then
         y|Y )
             # run get-docker script from local get-docker/get-docker.sh
             bash $SCRIPT_DIR/get-docker/get-docker.sh || { echo "Failed to install Docker"; exit 1; }
-            # re-run this script after installing Docker
-            # exec sudo -i -u $USER "$0"
-            sudo su $USER
+            # TODO(zsq1234): newgrp docker interupt the script, so use sudo chmod 666 /var/run/docker.sock instead and temporary
+            sudo chmod 666 /var/run/docker.sock
             ;;
         n|N )
             echo "Installation aborted. Docker is required to proceed." >&2
