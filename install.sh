@@ -25,12 +25,6 @@ if ! [ -x "$(command -v curl)" ]; then
     exit 1
 fi
 
-# check unzip command
-if ! [ -x "$(command -v unzip)" ]; then
-    echo "Error: unzip is not installed." >&2
-    exit 1
-fi
-
 
 tokenPath="${HOME}/.univer/"
 tokenFileName="${tokenPath}/deploy_token"
@@ -106,7 +100,7 @@ getLicense(){
        echo "ERROR: need a file path"
      elif [ -f "${license}" ]; then
        mkdir -p docker-compose/configs
-       unzip -q "$license" -d docker-compose/configs
+       cp "$license" docker-compose/configs
        break
      else
        echo "file not exist"
@@ -145,9 +139,9 @@ getLicense
 
 mkdir -p docker-compose \
     && cd docker-compose \
-    && curl -s -o univer.zip https://release-univer.oss-cn-shenzhen.aliyuncs.com/release-demo/docker-compose.zip \
-    && unzip -q univer.zip \
-    && rm univer.zip \
+    && curl -s -o univer.tar.gz https://release-univer.oss-cn-shenzhen.aliyuncs.com/release-demo/docker-compose.tar.gz \
+    && tar -xzf univer.tar.gz \
+    && rm univer.tar.gz \
     && bash run.sh
 
 
