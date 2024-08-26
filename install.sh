@@ -137,10 +137,21 @@ fi
 
 getLicense
 
+# check docker-compose directory
+tar_overwrite=""
+if [ -f docker-compose/.env ] && [ -f docker-compose/run.sh ]; then
+    read -r -p "docker-compose directory already exists, do you want to overwrite it? [y/N] " response
+    if [ "$response" == "y" ] || [ "$response" == "Y" ]; then
+        tar_overwrite="--overwrite"
+    else
+        tar_overwrite="--skip-old-files"
+    fi
+fi
+
 mkdir -p docker-compose \
     && cd docker-compose \
     && curl -s -o univer.tar.gz https://release-univer.oss-cn-shenzhen.aliyuncs.com/release-demo/docker-compose.tar.gz \
-    && tar -xzf univer.tar.gz \
+    && tar -xzf univer.tar.gz $tar_overwrite \
     && rm univer.tar.gz \
     && bash run.sh
 
