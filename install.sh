@@ -12,6 +12,9 @@ if ! [ -x "$(command -v docker)" ]; then
         y|Y )
             # run get-docker script from local get-docker/get-docker.sh
             bash $SCRIPT_DIR/get-docker/get-docker.sh || { echo "Failed to install Docker"; exit 1; }
+            # re-run this script after installing Docker
+            # exec sudo -i -u $USER "$0"
+            sudo su $USER -c "docker --version"
             ;;
         n|N )
             echo "Installation aborted. Docker is required to proceed." >&2
@@ -28,10 +31,6 @@ if ! [ -x "$(command -v docker-compose)" ] && ! [ -x "$(command -v docker compos
     echo "Error: docker-compose is not installed." >&2
     exit 1
 fi
-
-newgrp docker<<EONG
-    docker info
-EONG
 
 # check docker daemon
 if ! docker info > /dev/null 2>&1; then
