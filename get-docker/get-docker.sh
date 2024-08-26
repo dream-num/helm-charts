@@ -57,6 +57,11 @@ get_docker_from_aliyun() {
     join_docker_group
 }
 
+get_docker_from_azure_china() {
+    bash "$SCRIPT_DIR/get-docker-official-script.sh"  --mirror AzureChinaCloud
+    join_docker_group
+}
+
 do_install() {
     # Check if Docker is installed
     if ! command_exists docker; then
@@ -66,6 +71,10 @@ do_install() {
             # Check if download.docker.com is reachable
             echo "download.docker.com is reachable. Installing Docker using the official script..."
             get_docker_officially
+        elif host_reachable mirror.azure.cn; then
+            # Check if mirror.azure.cn is reachable
+            echo "mirror.azure.cn is reachable. Installing Docker using the from Azure China Cloud..."
+            get_docker_from_azure_china
         elif host_reachable mirrors.aliyun.com; then
             # Check if mirrors.aliyun.com is reachable
             echo "mirrors.aliyun.com is reachable. Installing Docker using the from aliyun..."
