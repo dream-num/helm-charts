@@ -14,7 +14,7 @@ if ! [ -x "$(command -v docker)" ]; then
             bash $SCRIPT_DIR/get-docker/get-docker.sh || { echo "Failed to install Docker"; exit 1; }
             # re-run this script after installing Docker
             # exec sudo -i -u $USER "$0"
-            sudo su $USER -c "docker --version"
+            sudo su $USER
             ;;
         n|N )
             echo "Installation aborted. Docker is required to proceed." >&2
