@@ -2,6 +2,31 @@
 
 set -eu
 
+# get operating system
+os_type=$(uname)
+if [ "$os_type" == "Darwin" ]; then
+    echo "Operating System: macOS"
+    os_type="darwin"
+elif [ "$os_type" == "Linux" ]; then
+    echo "Operating System: Linux"
+    os_type="linux"
+else
+    echo "Unknown Operating System: $os_type"
+fi
+
+# get architecture
+architecture=$(uname -m)
+if [ "$architecture" == "aarch64" ]; then
+    echo "Architecture: ARM 64-bit (aarch64)"
+    architecture="arm64"
+elif [ "$architecture" == "x86_64" ]; then
+    echo "Architecture: AMD 64-bit (x86_64)"
+    architecture="amd64"
+else
+    echo "Not Support Architecture: $architecture"
+    exit 1
+fi
+
 # check docker and docker-compose
 if ! [ -x "$(command -v docker)" ]; then
     echo "Error: docker is not installed." >&2
@@ -26,9 +51,22 @@ if ! [ -x "$(command -v curl)" ]; then
 fi
 
 # check unzip command
-if ! [ -x "$(command -v unzip)" ]; then
-    echo "Error: unzip is not installed." >&2
-    exit 1
+UNZIP="unzip"
+if ! [ -x "$(command -v $UNZIP)" ]; then
+    # download unzip
+    if [ "$os_type" == "darwin" ] || [ "$os_type" == "linux" ]; then
+        if [ "$architecture" == "arm64" ] || [ "$architecture" == "amd64" ]; then
+            curl -s -o /tmp/unzip "https://release-univer.oss-cn-shenzhen.aliyuncs.com/release-demo/unzip-${os_type}-${architecture}"
+            chmod +x /tmp/unzip
+            UNZIP="/tmp/unzip"
+        else
+            echo "Error: unzip is not installed." >&2
+            exit 1
+        fi
+    else
+        echo "Error: unzip is not installed." >&2
+        exit 1
+    fi
 fi
 
 
@@ -36,6 +74,27 @@ tokenPath="${HOME}/.univer/"
 tokenFileName="${tokenPath}/deploy_token"
 getTokenURL="https://univer.ai/cli-auth"
 verifyTokenURL="https://univer.ai/license-manage-api/cli-auth/verify-token"
+
+
+unzip_file() {
+    local file="$1"
+    local dest="$2"
+    
+    if [ "$UNZIP" == "unzip" ]; then
+        $UNZIP -q "$file" -d "$dest"
+    else
+        $UNZIP "$file" "$dest"
+    fi
+
+    # Check if the command was successful
+    if [ $? -eq 0 ]; then
+        # "File unzipped successfully."
+        return 0
+    else
+        # "Failed to unzip file."
+        return 1
+    fi
+}
 
 
 openURL() {
@@ -106,7 +165,7 @@ getLicense(){
        echo "ERROR: need a file path"
      elif [ -f "${license}" ]; then
        mkdir -p docker-compose/configs
-       unzip -q "$license" -d docker-compose/configs
+       unzip_file "$license" docker-compose/configs
        break
      else
        echo "file not exist"
@@ -146,7 +205,7 @@ getLicense
 mkdir -p docker-compose \
     && cd docker-compose \
     && curl -s -o univer.zip https://release-univer.oss-cn-shenzhen.aliyuncs.com/release-demo/docker-compose.zip \
-    && unzip -q univer.zip \
+    && unzip_file univer.zip . \
     && rm univer.zip \
     && bash run.sh
 
