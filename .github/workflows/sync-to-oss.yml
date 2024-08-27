@@ -39,8 +39,7 @@ jobs:
     - name: tar docker-compose.tar.gz
       run: |
         cd docker-compose
-        ls -a
-        tar -czcf ~/docker-compose.tar.gz * .[!.]*
+        tar -czvf ~/docker-compose.tar.gz * .[!.]*
 
     - name: Sync docker-compose.zip to OSS
       uses: hexf00/upload-to-oss@v1
