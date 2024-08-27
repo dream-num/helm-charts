@@ -9,7 +9,7 @@ if [ "${osType}" == "Darwin" ]; then
 elif [ "${osType}" == "Linux" ]; then
     osType="linux"
 else
-    echo "Unknow OS type: ${osType}"
+    echo "Warning: Unknow OS type ${osType}"
 fi
 
 # get arch type
@@ -19,7 +19,7 @@ if [ "${archType}" == "x86_64" ]; then
 elif [ "${archType}" == "aarch64" ]; then
     archType="arm64"
 else
-    echo "Unsupport arch type: ${archType}"
+    echo "Error: Unsupport arch type ${archType}"
     exit 1
 fi
 
@@ -37,6 +37,13 @@ fi
 # check docker daemon
 if ! docker info > /dev/null 2>&1; then
     echo "Error: docker daemon is not running." >&2
+    exit 1
+fi
+
+# check docker version
+_docker_version=$(docker version --format '{{ .Server.Version }}')
+if [ "$(printf '%s\n' "$_docker_version" "23.0" | sort -V | head -n1)" == "$_docker_version" ] && [ "$_docker_version" != "23.0" ]; then
+    echo "Error: docker version must be greater than 23.0" >&2
     exit 1
 fi
 
