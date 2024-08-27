@@ -47,12 +47,6 @@ if ! docker info > /dev/null 2>&1; then
     exit 1
 fi
 
-# check unzip command
-if ! [ -x "$(command -v unzip)" ]; then
-    echo "Error: unzip is not installed." >&2
-    exit 1
-fi
-
 
 tokenPath="${HOME}/.univer/"
 tokenFileName="${tokenPath}/deploy_token"
@@ -121,14 +115,14 @@ verifyToken() {
 
 getLicense(){
   while true ; do
-     read -r -p "Enter the path for license.zip or press Enter to continue: " license
+     read -r -p "Enter the path for license or press Enter to continue: " license
      if [ -z "${license}" ]; then
        break
      elif [ -d "${license}" ]; then
        echo "ERROR: need a file path"
      elif [ -f "${license}" ]; then
        mkdir -p docker-compose/configs
-       unzip -q "$license" -d docker-compose/configs
+       cp "$license" docker-compose/configs
        break
      else
        echo "file not exist"
@@ -165,11 +159,22 @@ fi
 
 getLicense
 
+# check docker-compose directory
+tar_overwrite=""
+if [ -f docker-compose/.env ] && [ -f docker-compose/run.sh ]; then
+    read -r -p "docker-compose directory already exists, do you want to overwrite it? [y/N] " response
+    if [ "$response" == "y" ] || [ "$response" == "Y" ]; then
+        tar_overwrite="--overwrite"
+    else
+        tar_overwrite="--skip-old-files"
+    fi
+fi
+
 mkdir -p docker-compose \
     && cd docker-compose \
-    && curl -s -o univer.zip https://release-univer.oss-cn-shenzhen.aliyuncs.com/release-demo/docker-compose.zip \
-    && unzip -q univer.zip \
-    && rm univer.zip \
+    && curl -s -o univer.tar.gz https://release-univer.oss-cn-shenzhen.aliyuncs.com/release/docker-compose.tar.gz \
+    && tar -xzf univer.tar.gz $tar_overwrite \
+    && rm univer.tar.gz \
     && bash run.sh
 
 
