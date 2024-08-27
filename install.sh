@@ -2,6 +2,27 @@
 
 set -eu
 
+# get os type
+osType=$(uname)
+if [ "${osType}" == "Darwin" ]; then
+    osType="darwin"
+elif [ "${osType}" == "Linux" ]; then
+    osType="linux"
+else
+    echo "Unknow OS type: ${osType}"
+fi
+
+# get arch type
+archType=$(uname -m)
+if [ "${archType}" == "x86_64" ]; then
+    archType="amd64"
+elif [ "${archType}" == "aarch64" ]; then
+    archType="arm64"
+else
+    echo "Unsupport arch type: ${archType}"
+    exit 1
+fi
+
 # check docker and docker-compose
 if ! [ -x "$(command -v docker)" ]; then
     echo "Error: docker is not installed." >&2
@@ -30,6 +51,18 @@ if ! [ -x "$(command -v unzip)" ]; then
     echo "Error: unzip is not installed." >&2
     exit 1
 fi
+
+checkPort() {
+    if ! [ -x "$(command -v netstat)" ] || ! [ -x "$(command -v awk)" ] ; then
+        docker run --network=host --rm univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/network-tool:0.0.1 netstat -tuln | awk '{print $4}' | grep -q ":$1"
+    else
+        netstat -tuln | awk '{print $4}' | grep -q ":$1"
+    fi
+    if [ $? -eq 0 ]; then
+        echo "Port $1 is already in use."
+        exit 1
+    fi
+}
 
 
 tokenPath="${HOME}/.univer/"
@@ -114,6 +147,10 @@ getLicense(){
   done
 }
 
+
+checkPort 8000
+checkPort 19000
+checkPort 3010
 
 token=""
 if [[ -s ${tokenFileName} ]]; then
