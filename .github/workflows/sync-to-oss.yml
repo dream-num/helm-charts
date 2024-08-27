@@ -35,22 +35,61 @@ jobs:
       run: |
         cd docker-compose
         zip -r ~/docker-compose.zip .
+    
+    - name: tar docker-compose.tar.gz
+      run: |
+        cd docker-compose
+        tar -czvf ~/docker-compose.tar.gz * .[!.]*
 
     - name: Sync docker-compose.zip to OSS
       uses: hexf00/upload-to-oss@v1
       with:
         source: '~/docker-compose.zip'
-        dest: ${{secrets.OSS_DOCKER_ZIP_PATH}}
+        dest: 'release/docker-compose.zip'
         bucket: ${{secrets.OSS_BUCKET}}
         region: "oss-cn-shenzhen"
         accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
         accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
       if: ${{ github.event.inputs.sync-docker == 'true' }}
+
+    - name: Sync docker-compose.tar.gz to OSS
+      uses: hexf00/upload-to-oss@v1
+      with:
+        source: '~/docker-compose.tar.gz'
+        dest: 'release/docker-compose.tar.gz'
+        bucket: ${{secrets.OSS_BUCKET}}
+        region: "oss-cn-shenzhen"
+        accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
+        accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
+      if: ${{ github.event.inputs.sync-docker == 'true' }}
+
     - name: Sync install.sh to OSS
       uses: hexf00/upload-to-oss@v1
       with:
         source: 'install.sh'
-        dest: ${{secrets.OSS_INSTALL_SCRIPT_PATH}}
+        dest: tool/install.sh
+        bucket: ${{secrets.OSS_BUCKET}}
+        region: "oss-cn-shenzhen"
+        accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
+        accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
+      if: ${{ github.event.inputs.sync-install == 'true' }}
+
+    - name: Sync get-docker/get-docker-official-script.sh to OSS
+      uses: hexf00/upload-to-oss@v1
+      with:
+        source: 'get-docker/get-docker-official-script.sh'
+        dest: tool/get-docker-official-script.sh
+        bucket: ${{secrets.OSS_BUCKET}}
+        region: "oss-cn-shenzhen"
+        accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
+        accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
+      if: ${{ github.event.inputs.sync-install == 'true' }}
+
+    - name: Sync get-docker/get-docker.sh to OSS
+      uses: hexf00/upload-to-oss@v1
+      with:
+        source: 'get-docker/get-docker.sh'
+        dest: tool/get-docker.sh
         bucket: ${{secrets.OSS_BUCKET}}
         region: "oss-cn-shenzhen"
         accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
