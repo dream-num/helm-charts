@@ -148,10 +148,6 @@ getLicense(){
 }
 
 
-checkPort 8000
-checkPort 19000
-checkPort 3010
-
 token=""
 if [[ -s ${tokenFileName} ]]; then
   # check saved token
