@@ -2,10 +2,38 @@
 
 set -eu
 
-# check docker and docker-compose
-if ! [ -x "$(command -v docker)" ]; then
-    echo "Error: docker is not installed." >&2
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# check curl command
+if ! [ -x "$(command -v curl)" ]; then
+    echo "Error: curl is not installed." >&2
     exit 1
+fi
+
+if ! [ -x "$(command -v docker)" ]; then
+    echo "Docker is not installed."
+    read -p "Do you want to install Docker? (Y/n): " choice
+    choice=${choice:-Y}  # Default to 'Y' if no input is provided
+    case "$choice" in
+        y|Y )
+            mkdir -p $SCRIPT_DIR/get-docker
+            curl -s -o $SCRIPT_DIR/get-docker/get-docker.sh https://release-univer.oss-cn-shenzhen.aliyuncs.com/tool/get-docker.sh
+            curl -s -o $SCRIPT_DIR/get-docker/get-docker-official-script.sh https://release-univer.oss-cn-shenzhen.aliyuncs.com/tool/get-docker-official-script.sh
+            # run get-docker script from local get-docker/get-docker.sh
+            bash $SCRIPT_DIR/get-docker/get-docker.sh || { echo "Failed to install Docker"; exit 1; }
+            # TODO(zsq1234): newgrp docker interupt the script, so use sudo chmod 666 /var/run/docker.sock instead and temporary
+            sudo chmod 666 /var/run/docker.sock
+            rm -rf $SCRIPT_DIR/get-docker
+            ;;
+        n|N )
+            echo "Installation aborted. Docker is required to proceed." >&2
+            exit 1
+            ;;
+        * )
+            echo "Invalid input. Installation aborted." >&2
+            exit 1
+            ;;
+    esac
 fi
 
 if ! [ -x "$(command -v docker-compose)" ] && ! [ -x "$(command -v docker compose)" ]; then
@@ -16,12 +44,6 @@ fi
 # check docker daemon
 if ! docker info > /dev/null 2>&1; then
     echo "Error: docker daemon is not running." >&2
-    exit 1
-fi
-
-# check curl command
-if ! [ -x "$(command -v curl)" ]; then
-    echo "Error: curl is not installed." >&2
     exit 1
 fi
 
