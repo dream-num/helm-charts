@@ -23,10 +23,38 @@ else
     exit 1
 fi
 
-# check docker and docker-compose
-if ! [ -x "$(command -v docker)" ]; then
-    echo "Error: docker is not installed." >&2
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# check curl command
+if ! [ -x "$(command -v curl)" ]; then
+    echo "Error: curl is not installed." >&2
     exit 1
+fi
+
+if ! [ -x "$(command -v docker)" ]; then
+    echo "Docker is not installed."
+    read -p "Do you want to install Docker? (Y/n): " choice
+    choice=${choice:-Y}  # Default to 'Y' if no input is provided
+    case "$choice" in
+        y|Y )
+            mkdir -p $SCRIPT_DIR/get-docker
+            curl -s -o $SCRIPT_DIR/get-docker/get-docker.sh https://release-univer.oss-cn-shenzhen.aliyuncs.com/tool/get-docker.sh
+            curl -s -o $SCRIPT_DIR/get-docker/get-docker-official-script.sh https://release-univer.oss-cn-shenzhen.aliyuncs.com/tool/get-docker-official-script.sh
+            # run get-docker script from local get-docker/get-docker.sh
+            bash $SCRIPT_DIR/get-docker/get-docker.sh || { echo "Failed to install Docker"; exit 1; }
+            # TODO(zsq1234): newgrp docker interupt the script, so use sudo chmod 666 /var/run/docker.sock instead and temporary
+            sudo chmod 666 /var/run/docker.sock
+            rm -rf $SCRIPT_DIR/get-docker
+            ;;
+        n|N )
+            echo "Installation aborted. Docker is required to proceed." >&2
+            exit 1
+            ;;
+        * )
+            echo "Invalid input. Installation aborted." >&2
+            exit 1
+            ;;
+    esac
 fi
 
 if ! [ -x "$(command -v docker-compose)" ] && ! [ -x "$(command -v docker compose)" ]; then
@@ -44,18 +72,6 @@ fi
 _docker_version=$(docker version --format '{{ .Server.Version }}')
 if [ "$(printf '%s\n' "$_docker_version" "23.0" | sort -V | head -n1)" == "$_docker_version" ] && [ "$_docker_version" != "23.0" ]; then
     echo "Error: docker version must be greater than 23.0" >&2
-    exit 1
-fi
-
-# check curl command
-if ! [ -x "$(command -v curl)" ]; then
-    echo "Error: curl is not installed." >&2
-    exit 1
-fi
-
-# check unzip command
-if ! [ -x "$(command -v unzip)" ]; then
-    echo "Error: unzip is not installed." >&2
     exit 1
 fi
 
@@ -139,14 +155,14 @@ verifyToken() {
 
 getLicense(){
   while true ; do
-     read -r -p "Enter the path for license.zip or press Enter to continue: " license
+     read -r -p "Enter the path for license or press Enter to continue: " license
      if [ -z "${license}" ]; then
        break
      elif [ -d "${license}" ]; then
        echo "ERROR: need a file path"
      elif [ -f "${license}" ]; then
        mkdir -p docker-compose/configs
-       unzip -q "$license" -d docker-compose/configs
+       cp "$license" docker-compose/configs
        break
      else
        echo "file not exist"
@@ -183,11 +199,22 @@ fi
 
 getLicense
 
+# check docker-compose directory
+tar_overwrite=""
+if [ -f docker-compose/.env ] && [ -f docker-compose/run.sh ]; then
+    read -r -p "docker-compose directory already exists, do you want to overwrite it? [y/N] " response
+    if [ "$response" == "y" ] || [ "$response" == "Y" ]; then
+        tar_overwrite="--overwrite"
+    else
+        tar_overwrite="--skip-old-files"
+    fi
+fi
+
 mkdir -p docker-compose \
     && cd docker-compose \
-    && curl -s -o univer.zip https://release-univer.oss-cn-shenzhen.aliyuncs.com/release-demo/docker-compose.zip \
-    && unzip -q univer.zip \
-    && rm univer.zip \
+    && curl -s -o univer.tar.gz https://release-univer.oss-cn-shenzhen.aliyuncs.com/release/docker-compose.tar.gz \
+    && tar -xzf univer.tar.gz $tar_overwrite \
+    && rm univer.tar.gz \
     && bash run.sh
 
 

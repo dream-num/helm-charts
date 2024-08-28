@@ -7,7 +7,8 @@ on:
 jobs:
   update:
     name: UpdateRepository
-    runs-on: arc-runner-set
+    # runs-on: arc-runner-set
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
 

@@ -88,7 +88,8 @@ prepare_image() {
 
 init_config() {
     cp ./configs/config.yaml.template ./configs/config.yaml
-    $SED -e 's|${DATABASE_DSN}|'"${DATABASE_DSN}"'|' ./configs/config.yaml
+    s='s|${DATABASE_DSN}|'$DATABASE_DSN'|'
+    $SED -e "$s" ./configs/config.yaml
 
     while IFS='=' read -r name value ; do
         # Replace variable with value. 
@@ -121,6 +122,65 @@ _env() {
     . $ENV_FILE
 }
 
+check_failed_message() {
+    service="$1"
+    if [ "$service" == "" ]; then
+        service="universer"
+    fi
+    echo -e "\nCheck service failed. \
+        \nPlease use 'docker compose logs $service' to check the logs, \
+        \nand check the Q&A in https://www.univer.ai/guides/sheet/server/docker#troubleshooting- may helpfull."
+}
+
+check_docker_service() {
+    # check docker compose service status
+    for i in {1..10}; do
+        echo "Checking docker compose $1 service..." $i
+        $DOCKER_COMPOSE -f $COMPOSE_FILE ps --format '{{.State}}' $1 2>/dev/null | grep -q "running"
+        if [ $? -eq 0 ]; then
+            $DOCKER_COMPOSE -f $COMPOSE_FILE ps --format '{{.Status}}' $1 2>/dev/null | grep -q "Up"
+            if [ $? -eq 0 ]; then
+                echo "success"
+                break
+            fi
+        fi
+        if [ $i -eq 10 ]; then
+            return 1
+        fi
+        sleep $i
+    done
+}
+
+check_service() {
+    # check docker compose universer service status
+    check_docker_service universer
+    if [ $? -ne 0 ]; then
+        check_failed_message universer
+        return 1
+    fi
+
+    # check docker compose collaboration service status
+    check_docker_service collaboration-server
+    if [ $? -ne 0 ]; then
+        check_failed_message collaboration-server
+        return 1
+    fi
+
+    # check universer service
+    for i in {1..10}; do
+        echo "Checking universer service..." $i
+        docker run --rm --network=univer-prod --env no_proxy=universer univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-check:0.0.1
+        if [ $? -eq 0 ]; then
+            echo "success"
+            return 0
+        fi
+        sleep $i
+    done
+
+    check_failed_message universer
+    return 1
+}
+
 help() {
     echo "Usage: ./run.sh [COMMAND] [OPTION]"
     echo "Options:"
@@ -131,6 +191,7 @@ help() {
     echo "  start    Start the service"
     echo "  stop     Stop the service"
     echo "  restart  Restart the service"
+    echo "  check    Check the service health"
     echo "Default command:"
     echo "  ./run.sh start"
 }
@@ -196,9 +257,12 @@ case "$command" in
     _env
     choose_compose_file
     init_config
-    stop
-    prepare_image
-    start
+    # stop
+    # prepare_image
+    # start
+    ;;
+  "check")
+    check_service
     ;;
   *)
     echo "Unknown option: $option"
