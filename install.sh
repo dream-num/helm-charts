@@ -71,8 +71,7 @@ fi
 # check docker version
 _docker_version=$(docker version --format '{{ .Server.Version }}')
 if [ "$(printf '%s\n' "$_docker_version" "23.0" | sort -V | head -n1)" == "$_docker_version" ] && [ "$_docker_version" != "23.0" ]; then
-    echo "Error: docker version must be greater than 23.0" >&2
-    exit 1
+    echo "Warning: docker version $_docker_version less than 23.0" >&2
 fi
 
 checkPort() {
