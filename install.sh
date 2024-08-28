@@ -2,6 +2,27 @@
 
 set -eu
 
+# get os type
+osType=$(uname)
+if [ "${osType}" == "Darwin" ]; then
+    osType="darwin"
+elif [ "${osType}" == "Linux" ]; then
+    osType="linux"
+else
+    echo "Warning: Unknow OS type ${osType}"
+fi
+
+# get arch type
+archType=$(uname -m)
+if [ "${archType}" == "x86_64" ]; then
+    archType="amd64"
+elif [ "${archType}" == "aarch64" ]; then
+    archType="arm64"
+else
+    echo "Error: Unsupport arch type ${archType}"
+    exit 1
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # check curl command
@@ -46,6 +67,24 @@ if ! docker info > /dev/null 2>&1; then
     echo "Error: docker daemon is not running." >&2
     exit 1
 fi
+
+# check docker version
+_docker_version=$(docker version --format '{{ .Server.Version }}')
+if [ "$(printf '%s\n' "$_docker_version" "23.0" | sort -V | head -n1)" == "$_docker_version" ] && [ "$_docker_version" != "23.0" ]; then
+    echo "Warning: docker version $_docker_version less than 23.0" >&2
+fi
+
+checkPort() {
+    if ! [ -x "$(command -v netstat)" ] || ! [ -x "$(command -v awk)" ] ; then
+        docker run --network=host --rm univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/network-tool:0.0.1 netstat -tuln | awk '{print $4}' | grep -q ":$1"
+    else
+        netstat -tuln | awk '{print $4}' | grep -q ":$1"
+    fi
+    if [ $? -eq 0 ]; then
+        echo "Port $1 is already in use."
+        exit 1
+    fi
+}
 
 
 tokenPath="${HOME}/.univer/"
