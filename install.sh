@@ -217,16 +217,11 @@ mkdir -p docker-compose \
     && bash run.sh
 
 
-# check universer start by 8000 port in loop
-for i in {1..100}; do
-    if curl -s http://localhost:8000 > /dev/null 2>&1; then
-        break
-    fi
-    sleep 1
-done
+# check service health
+bash run.sh check
+if [ $? -eq 0 ]; then
+    docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
 
-sleep 5
+    docker run --net=univer-prod --rm --name univer-collaboration-lite -p 3010:3010 univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
+fi
 
-docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
-
-docker run --net=univer-prod --rm --name univer-collaboration-lite -p 3010:3010 univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
