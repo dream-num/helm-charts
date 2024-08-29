@@ -1,0 +1,30 @@
+FROM ubuntu:22.04
+
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq ca-certificates curl lsb-release
+
+ARG ARCH
+RUN ARCH=$(uname -m) && if [ "$ARCH" = "arm64" ]; then ARCH="aarch64"; fi && echo $ARCH > /arch
+
+# Install essential packages
+ENV DOWNLOAD_URL="https://download.docker.com"
+ENV DOCKERVERSION=27.1.2
+RUN curl -fsSLO $DOWNLOAD_URL/linux/static/stable/$(cat /arch)/docker-${DOCKERVERSION}.tgz \
+  && tar xzvf docker-${DOCKERVERSION}.tgz --strip 1 \
+                 -C /usr/local/bin docker/docker \
+  && rm docker-${DOCKERVERSION}.tgz
+
+# Install docker compose
+ENV DOCKER_COMPOSE_VERSION=v2.29.1
+ENV DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+RUN mkdir -p $DOCKER_CONFIG/cli-plugins && curl -SL https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-$(cat /arch) -o $DOCKER_CONFIG/cli-plugins/docker-compose \
+    && chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
+
+# Set the working directory
+WORKDIR /app
+
+# Optionally, copy your application code into the container
+# COPY . /app
+
+# Example command: show Docker version inside the container
+CMD ["docker", "compose", "version"]

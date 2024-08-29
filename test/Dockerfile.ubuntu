@@ -1,0 +1,14 @@
+ARG BASE_IMAGE=ubuntu:22.04
+FROM ${BASE_IMAGE}
+
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y -qq ca-certificates curl lsb-release sudo unzip
+
+COPY setup-docker.sh /setup-docker.sh
+RUN /bin/sh /setup-docker.sh
+
+# Add a non-root user named 'univer' with sudo access without a password
+RUN useradd -m -s /bin/bash univer && \
+    echo "univer ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+CMD ["docker", "compose", "version"]

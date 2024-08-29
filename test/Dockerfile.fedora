@@ -1,0 +1,13 @@
+ARG BASE_IMAGE=fedora:37
+FROM ${BASE_IMAGE}
+
+RUN dnf update -y && dnf install -y ca-certificates curl sudo
+
+COPY setup-docker.sh /setup-docker.sh
+RUN /bin/sh /setup-docker.sh
+
+# Add a non-root user named 'univer' with sudo access without a password
+RUN useradd -m -s /bin/bash univer && \
+    echo "univer ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+CMD ["docker", "compose", "version"]
