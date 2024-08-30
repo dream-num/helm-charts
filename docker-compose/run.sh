@@ -257,9 +257,9 @@ case "$command" in
     _env
     choose_compose_file
     init_config
-    # stop
-    # prepare_image
-    # start
+    stop
+    prepare_image
+    start
     ;;
   "check")
     check_service
