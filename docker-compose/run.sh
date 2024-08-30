@@ -132,7 +132,7 @@ check_failed_message() {
     fi
     echo -e "\nCheck service failed. \
         \nPlease use 'docker compose logs $service' to check the logs, \
-        \nand check the Q&A in https://www.univer.ai/guides/sheet/server/docker#troubleshooting- may helpfull."
+        \nand check the Q&A in https://www.univer.ai/guides/sheet/server/docker#troubleshooting- may helpful."
 }
 
 check_docker_service() {

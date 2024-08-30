@@ -58,7 +58,7 @@ universer:
       accessKeySecret: minioadmin
       region: "us-east-1"
       endpoint: http://minio:9000
-      endpointPublic: http://minio:9000
+      endpointPublic:
       usePathStyle: true
       presignExpires: 3600s
       defaultBucket: univer
