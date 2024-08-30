@@ -16,7 +16,7 @@ fi
 archType=$(uname -m)
 if [ "${archType}" == "x86_64" ]; then
     archType="amd64"
-elif [ "${archType}" == "aarch64" ]; then
+elif [ "${archType}" == "aarch64" ] || [ "$archType" == "arm64" ]; then
     archType="arm64"
 else
     echo "Error: Unsupport arch type ${archType}"
