@@ -36,19 +36,19 @@ choose_compose_file() {
     ;;
     esac
 
-    if [ "${DATABASE_REPLICA_HOST}" != "" ]; then
+    if [ "${DATABASE_READ_HOST}" != "" ]; then
         case "$DATABASE_DRIVER" in
         "postgresql")
-            DATABASE_REPLICA_DSN='host=${DATABASE_REPLICA_HOST} port=${DATABASE_PORT} dbname=${DATABASE_DBNAME} user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} sslmode=disable TimeZone=Asia/Shanghai'
+            DATABASE_REPLICA_DSN='host=${DATABASE_READ_HOST} port=${DATABASE_PORT} dbname=${DATABASE_DBNAME} user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} sslmode=disable TimeZone=Asia/Shanghai'
         ;;
         "mysql")
-            DATABASE_REPLICA_DSN='${DATABASE_USERNAME}:${DATABASE_PASSWORD}@tcp(${DATABASE_REPLICA_HOST}:${DATABASE_PORT})/${DATABASE_DBNAME}?charset=utf8mb4\&parseTime=True\&loc=Local'
+            DATABASE_REPLICA_DSN='${DATABASE_USERNAME}:${DATABASE_PASSWORD}@tcp(${DATABASE_READ_HOST}:${DATABASE_PORT})/${DATABASE_DBNAME}?charset=utf8mb4\&parseTime=True\&loc=Local'
         ;;
         "dameng")
-            DATABASE_REPLICA_DSN='dm://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_REPLICA_HOST}:${DATABASE_PORT}?autoCommit=true'
+            DATABASE_REPLICA_DSN='dm://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_READ_HOST}:${DATABASE_PORT}?autoCommit=true'
         ;;
         "gaussdb")
-            DATABASE_REPLICA_DSN='host=${DATABASE_REPLICA_HOST} port=${DATABASE_PORT} dbname=${DATABASE_DBNAME} user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} sslmode=disable TimeZone=Asia/Shanghai'
+            DATABASE_REPLICA_DSN='host=${DATABASE_READ_HOST} port=${DATABASE_PORT} dbname=${DATABASE_DBNAME} user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} sslmode=disable TimeZone=Asia/Shanghai'
         ;;
         esac
     fi
@@ -89,6 +89,9 @@ prepare_image() {
 init_config() {
     cp ./configs/config.yaml.template ./configs/config.yaml
     s='s|${DATABASE_DSN}|'$DATABASE_DSN'|'
+    $SED -e "$s" ./configs/config.yaml
+
+    s='s|${DATABASE_REPLICA_DSN}|'$DATABASE_REPLICA_DSN'|'
     $SED -e "$s" ./configs/config.yaml
 
     while IFS='=' read -r name value ; do
