@@ -23,11 +23,11 @@ else
     exit 1
 fi
 
-_current_info=$0
-if [ "$0" == "bash" ] || [ "$0" == "sh" ] || [ "$0" == "sudo" ] || ! [ -f "$0" ]; then
-    _current_info=$(pwd)
+if [ "$0" == "bash" ] || [ "$0 == $(which bash)" ] || [ "$0" == "sh" ] || [ "$0" == "sudo" ] || ! [ -f "$0" ]; then
+    SCRIPT_DIR=$(pwd)
+else
+    SCRIPT_DIR="$(dirname $(realpath "$0"))"
 fi
-SCRIPT_DIR="$(dirname $(realpath "$_current_info"))"
 
 # check curl command
 if ! [ -x "$(command -v curl)" ]; then
