@@ -23,7 +23,11 @@ else
     exit 1
 fi
 
-SCRIPT_DIR="$(dirname $(realpath "$0"))"
+_current_info=$0
+if [ "$0" == "bash" ] || [ "$0" == "sh" ] || [ "$0" == "sudo" ] || ! [ -f "$0" ]; then
+    _current_info=$(pwd)
+fi
+SCRIPT_DIR="$(dirname $(realpath "$_current_info"))"
 
 # check curl command
 if ! [ -x "$(command -v curl)" ]; then
@@ -203,9 +207,23 @@ tar_overwrite=""
 if [ -f docker-compose/.env ] && [ -f docker-compose/run.sh ]; then
     read -r -p "docker-compose directory already exists, do you want to overwrite it? [y/N] " response
     if [ "$response" == "y" ] || [ "$response" == "Y" ]; then
-        tar_overwrite="--overwrite"
+        case "$osType" in
+            "darwin")
+                tar_overwrite="-U"
+                ;;
+            "linux")
+                tar_overwrite="--overwrite"
+                ;;
+        esac
     else
-        tar_overwrite="--skip-old-files"
+        case "$osType" in
+            "darwin")
+                tar_overwrite="-k"
+                ;;
+            "linux")
+                tar_overwrite="--skip-old-files"
+                ;;
+        esac
     fi
 fi
 
