@@ -23,11 +23,7 @@ else
     exit 1
 fi
 
-_current_info=$0
-if [ "$0" == "bash" ] || [ "$0" == "sh" ] || [ "$0" == "sudo" ] || ! [ -f "$0" ]; then
-    _current_info=$(pwd)
-fi
-SCRIPT_DIR="$(dirname $(realpath "$_current_info"))"
+SCRIPT_DIR="/tmp/univer-script"
 
 # check curl command
 if ! [ -x "$(command -v curl)" ]; then
