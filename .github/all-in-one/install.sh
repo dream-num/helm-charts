@@ -14,7 +14,7 @@ fi
 archType=$(uname -m)
 if [ "${archType}" == "x86_64" ]; then
     archType="amd64"
-elif [ "${archType}" == "aarch64" ]; then
+elif [ "${archType}" == "aarch64" ] || [ "$archType" == "arm64" ]; then
     archType="arm64"
 else
     echo "Error: Unsupport arch type ${archType}"
@@ -56,15 +56,40 @@ docker load -i univer-image.tar.gz
 # load observability image
 docker load -i observability-image.tar.gz
 
+# check docker-compose directory
+tar_overwrite=""
+if [ -f docker-compose/.env ] && [ -f docker-compose/run.sh ]; then
+    read -r -p "docker-compose directory already exists, do you want to overwrite it? [y/N] " response
+    if [ "$response" == "y" ] || [ "$response" == "Y" ]; then
+        case "$osType" in
+            "darwin")
+                tar_overwrite="-U"
+                ;;
+            "linux")
+                tar_overwrite="--overwrite"
+                ;;
+        esac
+    else
+        case "$osType" in
+            "darwin")
+                tar_overwrite="-k"
+                ;;
+            "linux")
+                tar_overwrite="--skip-old-files"
+                ;;
+        esac
+    fi
+fi
+
 mkdir -p docker-compose \
     && cd docker-compose \
     && cp ../univer.tar.gz . \
-    && tar -xzf univer.tar.gz \
+    && tar -xzf univer.tar.gz $tar_overwrite \
     && if [ -f ../license-univer ]; then cp ../license-univer ./configs/; fi \
     && bash run.sh \
     && cd ..
 
 # check service health
-bash run.sh check
+bash docker-compose/run.sh check
 
 rm univer-image.tar.gz observability-image.tar.gz univer.tar.gz
