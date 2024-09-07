@@ -13,6 +13,7 @@ services:
       - ./configs:/data/configs
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/univers:/tmp/univers
+      - ./logs/universer:/logs
     depends_on:
       univer-postgres:
         condition: service_started
@@ -143,6 +144,7 @@ services:
       - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16
     volumes:
       - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
+      - ./logs/temporal:/logs
     expose:
       - 7233
     depends_on:
