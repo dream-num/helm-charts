@@ -4,6 +4,7 @@ set -eu
 
 _CI_TEST=${_CI_TEST:-false}
 
+
 # get os type
 osType=$(uname)
 if [ "${osType}" == "Darwin" ]; then
