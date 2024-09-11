@@ -154,6 +154,7 @@ check_docker_service() {
     done
 }
 
+
 check_service() {
     # check universer service
     echo "Checking universer service..."
