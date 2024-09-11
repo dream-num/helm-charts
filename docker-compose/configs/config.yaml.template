@@ -54,6 +54,10 @@ auth:
     clientSecret: ${AUTH_OIDC_CLIENT_SECRET}
     redirectURL: ${AUTH_OIDC_CALLBACK_URL}
     cookieDomain: ${AUTH_COOKIE_DOMAIN}
+  permission:
+    enabled: ${AUTH_PERMISSION_ENABLED}
+    defaultShareScope: "${AUTH_PERMISSION_DEFAULT_SHARE_SCOPE}"
+    defaultShareRole: "${AUTH_PERMISSION_DEFAULT_SHARE_ROLE}"
 apiLimit:
   method:
     tokens: 600

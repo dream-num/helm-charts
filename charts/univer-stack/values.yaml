@@ -11,8 +11,8 @@ univerStack:
   securityContext: {}
   temporalJob:
     image:
-      registry: docker.io
-      repository: temporalio/admin-tools
+      registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+      repository: release/temporal-admin-tools
       tag: "1.22.4"
       pullPolicy: IfNotPresent
     backoffLimit: 100
@@ -20,6 +20,7 @@ univerStack:
 global: 
   istioNamespace: "univer"
   istioDefaultRevision: "univer"
+  hub: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release
 
 universer:
   fullnameOverride: universer
@@ -58,7 +59,7 @@ universer:
       accessKeySecret: minioadmin
       region: "us-east-1"
       endpoint: http://minio:9000
-      endpointPublic: http://minio:9000
+      endpointPublic:
       usePathStyle: true
       presignExpires: 3600s
       defaultBucket: univer
@@ -94,7 +95,7 @@ collaboration-demo:
 worker:
   image:
     repository: release/worker-exchange
-    tag: 0.2.9 # VERSION
+    tag: 0.2.12 # VERSION
   temporalServer:
     host: temporal-frontend:7233
     namespace: univer
@@ -107,10 +108,74 @@ postgresql:
     postgresql:
       auth:
         postgresPassword: postgres
-        database: univer
+        database: postgres
+  image:
+    registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+    repository: release/postgres
+    tag: 16.1
+    pullPolicy: IfNotPresent
   commonAnnotations:
     "helm.sh/hook": pre-install
     "helm.sh/hook-weight": "-1"
+  metrics:
+    enabled: true
+    image:
+      registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+      repository: release/postgres-exporter
+      tag: 0.15.0-debian-11-r6
+    customMetrics:
+      pg_stat_activity_by_client:
+        query: |
+          SELECT
+            client_addr,
+            count(*) as connection_count
+          FROM
+            pg_stat_activity
+            GROUP BY
+            client_addr;
+        metrics:
+          - client_addr:
+              usage: "LABEL"
+              description: "The IP address of the client"
+          - connection_count:
+              usage: "GAUGE"
+              description: "Number of connections for this client IP"
+      pg_stat_statements_per_db:
+        query: |
+          SELECT
+            pg_database.datname,
+            pg_stat_statements.queryid,
+            pg_stat_statements.calls,
+            pg_stat_statements.total_exec_time / pg_stat_statements.calls AS avg_exec_time,
+            CASE
+              WHEN left(pg_stat_statements.query, 6) = 'INSERT' THEN 'create'
+              WHEN left(pg_stat_statements.query, 6) = 'SELECT' THEN 'read'
+              WHEN left(pg_stat_statements.query, 6) = 'UPDATE' THEN 'update'
+              WHEN left(pg_stat_statements.query, 6) = 'DELETE' THEN 'delete'
+              ELSE 'other'
+            END AS operation
+          FROM
+            pg_stat_statements
+          JOIN pg_database ON pg_stat_statements.dbid = pg_database.oid
+          WHERE
+            pg_database.datname = 'univer';
+        metrics:
+          - datname:
+              usage: "LABEL"
+              description: "Name of the database"
+          - queryid:
+              usage: "LABEL"
+              description: "Internal hash code, identifying the executed statement"
+          - calls:
+              usage: "COUNTER"
+              description: "Number of times executed"
+          - avg_exec_time:
+              usage: "GAUGE"
+              description: "Average execution time of statements, in milliseconds"
+          - operation:
+              usage: "LABEL"
+              description: "Type of CRUD operation"
+
 
 mysql:
   enabled: false
@@ -119,6 +184,10 @@ temporal:
   enabled: true
   fullnameOverride: temporal
   server:
+    affinity: {}
+    image:
+      repository: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/temporal
+      tag: 1.22.4
     config:
       persistence:
         default:
@@ -144,6 +213,18 @@ temporal:
             password: postgres
             maxConns: 20
             maxConnLifetime: "1h"
+
+  admintools:
+    image:
+      repository: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/temporal-admin-tools
+      tag: 1.22.4
+    affinity: {}
+
+  web:
+    image:
+      repository: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/temporal-ui
+      tag: 2.16.2
+    affinity: {}
 
   cassandra:
     enabled: false
@@ -175,6 +256,16 @@ redis:
   architecture: standalone
   auth:
     enabled: false
+  image:
+    registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+    repository: release/redis
+    tag: 7.2.4-debian-11-r4
+  metrics:
+    enabled: true
+    image:
+      registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+      repository: release/redis-exporter
+      tag: 1.56.0-debian-11-r1
 
 rabbitmq:
   enabled: true
@@ -183,10 +274,20 @@ rabbitmq:
     username: guest
     password: guest
     securePassword: false
+  image:
+    registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+    repository: release/rabbitmq
+    tag: 3.12.3-debian-11-r0
+  metrics:
+    enabled: true
 
 minio:
   enabled: true
   fullnameOverride: minio
+  image:
+    registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+    repository: release/minio
+    tag: 2024.8.3-debian-12-r1
   auth:
     rootUser: admin
     rootPassword: minioadmin

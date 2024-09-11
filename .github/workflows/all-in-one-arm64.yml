@@ -22,7 +22,7 @@ jobs:
       uses: hexf00/upload-to-oss@v1
       with:
         source: '${{ env.ALLINONE_PATH }}'
-        dest: ${{ secrets.OSS_ALLINONE_PATH }}/${{ env.ALLINONE_TAR }}
+        dest: release/${{ env.ALLINONE_TAR }}
         bucket: ${{ secrets.OSS_BUCKET }}
         region: "oss-cn-shenzhen"
         accessKeyId: ${{ secrets.S3_ACCESS_KEY_ID }}

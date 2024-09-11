@@ -12,7 +12,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.2.9 # VERSION
+  tag: 0.2.12 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -108,7 +108,7 @@ config:
     accessKeySecret: ""
     region: oss-cn-shenzhen
     endpoint: https://oss-cn-shenzhen.aliyuncs.com
-    endpointPublic: https://oss-cn-shenzhen.aliyuncs.com
+    endpointPublic: ""
     usePathStyle: false
     presignExpires: 3600s
     defaultBucket: univer
@@ -147,6 +147,8 @@ config:
       enabled: false
     permission:
       enabled: false
+      defaultShareScope: ""
+      defaultShareRole: ""
     admin:
       userIDs: []
   apiLimit:

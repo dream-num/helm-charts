@@ -130,9 +130,9 @@ check_failed_message() {
     if [ "$service" == "" ]; then
         service="universer"
     fi
-    echo -e "\nCheck service failed. \
+    echo -e "\n $service is not ready. \
         \nPlease use 'docker compose logs $service' to check the logs, \
-        \nand check the Q&A in https://www.univer.ai/guides/sheet/server/docker#troubleshooting- may helpfull."
+        \nand check the Q&A in https://www.univer.ai/guides/sheet/server/docker#troubleshooting- may helpful."
 }
 
 check_docker_service() {
@@ -155,26 +155,12 @@ check_docker_service() {
 }
 
 check_service() {
-    # check docker compose universer service status
-    check_docker_service universer
-    if [ $? -ne 0 ]; then
-        check_failed_message universer
-        return 1
-    fi
-
-    # check docker compose collaboration service status
-    check_docker_service collaboration-server
-    if [ $? -ne 0 ]; then
-        check_failed_message collaboration-server
-        return 1
-    fi
-
     # check universer service
-    for i in {1..10}; do
-        echo "Checking universer service..." $i
-        docker run --rm --network=univer-prod --env no_proxy=universer univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-check:0.0.1
+    echo "Checking universer service..."
+    for i in {1..30}; do
+        docker run --rm --network=univer-prod --env no_proxy=universer univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-check:0.0.1 > /dev/null
         if [ $? -eq 0 ]; then
-            echo "success"
+            echo "check completed."
             return 0
         fi
         sleep $i

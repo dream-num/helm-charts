@@ -16,14 +16,14 @@ fi
 archType=$(uname -m)
 if [ "${archType}" == "x86_64" ]; then
     archType="amd64"
-elif [ "${archType}" == "aarch64" ]; then
+elif [ "${archType}" == "aarch64" ] || [ "$archType" == "arm64" ]; then
     archType="arm64"
 else
     echo "Error: Unsupport arch type ${archType}"
     exit 1
 fi
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="/tmp/univer-script"
 
 # check curl command
 if ! [ -x "$(command -v curl)" ]; then
@@ -203,9 +203,23 @@ tar_overwrite=""
 if [ -f docker-compose/.env ] && [ -f docker-compose/run.sh ]; then
     read -r -p "docker-compose directory already exists, do you want to overwrite it? [y/N] " response
     if [ "$response" == "y" ] || [ "$response" == "Y" ]; then
-        tar_overwrite="--overwrite"
+        case "$osType" in
+            "darwin")
+                tar_overwrite="-U"
+                ;;
+            "linux")
+                tar_overwrite="--overwrite"
+                ;;
+        esac
     else
-        tar_overwrite="--skip-old-files"
+        case "$osType" in
+            "darwin")
+                tar_overwrite="-k"
+                ;;
+            "linux")
+                tar_overwrite="--skip-old-files"
+                ;;
+        esac
     fi
 fi
 
@@ -220,7 +234,7 @@ mkdir -p docker-compose \
 # check service health
 bash run.sh check
 if [ $? -eq 0 ]; then
-    docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
+    DOCKER_CLI_HINTS=false docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
 
     docker run --net=univer-prod --rm --name univer-collaboration-lite -p 3010:3010 univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
 fi
