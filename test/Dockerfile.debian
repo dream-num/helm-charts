@@ -1,0 +1,14 @@
+ARG BASE_IMAGE=debian:bullseye
+FROM ${BASE_IMAGE}
+
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl lsb-release sudo unzip
+
+COPY setup-docker.sh /setup-docker.sh
+RUN /bin/sh /setup-docker.sh
+
+# add a non root user named univer with sudo access without password
+RUN useradd -m -s /bin/bash univer && \
+    echo "univer ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+CMD ["docker", "compose", "version"]
