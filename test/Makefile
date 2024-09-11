@@ -8,6 +8,7 @@ PATH_INFO=docker-compose-test-$(RANDOM_STRING)
 # Targets
 all: build_fedora build_ubuntu build_debian
 
+
 build_fedora:
 	@DOCKER_CLI_HINTS=false docker build -f Dockerfile.fedora -t mydockerimage:fedora .
 	# Run the fedora container
