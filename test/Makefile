@@ -13,7 +13,7 @@ build_fedora:
 	# Run the fedora container
 	@mkdir /tmp/fedora-$(PATH_INFO)-dir
 	@chmod 777 /tmp/fedora-$(PATH_INFO)-dir
-	@docker run -it -d \
+	@docker run -d \
   		-v /var/run/docker.sock:/var/run/docker.sock \
 		-v /tmp/fedora-$(PATH_INFO)-dir:/tmp/fedora-$(PATH_INFO)-dir \
 		--cidfile /tmp/fedora-$(PATH_INFO) \
@@ -21,14 +21,14 @@ build_fedora:
 	@docker cp $(DIR)/../docker-compose $$(cat /tmp/fedora-$(PATH_INFO)):/tmp/fedora-$(PATH_INFO)-dir
 	@docker cp $(DIR)/../install.sh $$(cat /tmp/fedora-$(PATH_INFO)):/tmp/fedora-$(PATH_INFO)-dir
 	# Test fedora
-	@docker exec -it -w  /tmp/fedora-$(PATH_INFO)-dir $$(cat /tmp/fedora-$(PATH_INFO)) bash install.sh
+	@docker exec -w /tmp/fedora-$(PATH_INFO)-dir -e _CI_TEST=true $$(cat /tmp/fedora-$(PATH_INFO)) bash install.sh
 
 build_ubuntu:
 	@DOCKER_CLI_HINTS=false docker build -f Dockerfile.ubuntu -t mydockerimage:ubuntu .
 	# Run the ubuntu container
 	@mkdir /tmp/ubuntu-$(PATH_INFO)-dir
 	@chmod 777 /tmp/ubuntu-$(PATH_INFO)-dir
-	@docker run -it -d \
+	@docker run -d \
   		-v /var/run/docker.sock:/var/run/docker.sock \
 		-v /tmp/ubuntu-$(PATH_INFO)-dir:/tmp/ubuntu-$(PATH_INFO)-dir \
 		--cidfile /tmp/ubuntu-$(PATH_INFO) \
@@ -36,14 +36,14 @@ build_ubuntu:
 	@docker cp $(DIR)/../docker-compose $$(cat /tmp/ubuntu-$(PATH_INFO)):/tmp/ubuntu-$(PATH_INFO)-dir
 	@docker cp $(DIR)/../install.sh $$(cat /tmp/ubuntu-$(PATH_INFO)):/tmp/ubuntu-$(PATH_INFO)-dir
 	# Test ubuntu
-	@docker exec -it -w /tmp/ubuntu-$(PATH_INFO)-dir $$(cat /tmp/ubuntu-$(PATH_INFO)) bash install.sh
+	@docker exec -w /tmp/ubuntu-$(PATH_INFO)-dir -e _CI_TEST=true $$(cat /tmp/ubuntu-$(PATH_INFO)) bash install.sh
 
 build_debian:
 	@DOCKER_CLI_HINTS=false docker build -f Dockerfile.debian -t mydockerimage:debian .
 	# Run the debian container
 	@mkdir /tmp/debian-$(PATH_INFO)-dir
 	@chmod 777 /tmp/debian-$(PATH_INFO)-dir
-	@docker run -it -d \
+	@docker run -d \
   		-v /var/run/docker.sock:/var/run/docker.sock \
 		-v /tmp/debian-$(PATH_INFO)-dir:/tmp/debian-$(PATH_INFO)-dir \
 		--cidfile /tmp/debian-$(PATH_INFO) \
@@ -51,7 +51,7 @@ build_debian:
 	@docker cp $(DIR)/../docker-compose $$(cat /tmp/debian-$(PATH_INFO)):/tmp/debian-$(PATH_INFO)-dir
 	@docker cp $(DIR)/../install.sh $$(cat /tmp/debian-$(PATH_INFO)):/tmp/debian-$(PATH_INFO)-dir
 	# Test debian
-	@docker exec -it -w /tmp/debian-$(PATH_INFO)-dir $$(cat /tmp/debian-$(PATH_INFO)) bash install.sh
+	@docker exec -w /tmp/debian-$(PATH_INFO)-dir -e _CI_TEST=true $$(cat /tmp/debian-$(PATH_INFO)) bash install.sh
 
 clean:
 	docker rmi mydockerimage:fedora mydockerimage:ubuntu mydockerimage:debian || true
@@ -60,7 +60,7 @@ clean_containers:
 	@for file in $(wildcard /tmp/*-docker-compose-test-*); do \
 		if [ -d "$$file" ]; then continue; fi; \
 		echo "Cleaning up container $$(cat $$file)"; \
-		docker exec -it -w $$file-dir/docker-compose $$(cat $$file) docker compose down --volumes; \
+		docker exec -w $$file-dir/docker-compose $$(cat $$file) docker compose down --volumes; \
 		docker stop $$(cat $$file) || true; \
 		docker rm -f $$(cat $$file) || true; \
 		rm -f $$file; \

@@ -24,16 +24,16 @@ jobs:
         cd test
         make build_${{ matrix.platform }}
 
-    - name: Warning
-      if: ${{ failure() }}
-      run: |
-        curl ${{ secrets.WECOM_ROBOT }} \
-          -H 'Content-Type: application/json' \
-          -d '{
-            "msgtype": "markdown",
-            "markdown": {
-              "content": "⚠️ helm-charts test fail, please check the logs.\n
-              >Job Log: [https://github.com/dream-num/helm-charts/actions/runs/${{ github.run_id }}](https://github.com/dream-num/helm-charts/actions/runs/${{ github.run_id }})
-              >enviroment: docker-compose"
-            }
-          }'
+    # - name: Warning
+    #   if: ${{ failure() }}
+    #   run: |
+    #     curl ${{ secrets.WECOM_ROBOT }} \
+    #       -H 'Content-Type: application/json' \
+    #       -d '{
+    #         "msgtype": "markdown",
+    #         "markdown": {
+    #           "content": "⚠️ helm-charts test fail, please check the logs.\n
+    #           >Job Log: [https://github.com/dream-num/helm-charts/actions/runs/${{ github.run_id }}](https://github.com/dream-num/helm-charts/actions/runs/${{ github.run_id }})
+    #           >enviroment: docker-compose"
+    #         }
+    #       }'

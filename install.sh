@@ -2,6 +2,8 @@
 
 set -eu
 
+_CI_TEST=${_CI_TEST:-false}
+
 # get os type
 osType=$(uname)
 if [ "${osType}" == "Darwin" ]; then
@@ -153,6 +155,9 @@ verifyToken() {
 }
 
 getLicense(){
+  if [ "$_CI_TEST" == "true" ]; then
+    return
+  fi
   while true ; do
      read -r -p "Enter the path for license or press Enter to continue: " license
      if [ -z "${license}" ]; then
@@ -186,7 +191,7 @@ if [ -z "$token" ]; then
         echo -e "Your browser has been opened to visit:\n\n\t ${getTokenURL} \n" || 
         echo -e "Open the following in your browser:\n\n\t ${getTokenURL} \n"
 
-  while true ; do
+  while [ "$_CI_TEST" != "true" ] ; do
     read -r -p "> Paste your token here: " token
     if verifyToken "${token}" true; then
       mkdir -p "${tokenPath}"
@@ -201,7 +206,11 @@ getLicense
 # check docker-compose directory
 tar_overwrite=""
 if [ -f docker-compose/.env ] && [ -f docker-compose/run.sh ]; then
-    read -r -p "docker-compose directory already exists, do you want to overwrite it? [y/N] " response
+    if [ "$_CI_TEST" == "true" ]; then
+        response="N"
+    else
+        read -r -p "docker-compose directory already exists, do you want to overwrite it? [y/N] " response
+    fi
     if [ "$response" == "y" ] || [ "$response" == "Y" ]; then
         case "$osType" in
             "darwin")
