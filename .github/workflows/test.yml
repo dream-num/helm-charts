@@ -1,0 +1,38 @@
+name: 🩺 Test
+
+on:
+  workflow_dispatch:
+    
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        platform: [debian, fedora, ubuntu]
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Test the repository
+      run: |
+        make -f test/Makefile build_${{ matrix.platform }}
+
+    - name: Warning
+      if: ${{ failure() }}
+      run: |
+        curl ${{ secrets.WECOM_ROBOT }} \
+          -H 'Content-Type: application/json' \
+          -d '{
+            "msgtype": "markdown",
+            "markdown": {
+              "content": "⚠️ helm-charts test fail, please check the logs.\n
+              >Job Log: [https://github.com/dream-num/helm-charts/actions/runs/${{ github.run_id }}](https://github.com/dream-num/helm-charts/actions/runs/${{ github.run_id }})
+              >enviroment: docker-compose"
+            }
+          }'
