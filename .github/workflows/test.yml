@@ -21,7 +21,8 @@ jobs:
 
     - name: Test the repository
       run: |
-        make -f test/Makefile build_${{ matrix.platform }}
+        cd test
+        make build_${{ matrix.platform }}
 
     - name: Warning
       if: ${{ failure() }}
