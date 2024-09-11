@@ -242,7 +242,7 @@ mkdir -p docker-compose \
 
 # check service health
 bash run.sh check
-if [ $? -eq 0 ]; then
+if [ $? -eq 0 ] && [ "$_CI_TEST" != "true" ]; then
     DOCKER_CLI_HINTS=false docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
 
     docker run --net=univer-prod --rm --name univer-collaboration-lite -p 3010:3010 univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
