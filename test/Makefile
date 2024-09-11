@@ -21,6 +21,9 @@ build_fedora:
 	@docker cp $(DIR)/../docker-compose $$(cat /tmp/fedora-$(PATH_INFO)):/tmp/fedora-$(PATH_INFO)-dir
 	@docker cp $(DIR)/../install.sh $$(cat /tmp/fedora-$(PATH_INFO)):/tmp/fedora-$(PATH_INFO)-dir
 	# Test fedora
+	@sleep 10
+	@docker info
+	@docker ps
 	@docker exec -w /tmp/fedora-$(PATH_INFO)-dir -e _CI_TEST=true $$(cat /tmp/fedora-$(PATH_INFO)) bash install.sh
 
 build_ubuntu:
@@ -36,6 +39,9 @@ build_ubuntu:
 	@docker cp $(DIR)/../docker-compose $$(cat /tmp/ubuntu-$(PATH_INFO)):/tmp/ubuntu-$(PATH_INFO)-dir
 	@docker cp $(DIR)/../install.sh $$(cat /tmp/ubuntu-$(PATH_INFO)):/tmp/ubuntu-$(PATH_INFO)-dir
 	# Test ubuntu
+	@sleep 10
+	@docker info
+	@docker ps
 	@docker exec -w /tmp/ubuntu-$(PATH_INFO)-dir -e _CI_TEST=true $$(cat /tmp/ubuntu-$(PATH_INFO)) bash install.sh
 
 build_debian:
@@ -51,6 +57,9 @@ build_debian:
 	@docker cp $(DIR)/../docker-compose $$(cat /tmp/debian-$(PATH_INFO)):/tmp/debian-$(PATH_INFO)-dir
 	@docker cp $(DIR)/../install.sh $$(cat /tmp/debian-$(PATH_INFO)):/tmp/debian-$(PATH_INFO)-dir
 	# Test debian
+	@sleep 10
+	@docker info
+	@docker ps
 	@docker exec -w /tmp/debian-$(PATH_INFO)-dir -e _CI_TEST=true $$(cat /tmp/debian-$(PATH_INFO)) bash install.sh
 
 clean:
