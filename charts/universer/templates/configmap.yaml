@@ -7,3 +7,8 @@ metadata:
 data:
   config.yaml: |
     {{ tpl (.Files.Get "config/config.yml") . | nindent 4 | trim }}
+#    licnese v2
+  license.txt:
+    {{ .Values.license.licenseV2 | quote }}
+  LICENSE:
+    {{ .Values.license.LICENSE | quote }}

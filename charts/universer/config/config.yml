@@ -20,6 +20,10 @@ data:
     replicaDSN: {{ include "universer.database.replicaDSN" .Values.config.database }}
   rabbitmq:
     addr: amqp://{{ .Values.config.rabbitmq.username }}:{{ .Values.config.rabbitmq.password }}@{{ tpl .Values.config.rabbitmq.host . }}:{{ .Values.config.rabbitmq.port }}/
+    {{- with .Values.config.rabbitmq.cluster }}
+    cluster:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
   clickhouse:
     dsn: clickhouse://clickhouse:clickhouse@clickhouse:9000/univer?dial_timeout=10s&read_timeout=20s
   temporal:
