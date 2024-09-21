@@ -60,7 +60,10 @@ spec:
             - name: conf
               mountPath: /data/configs/config.yaml
               subPath: config.yaml
-            - name: secret
+            - name: conf
+              mountPath: /data/configs/license.txt
+              subPath: license.txt
+            - name: conf
               mountPath: /data/configs/LICENSE
               subPath: LICENSE
             - name: secret
@@ -69,6 +72,9 @@ spec:
             - name: secret
               mountPath: /data/configs/casdoor.pem
               subPath: casdoor.pem
+            - name: secret
+              mountPath: /data/configs/licenseKey.txt
+              subPath: licenseKey.txt
           env:
             - name: SERVICE_NAME
               value: "universer"

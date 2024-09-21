@@ -18,13 +18,23 @@ data:
     replicaDSN: ${DATABASE_REPLICA_DSN}
   rabbitmq:
     addr: amqp://${RABBITMQ_USERNAME}:${RABBITMQ_PASSWORD}@${RABBITMQ_HOST}:${RABBITMQ_PORT}/
+    cluster:
+      enabled: ${RABBITMQ_CLUSTER_ENABLED}
+      username: "${RABBITMQ_CLUSTER_USERNAME}"
+      password: "${RABBITMQ_CLUSTER_PASSWORD}"
+      addr: "${RABBITMQ_CLUSTER_ADDR}"
+      vhost: "${RABBITMQ_CLUSTER_VHOST}"
+      schema: "${RABBITMQ_CLUSTER_SCHEMA}"
   clickhouse:
     dsn: clickhouse://${CLICKHOUSE_USERNAME}:${CLICKHOUSE_PASSWORD}@${CLICKHOUSE_HOST}:${CLICKHOUSE_PORT}/univer?dial_timeout=10s&read_timeout=20s
   temporal:
     addr: ${TEMPORAL_HOST}:${TEMPORAL_PORT}
     namespace: ${TEMPORAL_NAMESPACE}
   redis:
-    addr: univer-redis:6379
+    addr: "${REDIS_ADDR}"
+    db: ${REDIS_DB}
+    username: "${REDIS_USERNAME}"
+    password: "${REDIS_PASSWORD}"
     read_timeout: 1s
     write_timeout: 1s
   s3:
