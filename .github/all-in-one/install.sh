@@ -86,7 +86,7 @@ mkdir -p docker-compose \
     && cp ../univer.tar.gz . \
     && tar -xzf univer.tar.gz $tar_overwrite \
     && if [ -f ../license-univer ]; then cp ../license-univer ./configs/; fi \
-    && bash run.sh \
+    && NOT_CHECK_REGION=true bash run.sh \
     && cd ..
 
 # check service health
