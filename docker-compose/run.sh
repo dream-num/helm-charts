@@ -19,6 +19,7 @@ COMPOSE_FILE="docker-compose.yaml"
 ENV_FILE=".env"
 DATABASE_DSN='host=${DATABASE_HOST} port=${DATABASE_PORT} dbname=${DATABASE_DBNAME} user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} sslmode=disable TimeZone=Asia/Shanghai'
 DATABASE_REPLICA_DSN=""
+NOT_CHECK_REGION=${NOT_CHECK_REGION:-false}
 
 choose_compose_file() {
     case "$DATABASE_DRIVER" in
@@ -69,6 +70,9 @@ check_docker_proxy() {
 }
 
 prepare_image() {
+    if [ "$NOT_CHECK_REGION" == "true" ]; then
+        return
+    fi
     check_abroad_region
     if [ $? -ne 0 ]; then
         # not in abroad
