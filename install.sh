@@ -201,7 +201,7 @@ if [ -z "$token" ]; then
   done
 fi
 
-getLicense
+# getLicense
 
 # check docker-compose directory
 tar_overwrite=""
