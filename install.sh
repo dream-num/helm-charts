@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -eu
-
 _CI_TEST=${_CI_TEST:-false}
 
 # get os type
@@ -59,9 +57,13 @@ if ! [ -x "$(command -v docker)" ]; then
     esac
 fi
 
-if ! [ -x "$(command -v docker-compose)" ] && ! [ -x "$(command -v docker compose)" ]; then
-    echo "Error: docker-compose is not installed." >&2
-    exit 1
+docker compose version &>/dev/null
+if [ $? -ne 0 ]; then
+    docker-compose version &>/dev/null
+    if [ $? -ne 0 ]; then
+        echo "Error: docker compose is not installed."
+        exit 1
+    fi
 fi
 
 # check docker daemon
@@ -69,6 +71,8 @@ if ! docker info > /dev/null 2>&1; then
     echo "Error: docker daemon is not running." >&2
     exit 1
 fi
+
+set -eu
 
 # check docker version
 _docker_version=$(docker version --format '{{ .Server.Version }}')
