@@ -27,9 +27,13 @@ if ! [ -x "$(command -v docker)" ]; then
     exit 1
 fi
 
-if ! [ -x "$(command -v docker-compose)" ] && ! [ -x "$(command -v docker compose)" ]; then
-    echo "Error: docker-compose is not installed." >&2
-    exit 1
+docker compose version &>/dev/null
+if [ $? -ne 0 ]; then
+    docker-compose version &>/dev/null
+    if [ $? -ne 0 ]; then
+        echo "Error: docker compose is not installed."
+        exit 1
+    fi
 fi
 
 # check docker daemon
