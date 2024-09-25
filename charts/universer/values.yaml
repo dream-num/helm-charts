@@ -71,6 +71,8 @@ tolerations: []
 affinity: {}
 
 config:
+  logs:
+    disableLogMask: false
   server:
     http: 
       corsAllowOrigins: []

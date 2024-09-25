@@ -7,7 +7,7 @@ services:
       - 9000
     environment:
       - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-temporal,collaboration-server,univer-minio
-      - SERVICE_NAME=universer
+      - SERVICE_NAME=Universer
       - SERVICE_VERSION=${UNIVERSER_VERSION}
     volumes:
       - ./configs:/data/configs
