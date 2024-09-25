@@ -7,12 +7,14 @@ if [ "$PLATFORM" == "Darwin" ]; then
 fi
 
 DOCKER_COMPOSE="docker compose"
-if [! $DOCKER_COMPOSE version] &> /dev/null; then
+$DOCKER_COMPOSE version &>/dev/null
+if [ $? -ne 0 ]; then
     DOCKER_COMPOSE="docker-compose"
-fi
-if [! $DOCKER_COMPOSE version] &> /dev/null; then
-    echo "need docker compose."
-    exit 1
+    $DOCKER_COMPOSE version &>/dev/null
+    if [ $? -ne 0 ]; then
+        echo "need docker compose."
+        exit 1
+    fi
 fi
 
 COMPOSE_FILE="docker-compose.yaml"
