@@ -1,6 +1,7 @@
 #!/bin/bash
 
 _CI_TEST=${_CI_TEST:-false}
+_HOST=${_HOST:-"univer.ai"}
 
 # get os type
 osType=$(uname)
@@ -97,8 +98,10 @@ checkPort() {
 
 tokenPath="${HOME}/.univer/"
 tokenFileName="${tokenPath}/deploy_token"
-getTokenURL="https://univer.ai/cli-auth"
-verifyTokenURL="https://univer.ai/license-manage-api/cli-auth/verify-token"
+getTokenURL="https://${_HOST}/cli-auth"
+verifyTokenURL="https://${_HOST}/license-manage-api/cli-auth/verify-token"
+getLicenseURL="https://${_HOST}/license-manage-api/license/cli-download?type=1"
+getLicenseKeyURL="https://${_HOST}/license-manage-api/license/cli-download?type=2"
 
 
 openURL() {
@@ -160,54 +163,66 @@ verifyToken() {
   return 0
 }
 
-getLicense(){
+getLicenseOnline(){
+  reqToken=$1
   if [ "$_CI_TEST" == "true" ]; then
     return
   fi
-  while true ; do
-     read -r -p "Enter the path for license or press Enter to continue: " license
-     if [ -z "${license}" ]; then
-       break
-     elif [ -d "${license}" ]; then
-       echo "ERROR: need a file path"
-     elif [ -f "${license}" ]; then
-       mkdir -p docker-compose/configs
-       cp "$license" docker-compose/configs
-       break
-     else
-       echo "file not exist"
-     fi
-  done
+  response="$(curl -s -w "\n%{http_code}" ${getLicenseURL} -H 'X-Session-Token: '"${reqToken}" -H 'x-feature-id: lice')";
+  http_body="$(echo "${response}" | head -n 1)";
+  http_code="$(echo "${response}" | tail -n 1)";
+  if [[ "$http_code" -ne 200 ]] ; then
+    echo "Get License fail. (server response code:$http_code)"
+    return 1
+  else
+    echo -n  "${http_body}" > docker-compose/configs/license.txt
+  fi
+
+  response="$(curl -s -w "\n%{http_code}" ${getLicenseKeyURL} -H 'X-Session-Token: '"${reqToken}" -H 'x-feature-id: lice')";
+  http_body="$(echo "${response}" | head -n 1)";
+  http_code="$(echo "${response}" | tail -n 1)";
+  if [[ "$http_code" -ne 200 ]] ; then
+    echo "Get LicenseKey fail. (server response code:$http_code)"
+    return 1
+  else
+    echo -n "${http_body}" > docker-compose/configs/licenseKey.txt
+  fi
 }
 
-
 token=""
-if [[ -s ${tokenFileName} ]]; then
-  # check saved token
-  token=$(cat "${tokenFileName}")
-  if ! verifyToken "${token}" false; then
-    token=""
-    echo -n "" > "${tokenFileName}"
-  fi
-fi
 
-if [ -z "$token" ]; then
-  echo "Please authenticate the CLI to subscribe to our upgrade notifications"
-  openURL "${getTokenURL}" && 
-        echo -e "Your browser has been opened to visit:\n\n\t ${getTokenURL} \n" || 
-        echo -e "Open the following in your browser:\n\n\t ${getTokenURL} \n"
-
-  while [ "$_CI_TEST" != "true" ] ; do
-    read -r -p "> Paste your token here: " token
-    if verifyToken "${token}" true; then
-      mkdir -p "${tokenPath}"
-      echo -n "${token}" > "${tokenFileName}"
-      break
+getToken(){
+  if [[ -s ${tokenFileName} ]]; then
+    # check saved token
+    token=$(cat "${tokenFileName}")
+    if ! verifyToken "${token}" false; then
+      token=""
+      echo -n "" > "${tokenFileName}"
     fi
-  done
-fi
+  fi
 
-# getLicense
+  if [ -z "$token" ]; then
+    echo "Please authenticate the CLI to subscribe to our upgrade notifications"
+    openURL "${getTokenURL}" &&
+          echo -e "Your browser has been opened to visit:\n\n\t ${getTokenURL} \n" ||
+          echo -e "Open the following in your browser:\n\n\t ${getTokenURL} \n"
+
+    while [ "$_CI_TEST" != "true" ] ; do
+      read -r -p "> Paste your token here: " token
+      if verifyToken "${token}" true; then
+        mkdir -p "${tokenPath}"
+        echo -n "${token}" > "${tokenFileName}"
+        break
+      fi
+    done
+  fi
+}
+
+getToken
+
+mkdir -p docker-compose/configs
+
+getLicenseOnline "${token}"
 
 # check docker-compose directory
 tar_overwrite=""
