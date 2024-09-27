@@ -71,6 +71,8 @@ tolerations: []
 affinity: {}
 
 config:
+  logs:
+    disableLogMask: false
   server:
     http: 
       corsAllowOrigins: []
@@ -180,7 +182,7 @@ config:
   usip:
     enabled: false
     uri:
-      userInfo: "http://usip:8080/userinfo"
+      userinfo: "http://usip:8080/userinfo"
       collaborators: "http://usip:8080/collaborators"
       role: "http://usip:8080/role"
       credential: "http://usip:8080/credential"

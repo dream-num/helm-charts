@@ -1,5 +1,7 @@
 #!/bin/bash
 
+RELEASE_TIME="1704067201" # RELEASE_TIME
+
 PLATFORM=$(uname)
 SED="sed -i"
 if [ "$PLATFORM" == "Darwin" ]; then
@@ -57,6 +59,21 @@ choose_compose_file() {
     fi
 }
 
+checkLicense() {
+  if [ -f configs/license.txt ] ; then
+    license_content=$(cat configs/license.txt)
+    IFS='-' read -r -a license_parts <<< "$license_content"
+    fourth_part=${license_parts[4]}
+    # echo "Fourth part of the license: $fourth_part"
+    if [ "$fourth_part" -lt "$RELEASE_TIME" ]; then
+      formatted_date=$(date -d @"$fourth_part" +"%Y-%m-%d")
+      echo "license not support current version. supports versions release before ${formatted_date}."
+      exit 1
+    fi
+  else
+    echo "No license has been configured, which will limit some functionalities. More information can be found here: https://univer.ai/pro/license"
+  fi
+}
 check_abroad_region() {
     status_code=$(curl -o /dev/null -s -w "%{http_code}" --connect-timeout 5 -m 10 "https://www.google.com")
     if [ $status_code -ne 200 ]; then
@@ -176,6 +193,11 @@ check_service() {
     return 1
 }
 
+start_demo_ui() {
+    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-ui up univer-demo-ui
+    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-ui rm -sf univer-demo-ui
+}
+
 help() {
     echo "Usage: ./run.sh [COMMAND] [OPTION]"
     echo "Options:"
@@ -183,10 +205,11 @@ help() {
     echo "  --enterprise                 Use enterprise edition"
     echo "  --load /path/image.tar.gz    Use to load enterprise edition image"
     echo "Commands:"
-    echo "  start    Start the service"
-    echo "  stop     Stop the service"
-    echo "  restart  Restart the service"
-    echo "  check    Check the service health"
+    echo "  start             Start the service"
+    echo "  stop              Stop the service"
+    echo "  restart           Restart the service"
+    echo "  check             Check the service health"
+    echo "  start-demo-ui     Start the sdk demo ui"
     echo "Default command:"
     echo "  ./run.sh start"
 }
@@ -216,6 +239,7 @@ case "$command" in
     fi
     echo "Staring the service..."
     _env
+    checkLicense
     choose_compose_file
     init_config
     prepare_image
@@ -250,6 +274,7 @@ case "$command" in
         $SED -e 's|UNIVERSER_VERSION=.*|UNIVERSER_VERSION='"${univer_version}"'|' .env.enterprise
     fi
     _env
+    checkLicense
     choose_compose_file
     init_config
     stop
@@ -258,6 +283,10 @@ case "$command" in
     ;;
   "check")
     check_service
+    ;;
+  "start-demo-ui")
+    _env
+    start_demo_ui
     ;;
   *)
     echo "Unknown option: $option"
