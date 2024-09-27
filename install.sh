@@ -8,6 +8,8 @@ if [ "${osType}" == "Darwin" ]; then
     osType="darwin"
 elif [ "${osType}" == "Linux" ]; then
     osType="linux"
+elif [[ "${osType}" == MINGW64* ]]; then
+    osType="mingw"
 else
     echo "Warning: Unknow OS type ${osType}"
 fi
@@ -232,6 +234,9 @@ if [ -f docker-compose/.env ] && [ -f docker-compose/run.sh ]; then
             "linux")
                 tar_overwrite="--skip-old-files"
                 ;;
+            "mingw")
+                tar_overwrite="--skip-old-files"
+                ;;
         esac
     fi
 fi
@@ -247,8 +252,6 @@ mkdir -p docker-compose \
 # check service health
 bash run.sh check
 if [ $? -eq 0 ] && [ "$_CI_TEST" != "true" ]; then
-    DOCKER_CLI_HINTS=false docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
-
-    docker run --net=univer-prod --rm --name univer-collaboration-lite -p 3010:3010 univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
+    bash run.sh start-demo-ui
 fi
 
