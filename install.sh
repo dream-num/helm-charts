@@ -168,7 +168,7 @@ getLicenseOnline(){
   if [ "$_CI_TEST" == "true" ]; then
     return
   fi
-  response="$(curl -s -w "\n%{http_code}" ${getLicenseURL} -H 'X-Session-Token: '"${reqToken}" -H 'x-feature-id: lice')";
+  response="$(curl -s -w "\n%{http_code}" ${getLicenseURL} -H 'X-Session-Token: '"${reqToken}")";
   http_body="$(echo "${response}" | head -n 1)";
   http_code="$(echo "${response}" | tail -n 1)";
   if [[ "$http_code" -ne 200 ]] ; then
@@ -178,7 +178,7 @@ getLicenseOnline(){
     echo -n  "${http_body}" > docker-compose/configs/license.txt
   fi
 
-  response="$(curl -s -w "\n%{http_code}" ${getLicenseKeyURL} -H 'X-Session-Token: '"${reqToken}" -H 'x-feature-id: lice')";
+  response="$(curl -s -w "\n%{http_code}" ${getLicenseKeyURL} -H 'X-Session-Token: '"${reqToken}")";
   http_body="$(echo "${response}" | head -n 1)";
   http_code="$(echo "${response}" | tail -n 1)";
   if [[ "$http_code" -ne 200 ]] ; then
