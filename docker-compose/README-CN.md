@@ -35,12 +35,7 @@ bash run.sh
 
 5. 可以利用我们提供的demo打开对应的表格. 
 ```bash
-docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
-               
-docker run --net=univer-prod --rm --name univer-collaboration-lite \
-  -p 3010:3010 univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
-
-# Open URL: http://localhost:3010
+bash run.sh start-demo-ui
 ```
 
 ## Use port
