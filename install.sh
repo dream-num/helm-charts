@@ -174,8 +174,11 @@ getLicenseOnline(){
   if [[ "$http_code" -ne 200 ]] ; then
     echo "Get License fail. (server response code:$http_code)"
     return 1
-  else
+  elif [ -n "${http_body}" ]; then
     echo -n  "${http_body}" > docker-compose/configs/license.txt
+  else
+    echo "You don't have any licenses! visit https://univer.ai/pro/license to unlock more features."
+    return
   fi
 
   response="$(curl -s -w "\n%{http_code}" ${getLicenseKeyURL} -H 'X-Session-Token: '"${reqToken}")";
@@ -184,7 +187,7 @@ getLicenseOnline(){
   if [[ "$http_code" -ne 200 ]] ; then
     echo "Get LicenseKey fail. (server response code:$http_code)"
     return 1
-  else
+  elif [ -n "${http_body}" ]; then
     echo -n "${http_body}" > docker-compose/configs/licenseKey.txt
   fi
 }
