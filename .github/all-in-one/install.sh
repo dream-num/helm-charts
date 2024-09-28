@@ -1,9 +1,12 @@
 #!/bin/bash
 
+SED="sed -i"
+
 # get os type
 osType=$(uname)
 if [ "${osType}" == "Darwin" ]; then
     osType="darwin"
+    SED="sed -i \"\""
 elif [ "${osType}" == "Linux" ]; then
     osType="linux"
 else
@@ -90,6 +93,7 @@ mkdir -p docker-compose \
     && cp ../univer.tar.gz . \
     && tar -xzf univer.tar.gz $tar_overwrite \
     && if [ -f ../license-univer ]; then cp ../license-univer ./configs/; fi \
+    && $SED -e 's/^\s*prepare_image$/#&/' run.sh \
     && NOT_CHECK_REGION=true bash run.sh \
     && cd ..
 
