@@ -270,6 +270,8 @@ mkdir -p docker-compose \
 # check service health
 bash run.sh check
 if [ $? -eq 0 ] && [ "$_CI_TEST" != "true" ]; then
-    bash run.sh start-demo-ui
+    echo "Install Success"
+    echo "More information about Univer Server, please refer to https://univer.ai/guides/sheet/server/docker"
+    echo "More information about Univer SDK, please refer to https://univer.ai/guides/sheet/getting-started/quickstart"
 fi
 
