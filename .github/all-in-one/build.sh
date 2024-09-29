@@ -3,7 +3,7 @@
 dir="docker-compose"
 
 pwd
-cp -r ../../docker-compose ./
+cp -r ../docker-compose ./
 
 
 source ${dir}/.env
