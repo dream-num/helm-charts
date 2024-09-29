@@ -270,8 +270,13 @@ mkdir -p docker-compose \
 # check service health
 bash run.sh check
 if [ $? -eq 0 ] && [ "$_CI_TEST" != "true" ]; then
-    echo "Install Success"
+    echo ""
+    echo "Congratulations! Univer Server is running on port 8000"
+    echo ""
+    echo "If you want try Demo ui, please run: 'cd docker-compose && bash run.sh start-demo-ui'"
+    echo ""
     echo "More information about Univer Server, please refer to https://univer.ai/guides/sheet/server/docker"
     echo "More information about Univer SDK, please refer to https://univer.ai/guides/sheet/getting-started/quickstart"
+    echo ""
 fi
 
