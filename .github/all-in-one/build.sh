@@ -2,13 +2,8 @@
 
 dir="docker-compose"
 
-curl -o univer.tar.gz https://release-univer.oss-cn-shenzhen.aliyuncs.com/release/docker-compose.tar.gz
+cp -r ../../docker-compose ./
 
-mkdir -p $dir \
-    && cd $dir \
-    && cp ../univer.tar.gz . \
-    && tar -xzf univer.tar.gz \
-    && cd ..
 
 source ${dir}/.env
 
