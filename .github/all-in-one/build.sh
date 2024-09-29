@@ -4,7 +4,10 @@ dir="docker-compose"
 
 pwd
 cp -r ../docker-compose ./
+cd docker-compose
 tar -czvf ./univer.tar.gz * .[!.]*
+mv ./univer.tar.gz ../
+cd ../
 
 source ${dir}/.env
 
