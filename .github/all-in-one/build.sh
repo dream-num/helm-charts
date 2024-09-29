@@ -2,6 +2,7 @@
 
 dir="docker-compose"
 
+pwd
 cp -r ../../docker-compose ./
 
 
