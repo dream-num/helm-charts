@@ -77,9 +77,11 @@ spec:
               subPath: licenseKey.txt
           env:
             - name: SERVICE_NAME
-              value: "universer"
+              value: "Universer"
             - name: SERVICE_VERSION
               value: {{ .Values.image.tag | quote }}
+            - name: DISABLE_LOG_MASK
+              value: {{ .Values.config.logs.disableLogMask | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

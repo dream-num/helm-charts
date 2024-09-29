@@ -1,5 +1,5 @@
-configs/LICENSE
-configs/public_key.crt
+docker-compose/configs/license.txt
+docker-compose/configs/licenseKey.txt
 
 build/
 charts/*/charts
