@@ -235,28 +235,28 @@ if [ -f docker-compose/.env ] && [ -f docker-compose/run.sh ]; then
     else
         read -r -p "docker-compose directory already exists, do you want to overwrite it? [y/N] " response
     fi
-    if [ "$response" == "y" ] || [ "$response" == "Y" ]; then
-        case "$osType" in
-            "darwin")
-                tar_overwrite="-U"
-                ;;
-            "linux")
-                tar_overwrite="--overwrite"
-                ;;
-        esac
-    else
-        case "$osType" in
-            "darwin")
-                tar_overwrite="-k"
-                ;;
-            "linux")
-                tar_overwrite="--skip-old-files"
-                ;;
-            "mingw")
-                tar_overwrite="--skip-old-files"
-                ;;
-        esac
-    fi
+fi
+if [ "$response" == "y" ] || [ "$response" == "Y" ]; then
+    case "$osType" in
+        "darwin")
+            tar_overwrite="-U"
+            ;;
+        "linux")
+            tar_overwrite="--overwrite"
+            ;;
+    esac
+else
+    case "$osType" in
+        "darwin")
+            tar_overwrite="-k"
+            ;;
+        "linux")
+            tar_overwrite="--skip-old-files"
+            ;;
+        "mingw")
+            tar_overwrite="--skip-old-files"
+            ;;
+    esac
 fi
 
 mkdir -p docker-compose \
