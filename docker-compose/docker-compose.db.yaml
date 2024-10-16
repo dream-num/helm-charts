@@ -6,7 +6,7 @@ services:
       - 8000
       - 9000
     environment:
-      - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-temporal,collaboration-server,univer-minio
+      - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},univer-temporal,collaboration-server,univer-minio
       - SERVICE_NAME=Universer
       - SERVICE_VERSION=${UNIVERSER_VERSION}
     volumes:
@@ -39,7 +39,7 @@ services:
       - USERNAME=${DATABASE_USERNAME}
       - PASSWORD=${DATABASE_PASSWORD}
       - DATABASE=${DATABASE_DBNAME}
-      - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,${DATABASE_HOST}
+      - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},${DATABASE_HOST}
     networks:
       - univer
     labels:
@@ -67,7 +67,8 @@ services:
       - URL_OF_SNAPSHOT_SERVICE=universer:9000
       - SAVE_SHEET_SNAPSHOT_INTERVAL=50
       - SAVE_DOC_SNAPSHOT_INTERVAL=50
-      - no_proxy=127.0.0.1,localhost,172.30.0.0/16,universer
+      - ENABLE_MUTATION_APPLY_INTERCEPTOR=true
+      - no_proxy=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},universer
     expose:
       - 5002
     networks:
@@ -133,7 +134,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PWD=postgres
       - TEMPORAL_CLI_SHOW_STACKS=1
-      - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16
+      - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET}
     volumes:
       - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
     expose:
@@ -171,7 +172,7 @@ services:
     container_name: univer-worker-exchange
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/worker-exchange:${UNIVER_WORKER_EXCHANGE_VERSION}
     environment:
-      - NO_PROXY=127.0.0.1,localhost,172.30.0.0/16,univer-temporal,univer-minio,universer
+      - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},univer-temporal,univer-minio,universer
       - TEMPORAL_SERVER=${TEMPORAL_HOST}:${TEMPORAL_PORT}
       - TEMPORAL_NAMESPACE=${TEMPORAL_NAMESPACE}
       - SERVICE_NAME=exchange-worker
@@ -202,7 +203,7 @@ networks:
     driver: bridge
     ipam:
      config:
-       - subnet: 172.30.0.0/16
+       - subnet: ${DOCKER_NETWORK_SUBNET}
 
 volumes:
   postgres-data:
