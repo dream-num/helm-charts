@@ -11,8 +11,8 @@ univerStack:
   securityContext: {}
   temporalJob:
     image:
-      registry: docker.io
-      repository: temporalio/admin-tools
+      registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+      repository: release/temporal-admin-tools
       tag: "1.22.4"
       pullPolicy: IfNotPresent
     backoffLimit: 100
@@ -115,6 +115,12 @@ mysql:
   auth:
     rootPassword: mysql
     createDatabase: false
+    password: mysql
+  image:
+    registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+    repository: release/mysql
+    tag: "8.0.36-debian-11-r2"
+    pullPolicy: IfNotPresent
   commonAnnotations:
     "helm.sh/hook": pre-install
     "helm.sh/hook-weight": "-1"

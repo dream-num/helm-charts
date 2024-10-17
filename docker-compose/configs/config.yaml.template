@@ -70,6 +70,7 @@ auth:
     enabled: ${AUTH_PERMISSION_ENABLED}
     defaultShareScope: "${AUTH_PERMISSION_DEFAULT_SHARE_SCOPE}"
     defaultShareRole: "${AUTH_PERMISSION_DEFAULT_SHARE_ROLE}"
+    enableObjInherit: ${AUTH_PERMISSION_ENABLE_OBJ_INHERIT}
 apiLimit:
   method:
     tokens: 600
