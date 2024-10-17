@@ -95,7 +95,7 @@ collaboration-demo:
 worker:
   image:
     repository: release/worker-exchange
-    tag: 0.3.0 # VERSION
+    tag: 0.4.0 # VERSION
   temporalServer:
     host: temporal-frontend:7233
     namespace: univer
@@ -115,8 +115,8 @@ postgresql:
     tag: 16.1
     pullPolicy: IfNotPresent
   commonAnnotations:
-    "helm.sh/hook": pre-install
-    "helm.sh/hook-weight": "-1"
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-100"
   metrics:
     enabled: true
     image:

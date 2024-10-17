@@ -1,12 +1,11 @@
 name: 🔄 Sync to OSS
 
 on:
+  push:
+    tags:
+      - 'v*.*.*'
   workflow_dispatch:
     inputs:
-      branch:
-        description: 'git branch(if not set, will use action trigger branch)'
-        required: false
-        default: ''
       sync-docker:
         description: 'can sync docker-compose.zip'
         required: false
@@ -21,15 +20,9 @@ jobs:
     name: Sync to OSS
     runs-on: ubuntu-latest
     steps:
-    - name: manual Checkout
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.inputs.branch }}
-      if: ${{ github.event.inputs.branch != '' }}
 
     - name: default Checkout
       uses: actions/checkout@v4
-      if: ${{ github.event.inputs.branch == '' }}
 
     - name: zip docker-compose.zip
       run: |
