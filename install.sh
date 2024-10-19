@@ -98,6 +98,9 @@ checkPort() {
 
 tokenPath="${HOME}/.univer/"
 tokenFileName="${tokenPath}/deploy_token"
+confPath="docker-compose/configs"
+tokenVerifyResp="${confPath}/verify.json"
+
 getTokenURL="https://${_HOST}/cli-auth"
 verifyTokenURL="https://${_HOST}/license-manage-api/cli-auth/verify-token"
 getLicenseURL="https://${_HOST}/license-manage-api/license/cli-download?type=1"
@@ -151,14 +154,16 @@ verifyToken() {
   reqToken=$1
   verbose=$2
   response="$(curl -s -w "\n%{http_code}" ${verifyTokenURL} -H 'X-Session-Token: '"${reqToken}" -d "token=${reqToken}&source=deploy")";
-  # http_body="$(echo "${response}" | head -n -1)";
+  http_body="$(echo "${response}" | sed  '$d')";
   http_code="$(echo "${response}" | tail -n 1)";
 
   if [[ "$http_code" -ne 200 ]] ; then
     ${verbose} && echo "That's not a valid token! (server response code:$http_code)"
+    echo "" > ${tokenVerifyResp}
     return 1
   else
     echo "Welcome! You're authenticated."
+    echo $http_body > ${tokenVerifyResp}
   fi
   return 0
 }
@@ -175,7 +180,7 @@ getLicenseOnline(){
     echo "Get License fail. (server response code:$http_code)"
     return 1
   elif [ -n "${http_body}" ]; then
-    echo -n  "${http_body}" > docker-compose/configs/license.txt
+    echo -n  "${http_body}" > ${confPath}/license.txt
   else
     echo "You don't have any licenses! visit https://univer.ai/pro/license to unlock more features."
     return
@@ -188,14 +193,14 @@ getLicenseOnline(){
     echo "Get LicenseKey fail. (server response code:$http_code)"
     return 1
   elif [ -n "${http_body}" ]; then
-    echo -n "${http_body}" > docker-compose/configs/licenseKey.txt
+    echo -n "${http_body}" > ${confPath}/licenseKey.txt
   fi
 }
 
 token=""
 
 getToken(){
-  if [[ -s ${tokenFileName} ]]; then
+  if [[ -s ${tokenFileName} ]] && [[ -s ${tokenVerifyResp} ]]; then
     # check saved token
     token=$(cat "${tokenFileName}")
     if ! verifyToken "${token}" false; then
@@ -223,7 +228,7 @@ getToken(){
 
 getToken
 
-mkdir -p docker-compose/configs
+mkdir -p ${confPath}
 
 getLicenseOnline "${token}"
 
