@@ -37,5 +37,6 @@ worker: prepare
 .PHONY: univer-stack
 univer-stack: prepare
 	# Build and push univer-stack chart
+	@helm dependency build charts/univer-stack --skip-refresh
 	@helm package charts/univer-stack -d $(BUILD_DIR)
 	@helm push $(BUILD_DIR)/univer-stack-*.tgz oci://$(REGISTRY)/$(NS)

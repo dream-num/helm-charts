@@ -8,53 +8,53 @@ on:
     
 
 jobs:
-  # build-amd64:
-  #   name: build-amd64
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v4
+  build-amd64:
+    name: build-amd64
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
 
-  #   - run: |
-  #       cp -r .github/all-in-one/docker-compose/ all-in-one && cd all-in-one
+    - run: |
+        cp -r .github/all-in-one/docker-compose/ all-in-one && cd all-in-one
 
-  #       bash build.sh amd64
+        bash build.sh amd64
 
-  #       ls -l
+        ls -l
     
-  #   - name: Sync all-in-one.tar to OSS
-  #     uses: hexf00/upload-to-oss@v1
-  #     with:
-  #       source: '${{ env.ALLINONE_PATH }}'
-  #       dest: release/${{ env.ALLINONE_TAR }}
-  #       bucket: ${{ secrets.OSS_BUCKET }}
-  #       region: "oss-cn-shenzhen"
-  #       accessKeyId: ${{ secrets.S3_ACCESS_KEY_ID }}
-  #       accessKeySecret: ${{ secrets.S3_ACCESS_KEY_SECRET }}
-  #       timeout: 1200s
+    - name: Sync all-in-one.tar to OSS
+      uses: hexf00/upload-to-oss@v1
+      with:
+        source: '${{ env.ALLINONE_PATH }}'
+        dest: release/${{ env.ALLINONE_TAR }}
+        bucket: ${{ secrets.OSS_BUCKET }}
+        region: "oss-cn-shenzhen"
+        accessKeyId: ${{ secrets.S3_ACCESS_KEY_ID }}
+        accessKeySecret: ${{ secrets.S3_ACCESS_KEY_SECRET }}
+        timeout: 1200s
 
-  # build-arm64:
-  #   name: build-arm64
-  #   runs-on: [self-hosted, macOS, ARM64]
-  #   steps:
-  #   - uses: actions/checkout@v4
+  build-arm64:
+    name: build-arm64
+    runs-on: [self-hosted, macOS, ARM64]
+    steps:
+    - uses: actions/checkout@v4
 
-  #   - run: |
-  #       cp -r .github/all-in-one/docker-compose/ all-in-one && cd all-in-one
+    - run: |
+        cp -r .github/all-in-one/docker-compose/ all-in-one && cd all-in-one
 
-  #       bash build.sh arm64
+        bash build.sh arm64
 
-  #       ls -l
+        ls -l
     
-  #   - name: Sync all-in-one.tar to OSS
-  #     uses: hexf00/upload-to-oss@v1
-  #     with:
-  #       source: '${{ env.ALLINONE_PATH }}'
-  #       dest: release/${{ env.ALLINONE_TAR }}
-  #       bucket: ${{ secrets.OSS_BUCKET }}
-  #       region: "oss-cn-shenzhen"
-  #       accessKeyId: ${{ secrets.S3_ACCESS_KEY_ID }}
-  #       accessKeySecret: ${{ secrets.S3_ACCESS_KEY_SECRET }}
-  #       timeout: 1200s
+    - name: Sync all-in-one.tar to OSS
+      uses: hexf00/upload-to-oss@v1
+      with:
+        source: '${{ env.ALLINONE_PATH }}'
+        dest: release/${{ env.ALLINONE_TAR }}
+        bucket: ${{ secrets.OSS_BUCKET }}
+        region: "oss-cn-shenzhen"
+        accessKeyId: ${{ secrets.S3_ACCESS_KEY_ID }}
+        accessKeySecret: ${{ secrets.S3_ACCESS_KEY_SECRET }}
+        timeout: 1200s
 
   build-k8s:
     name: build-k8s
