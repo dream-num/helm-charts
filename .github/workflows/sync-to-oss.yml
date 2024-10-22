@@ -96,6 +96,14 @@ jobs:
     - name: default Checkout
       uses: actions/checkout@v4
 
+    - name: Login to Aliyun Container Registry (ACR)
+      uses: aliyun/acr-login@v1
+      with:
+        login-server: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+        region-id: cn-shenzhen
+        username: "${{ secrets.REGISTRY_USERNAME }}"
+        password: "${{ secrets.REGISTRY_PASSWORD }}"
+
     - name: Sync helm chart to oci
       run: |
         make all
