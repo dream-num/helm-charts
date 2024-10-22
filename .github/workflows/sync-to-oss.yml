@@ -106,4 +106,6 @@ jobs:
 
     - name: Sync helm chart to oci
       run: |
+        helm repo add istio https://istio-release.storage.googleapis.com/charts
+        helm repo update
         make all
