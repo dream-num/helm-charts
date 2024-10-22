@@ -2,6 +2,8 @@
 
 chartsFolder=${1:-./../../../charts}
 
+ls $chartsFolder
+
 cat image-list.sh
 
 UNIVERSER_VERSION=$(docker run --rm -v $chartsFolder/universer/:/tmp/ mikefarah/yq:4 e '.image.tag' /tmp/values.yaml)
