@@ -1,11 +1,11 @@
 #!/bin/bash
 
 images=(
-    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration:0.3.0"
-    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:0.3.0"
-    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer:0.3.0"
-    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/worker-exchange:0.3.0"
-    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:0.0.12"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration:$UNIVER_COLLABORATION_VERSION"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:$UNIVER_COLLABORATION_LITE_VERSION"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer:$UNIVERSER_VERSION"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/worker-exchange:$UNIVER_WORKER_EXCHANGE_VERSION"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:$UNIVERSER_SQL_VERSION"
     "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/postgres:16.1"
     "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/mysql:8.0.36-debian-11-r2"
     "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/postgres-exporter:0.15.0-debian-11-r6"
