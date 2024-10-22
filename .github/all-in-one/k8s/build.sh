@@ -1,14 +1,18 @@
 #!/bin/bash
 
+chartsFolder=${1:-./../../../charts}
+
 cat image-list.sh
 
-UNIVERSER_VERSION=$(docker run --rm -v ../charts/universer/:/tmp/ mikefarah/yq:4 e '.image.tag' /tmp/values.yaml)
-UNIVERSER_SQL_VERSION=$(docker run --rm -v ../charts/universer/:/tmp/ mikefarah/yq:4 e '.job.image.tag' /tmp/values.yaml)
-UNIVER_COLLABORATION_VERSION=$(docker run --rm -v ../charts/collaboration-server/:/tmp/ mikefarah/yq:4 e '.image.tag' /tmp/values.yaml)
-UNIVER_COLLABORATION_LITE_VERSION=$(docker run --rm -v ../charts/collaboration-demo/:/tmp/ mikefarah/yq:4 e '.image.tag' /tmp/values.yaml)
-UNIVER_WORKER_EXCHANGE_VERSION=$(docker run --rm -v ../charts/univer-stack/:/tmp/ mikefarah/yq:4 e '.worker.image.tag' /tmp/values.yaml)
+UNIVERSER_VERSION=$(docker run --rm -v $chartsFolder/universer/:/tmp/ mikefarah/yq:4 e '.image.tag' /tmp/values.yaml)
+UNIVERSER_SQL_VERSION=$(docker run --rm -v $chartsFolder/universer/:/tmp/ mikefarah/yq:4 e '.job.image.tag' /tmp/values.yaml)
+UNIVER_COLLABORATION_VERSION=$(docker run --rm -v $chartsFolder/collaboration-server/:/tmp/ mikefarah/yq:4 e '.image.tag' /tmp/values.yaml)
+UNIVER_COLLABORATION_LITE_VERSION=$(docker run --rm -v $chartsFolder/collaboration-demo/:/tmp/ mikefarah/yq:4 e '.image.tag' /tmp/values.yaml)
+UNIVER_WORKER_EXCHANGE_VERSION=$(docker run --rm -v $chartsFolder/univer-stack/:/tmp/ mikefarah/yq:4 e '.worker.image.tag' /tmp/values.yaml)
 
-sed -i 's/${UNIVERSER_VERSION}/'${UNIVERSER_VERSION}'/g' image-list.sh
+echo "UNIVERSER_VERSION: $UNIVERSER_VERSION"
+
+sed -i -e 's/${UNIVERSER_VERSION}/'${UNIVERSER_VERSION}'/g' image-list.sh
 sed -i 's/${UNIVERSER_SQL_VERSION}/'${UNIVERSER_SQL_VERSION}'/g' image-list.sh
 sed -i 's/${UNIVER_COLLABORATION_VERSION}/'${UNIVER_COLLABORATION_VERSION}'/g' image-list.sh
 sed -i 's/${UNIVER_COLLABORATION_LITE_VERSION}/'${UNIVER_COLLABORATION_LITE_VERSION}'/g' image-list.sh

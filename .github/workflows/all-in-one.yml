@@ -63,9 +63,11 @@ jobs:
     - uses: actions/checkout@v4
 
     - run: |
+        pwd=$(PWD)
+
         cp -r .github/all-in-one/k8s/ all-in-one && cd all-in-one
 
-        bash build.sh
+        bash build.sh $pwd/charts
 
         ls -l
 
