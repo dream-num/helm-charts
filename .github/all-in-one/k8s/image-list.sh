@@ -1,0 +1,22 @@
+#!/bin/bash
+
+images=(
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration:${UNIVER_COLLABORATION_VERSION}"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:${UNIVER_COLLABORATION_LITE_VERSION}"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer:${UNIVERSER_VERSION}"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/worker-exchange:${UNIVER_WORKER_EXCHANGE_VERSION}"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:${UNIVERSER_SQL_VERSION}"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/postgres:16.1"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/mysql:8.0.36-debian-11-r2"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/postgres-exporter:0.15.0-debian-11-r6"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/temporal-admin-tools:1.22.4"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/temporal:1.22.4"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/temporal-ui:2.16.2"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/redis:7.2.4-debian-11-r4"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/redis-exporter:1.56.0-debian-11-r1"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/rabbitmq:3.12.3-debian-11-r0"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/minio:2024.8.3-debian-12-r1"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/install-cni:1.20.1"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/pilot:1.20.1"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/proxyv2:1.20.1"
+)

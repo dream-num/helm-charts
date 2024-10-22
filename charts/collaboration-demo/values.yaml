@@ -8,7 +8,7 @@ replicaCount: 1
 
 image:
   registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
-  repository: release/univer-collaboration-demo
+  repository: release/univer-collaboration-lite
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: 0.4.1 # VERSION
