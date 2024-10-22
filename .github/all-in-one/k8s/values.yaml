@@ -1,0 +1,74 @@
+univerStack:
+  temporalJob:
+    image:
+      registry: ${REGISTRY}
+      repository: ${IMAGE_NAMESPACE}/temporal-admin-tools
+
+global:
+  hub: ${REGISTRY}/${IMAGE_NAMESPACE}
+
+universer:
+  image:
+    registry: ${REGISTRY}
+    repository: ${IMAGE_NAMESPACE}/universer
+  job:
+    image:
+      registry: ${REGISTRY}
+      repository: ${IMAGE_NAMESPACE}/universer-sql
+
+collaboration-server:
+  image:
+    registry: ${REGISTRY}
+    repository: ${IMAGE_NAMESPACE}/univer-collaboration
+
+collaboration-demo:
+  image:
+    registry: ${REGISTRY}
+    repository: ${IMAGE_NAMESPACE}/univer-collaboration-lite
+
+worker:
+  image:
+    registry: ${REGISTRY}
+    repository: ${IMAGE_NAMESPACE}/worker-exchange
+
+postgresql:
+  image:
+    registry: ${REGISTRY}
+    repository: ${IMAGE_NAMESPACE}/postgres
+
+  metrics:
+    image:
+      registry: ${REGISTRY}
+      repository: ${IMAGE_NAMESPACE}/postgres-exporter
+
+temporal:
+  server:
+    image:
+      repository: ${REGISTRY}/${IMAGE_NAMESPACE}/temporal
+  admintools:
+    image:
+      repository: ${REGISTRY}/${IMAGE_NAMESPACE}/temporal-admin-tools
+  web:
+    image:
+      repository: ${REGISTRY}/${IMAGE_NAMESPACE}/temporal-ui
+
+redis:
+  image:
+    registry: ${REGISTRY}
+    repository: ${IMAGE_NAMESPACE}/redis
+
+  metrics:
+    image:
+      registry: ${REGISTRY}
+      repository: ${IMAGE_NAMESPACE}/redis-exporter
+
+rabbitmq:
+  image:
+    registry: ${REGISTRY}
+    repository: ${IMAGE_NAMESPACE}/rabbitmq
+
+minio:
+  image:
+    registry: ${REGISTRY}
+    repository: ${IMAGE_NAMESPACE}/minio
+
