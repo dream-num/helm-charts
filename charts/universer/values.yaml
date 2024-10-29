@@ -12,7 +12,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.4.1 # VERSION
+  tag: 0.4.2 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -35,6 +35,8 @@ service:
   type: ClusterIP
   http: 8000
   grpc: 9000
+  stats:
+    addr: "https://www.univer.ai/univer-cloud/stats/report"
 
 ingress:
   enabled: false
@@ -93,6 +95,7 @@ config:
     port: 5672
     username: guest
     password: guest
+    syncEvent: false
     cluster:
       enabled: false
       addr: ""
@@ -166,6 +169,7 @@ config:
       defaultShareScope: ""
       defaultShareRole: ""
       enableObjInherit: false
+      customerStrategies: ""
     admin:
       userIDs: []
   apiLimit:
@@ -230,6 +234,9 @@ config:
       timeout: 10
   workspace:
     enabled: false
+  statsConf:
+    timeInterval: 10
+    maxRecords: 10000
 
 license:
   LICENSE: ""

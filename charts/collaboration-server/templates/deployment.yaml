@@ -72,6 +72,8 @@ spec:
               value: {{ .Values.sentry.tracesSampleRate | quote }}
             - name: SENTRY_ENVIRONMENT
               value: {{ .Values.sentry.environment | quote }}
+            - name: STATS_ADDR
+              value: {{ .Values.stats | quote }}
               
       {{- with .Values.nodeSelector }}
       nodeSelector:
