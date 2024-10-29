@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RELEASE_TIME="1729239096" # RELEASE_TIME
+RELEASE_TIME="1730208421" # RELEASE_TIME
 
 PLATFORM=$(uname)
 SED="sed -i"
@@ -117,10 +117,14 @@ init_config() {
     s='s|${DATABASE_REPLICA_DSN}|'$DATABASE_REPLICA_DSN'|'
     $SED -e "$s" ./configs/config.yaml
 
+    # echo "" >> .env
+    
     while IFS='=' read -r name value ; do
         # Replace variable with value. 
         $SED -e 's|${'"${name}"'}|'"${value}"'|' ./configs/config.yaml
     done < .env
+    
+    $SED '${/^$/d;}' .env
 }
 
 start() {

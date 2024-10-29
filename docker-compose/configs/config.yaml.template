@@ -7,6 +7,9 @@ server:
   grpc:
     addr: 0.0.0.0:9000
     timeout: 10s
+  stats:
+    addr: ${STATS_ADDR}
+
 data:
   database:
     maxOpenConns: 100
@@ -18,6 +21,7 @@ data:
     replicaDSN: ${DATABASE_REPLICA_DSN}
   rabbitmq:
     addr: amqp://${RABBITMQ_USERNAME}:${RABBITMQ_PASSWORD}@${RABBITMQ_HOST}:${RABBITMQ_PORT}/
+    syncEvent: false
     cluster:
       enabled: ${RABBITMQ_CLUSTER_ENABLED}
       username: "${RABBITMQ_CLUSTER_USERNAME}"
@@ -71,6 +75,7 @@ auth:
     defaultShareScope: "${AUTH_PERMISSION_DEFAULT_SHARE_SCOPE}"
     defaultShareRole: "${AUTH_PERMISSION_DEFAULT_SHARE_ROLE}"
     enableObjInherit: ${AUTH_PERMISSION_ENABLE_OBJ_INHERIT}
+    customerStrategies: ${AUTH_PERMISSION_CUSTOMER_STRATEGIES}
 apiLimit:
   method:
     tokens: 600
@@ -102,3 +107,6 @@ postHogConf:
   enabled: false
 entitlementConf:
   enable: false
+statsConf:
+  maxRecords: 10000
+  timeInterval: 10
