@@ -71,4 +71,4 @@ affinity: {}
 istio:
   enabled: false
 
-stats: "https://www.univer.ai/univer-cloud/stats/report"
+stats: ""

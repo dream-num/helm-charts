@@ -36,7 +36,7 @@ service:
   http: 8000
   grpc: 9000
   stats:
-    addr: "https://www.univer.ai/univer-cloud/stats/report"
+    addr: ""
 
 ingress:
   enabled: false
