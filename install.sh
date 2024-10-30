@@ -226,9 +226,9 @@ getToken(){
   fi
 }
 
-getToken
-
 mkdir -p ${confPath}
+
+getToken
 
 getLicenseOnline "${token}"
 
