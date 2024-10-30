@@ -66,9 +66,10 @@ checkLicense() {
     fourth_part=${license_parts[4]}
     # echo "Fourth part of the license: $fourth_part"
     if [ "$fourth_part" -lt "$RELEASE_TIME" ]; then
+      mv -f configs/license.txt configs/license.txt.bak 2>/dev/null || true
+      mv -f configs/licenseKey.txt configs/licenseKey.txt.bak 2>/dev/null || true
       formatted_date=$(date -d @"$fourth_part" +"%Y-%m-%d")
-      echo "license not support current version. supports versions release before ${formatted_date}."
-      exit 1
+      echo "Your commercial license expired on ${formatted_date}. Visit https://univer.ai/pro/license or contact sales@univer.ai for renewal."
     fi
   else
     echo "No license has been configured, which will limit some functionalities. More information can be found here: https://univer.ai/pro/license"
