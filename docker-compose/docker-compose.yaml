@@ -6,14 +6,14 @@ services:
       - 8000
       - 9000
     environment:
-      - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},univer-temporal,collaboration-server,univer-minio
+      - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},univer-temporal,collaboration-envoy,univer-minio,univer-demo-usip
       - SERVICE_NAME=Universer
       - SERVICE_VERSION=${UNIVERSER_VERSION}
     volumes:
       - ./configs:/data/configs
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/univers:/tmp/univers
-      - ./logs/universer:/logs
+      - ./logs/universer:/app/logs
     depends_on:
       univer-postgres:
         condition: service_started
@@ -63,9 +63,22 @@ services:
     volumes:
       - ./nginx:/etc/nginx/conf.d/
 
+  collaboration-envoy:
+    restart: always
+    image: envoyproxy/envoy:v1.31.3
+    volumes:
+      - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
+    expose:
+      - 10000
+    networks:
+      - univer
+    depends_on:
+      - collaboration-server
+    environment:
+      - no_proxy=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},collaboration-server
+
   collaboration-server:
     restart: always
-    container_name: collaboration-server
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration:${COLLABORATION_SERVER_VERSION}
     environment:
       - URL_OF_APPLY_SERVICE=0.0.0.0:5002
@@ -75,6 +88,7 @@ services:
       - SAVE_DOC_SNAPSHOT_INTERVAL=50
       - ENABLE_MUTATION_APPLY_INTERCEPTOR=true
       - no_proxy=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},universer
+      - NODE_OPTIONS=--max-old-space-size=${MAX_MEMORY_LIMIT}
     expose:
       - 5002
       - 9090
@@ -82,6 +96,12 @@ services:
       - univer
     labels:
       - com.univer.app=collaboration-server
+    deploy:
+      replicas: 1
+      endpoint_mode: dnsrr
+      resources:
+        limits:
+          memory: ${MAX_MEMORY_LIMIT}M
 
   univer-postgres:
     image: postgres:${POSTGRES_VERSION}
@@ -114,6 +134,8 @@ services:
       - univer
     labels:
       - com.univer.app=rabbitmq
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq/
 
   univer-redis:
     restart: always
@@ -145,7 +167,6 @@ services:
       - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET}
     volumes:
       - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
-      - ./logs/temporal:/logs
     expose:
       - 7233
     depends_on:
@@ -175,6 +196,8 @@ services:
       - com.univer.app=minio
     volumes:
       - minio-data:/data
+      - minio-data:/bitnami/minio/data
+      - minio-data:/certs
 
   univer-worker-exchange:
     restart: always
@@ -186,6 +209,8 @@ services:
       - TEMPORAL_NAMESPACE=${TEMPORAL_NAMESPACE}
       - SERVICE_NAME=exchange-worker
       - SERVICE_VERSION=${UNIVER_WORKER_EXCHANGE_VERSION}
+    volumes:
+        - ./logs/worker-exchange:/app/logs
     depends_on:
       - univer-temporal
     networks:
@@ -353,6 +378,20 @@ services:
     profiles:
       - demo-ui
 
+  univer-demo-usip:
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/usip-server:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./usip-demo:/app/configs
+    networks:
+      - univer
+    restart: "no"
+    profiles:
+      - demo-usip
+    environment:
+      - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},lb
+
 networks:
   univer:
     name: univer-prod
@@ -372,4 +411,5 @@ volumes:
     name: univer-prod-loki-data
   prometheus-data:
     name: univer-prod-prometheus-data
-
+  rabbitmq-data:
+    name: univer-prod-rabbitmq-data

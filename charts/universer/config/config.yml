@@ -9,8 +9,6 @@ server:
   grpc:
     addr: 0.0.0.0:{{ .Values.service.grpc }}
     timeout: 10s
-  stats:
-    addr: {{ .Values.service.stats.addr }}
 data:
   database:
     maxOpenConns: {{ .Values.config.database.maxOpenConns }}
@@ -26,7 +24,7 @@ data:
     cluster:
       {{- toYaml . | nindent 6 }}
     {{- end }}
-    syncEvent: {{ .Values.config.rabbitmq.syncEvent }}
+    eventSync: {{ .Values.config.rabbitmq.eventSync }}
   clickhouse:
     dsn: clickhouse://clickhouse:clickhouse@clickhouse:9000/univer?dial_timeout=10s&read_timeout=20s
   temporal:

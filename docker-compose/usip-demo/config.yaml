@@ -1,0 +1,17 @@
+host: http://localhost:8080
+
+database:
+  driver: postgresql
+  dsn: user=postgres password=postgres dbname=postgres host=univer-postgres port=5432 sslmode=disable TimeZone=Asia/Shanghai
+
+redis:
+  addr: univer-redis:6379
+
+universer:
+  host: http://lb:8000
+
+univer:
+  docHost: ":3010/doc"
+  sheetHost: ":3010/sheet"
+
+font: web/public/font/SourceHanSansCN-VF.ttf
