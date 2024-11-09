@@ -234,6 +234,7 @@ getLicenseOnline "${token}"
 
 # check docker-compose directory
 tar_overwrite=""
+response=""
 if [ -f ${appPath}/.env ] && [ -f ${appPath}/run.sh ]; then
     if [ "$_CI_TEST" == "true" ]; then
         response="N"
