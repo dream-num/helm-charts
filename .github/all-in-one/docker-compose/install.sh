@@ -63,9 +63,12 @@ docker load -i univer-image.tar.gz
 # load observability image
 docker load -i observability-image.tar.gz
 
+packagePath="${PWD}"
+appPath="${PWD}/univer-server"
+
 # check docker-compose directory
 tar_overwrite=""
-if [ -f docker-compose/.env ] && [ -f docker-compose/run.sh ]; then
+if [ -f ${appPath}/.env ] && [ -f ${appPath}/run.sh ]; then
     read -r -p "docker-compose directory already exists, do you want to overwrite it? [y/N] " response
     if [ "$response" == "y" ] || [ "$response" == "Y" ]; then
         case "$osType" in
@@ -88,16 +91,14 @@ if [ -f docker-compose/.env ] && [ -f docker-compose/run.sh ]; then
     fi
 fi
 
-mkdir -p docker-compose \
-    && cd docker-compose \
-    && cp ../univer.tar.gz . \
+mkdir -p ${appPath} \
+    && cd ${appPath} \
+    && cp ${packagePath}/univer.tar.gz . \
     && tar -xzf univer.tar.gz $tar_overwrite \
     && if [ -f ../license-univer ]; then cp ../license-univer ./configs/; fi \
     && $SED -e 's/^\s*prepare_image$/#&/' run.sh \
     && NOT_CHECK_REGION=true bash run.sh \
-    && cd ..
-
-# check service health
-bash docker-compose/run.sh check
+    && bash run.sh check \
+    && cd -
 
 rm univer-image.tar.gz observability-image.tar.gz univer.tar.gz
