@@ -118,14 +118,15 @@ init_config() {
     s='s|${DATABASE_REPLICA_DSN}|'$DATABASE_REPLICA_DSN'|'
     $SED -e "$s" ./configs/config.yaml
 
-    # echo "" >> .env
+    cp .env .env-sed
+    echo "" >> .env-sed
     
     while IFS='=' read -r name value ; do
         # Replace variable with value. 
         $SED -e 's|${'"${name}"'}|'"${value}"'|' ./configs/config.yaml
-    done < .env
+    done < .env-sed
     
-    $SED '${/^$/d;}' .env
+    rm .env-sed
 }
 
 start() {
@@ -203,6 +204,13 @@ start_demo_ui() {
     $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-ui rm -sf univer-demo-ui
 }
 
+start_demo_usip() {
+    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-ui up -d univer-demo-ui
+    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-usip up univer-demo-usip
+    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-ui down univer-demo-ui
+    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-usip rm -sf univer-demo-usip
+}
+
 help() {
     echo "Usage: ./run.sh [COMMAND] [OPTION]"
     echo "Options:"
@@ -215,6 +223,7 @@ help() {
     echo "  restart           Restart the service"
     echo "  check             Check the service health"
     echo "  start-demo-ui     Start the sdk demo ui"
+    echo "  start-demo-usip   Start the usip demo"
     echo "Default command:"
     echo "  ./run.sh start"
 }
@@ -292,6 +301,10 @@ case "$command" in
   "start-demo-ui")
     _env
     start_demo_ui
+    ;;
+  "start-demo-usip")
+    _env
+    start_demo_usip
     ;;
   *)
     echo "Unknown option: $option"

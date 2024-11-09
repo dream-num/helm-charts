@@ -296,7 +296,7 @@ minio:
     annotations: 
       helm.sh/resource-policy: "keep"
   apiIngress:
-    enabled: true
+    enabled: false
     hostname: "minio.example.com"
 
 istio-base:
