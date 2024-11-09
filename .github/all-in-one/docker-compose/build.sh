@@ -25,6 +25,7 @@ docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/worker-excha
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-check:0.0.1
 docker pull envoyproxy/envoy:v1.31.3
+docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/usip-server:latest
 docker save \
     univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer:${UNIVERSER_VERSION} \
     univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:${UNIVERSER_SQL_VERSION} \
@@ -39,6 +40,7 @@ docker save \
     univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:latest \
     univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-check:0.0.1 \
     envoyproxy/envoy:v1.31.3 \
+    univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/usip-server:latest \
     | gzip > univer-image.tar.gz
 
 echo "save observability image"
