@@ -2,6 +2,7 @@
 
 _CI_TEST=${_CI_TEST:-false}
 _HOST=${_HOST:-"univer.ai"}
+_VERSION=${_VERSION:-"latest"}
 
 # get os type
 osType=$(uname)
@@ -105,6 +106,13 @@ getTokenURL="https://${_HOST}/cli-auth"
 verifyTokenURL="https://${_HOST}/license-manage-api/cli-auth/verify-token"
 getLicenseURL="https://${_HOST}/license-manage-api/license/cli-download?type=1"
 getLicenseKeyURL="https://${_HOST}/license-manage-api/license/cli-download?type=2"
+
+if [ "$_VERSION" == "latest" ]; then
+    downloadURL="https://release-univer.oss-cn-shenzhen.aliyuncs.com/release/docker-compose.tar.gz"
+else
+    version=${_VERSION#v}
+    downloadURL="https://release-univer.oss-cn-shenzhen.aliyuncs.com/release/docker-compose.${version}.tar.gz"
+fi
 
 
 openURL() {
@@ -267,7 +275,7 @@ fi
 
 mkdir -p ${appPath} \
     && cd ${appPath} \
-    && curl -s -o univer.tar.gz https://release-univer.oss-cn-shenzhen.aliyuncs.com/release/docker-compose.tar.gz \
+    && curl -f -o univer.tar.gz $downloadURL \
     && tar -xzf univer.tar.gz $tar_overwrite \
     && rm univer.tar.gz \
     && bash run.sh
