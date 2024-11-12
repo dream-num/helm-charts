@@ -43,16 +43,16 @@ jobs:
         tar -czvf ~/docker-compose.tar.gz * .[!.]*
         cp ~/docker-compose.tar.gz ~/docker-compose.${{ steps.version.outputs.version }}.tar.gz
 
-    # - name: Sync docker-compose.tar.gz to OSS
-    #   uses: hexf00/upload-to-oss@v1
-    #   with:
-    #     source: '~/docker-compose.tar.gz'
-    #     dest: 'release/docker-compose.tar.gz'
-    #     bucket: ${{secrets.OSS_BUCKET}}
-    #     region: "oss-cn-shenzhen"
-    #     accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
-    #     accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
-    #   if: ${{ github.event.inputs.sync-docker == 'true' }}
+    - name: Sync docker-compose.tar.gz to OSS
+      uses: hexf00/upload-to-oss@v1
+      with:
+        source: '~/docker-compose.tar.gz'
+        dest: 'release/docker-compose.tar.gz'
+        bucket: ${{secrets.OSS_BUCKET}}
+        region: "oss-cn-shenzhen"
+        accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
+        accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
+      if: ${{ github.event.inputs.sync-docker == 'true' }}
 
     - name: Sync docker-compose.${{ steps.version.outputs.version }}.tar.gz to OSS
       uses: hexf00/upload-to-oss@v1
@@ -98,23 +98,23 @@ jobs:
         accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
       if: ${{ github.event.inputs.sync-install == 'true' }}
 
-  # update-chart:
-  #   name: Sync helm chart to oci
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: default Checkout
-  #     uses: actions/checkout@v4
+  update-chart:
+    name: Sync helm chart to oci
+    runs-on: ubuntu-latest
+    steps:
+    - name: default Checkout
+      uses: actions/checkout@v4
 
-  #   - name: Login to Aliyun Container Registry (ACR)
-  #     uses: aliyun/acr-login@v1
-  #     with:
-  #       login-server: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
-  #       region-id: cn-shenzhen
-  #       username: "${{ secrets.REGISTRY_USERNAME }}"
-  #       password: "${{ secrets.REGISTRY_PASSWORD }}"
+    - name: Login to Aliyun Container Registry (ACR)
+      uses: aliyun/acr-login@v1
+      with:
+        login-server: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+        region-id: cn-shenzhen
+        username: "${{ secrets.REGISTRY_USERNAME }}"
+        password: "${{ secrets.REGISTRY_PASSWORD }}"
 
-  #   - name: Sync helm chart to oci
-  #     run: |
-  #       helm repo add istio https://istio-release.storage.googleapis.com/charts
-  #       helm repo update
-  #       make all
+    - name: Sync helm chart to oci
+      run: |
+        helm repo add istio https://istio-release.storage.googleapis.com/charts
+        helm repo update
+        make all
