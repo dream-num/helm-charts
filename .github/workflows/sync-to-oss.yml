@@ -31,11 +31,10 @@ jobs:
       id: version
       run: |
         if [[ -z "${GITHUB_REF##refs/tags/v*}" ]]; then
-          echo hello: "${GITHUB_REF##refs/tags/v*}"
           echo ::set-output name=version::${GITHUB_REF#refs/tags/v}
         else
-          echo world: "${{ inputs.version }}"
-          echo ::set-output name=version::${${{ inputs.version }}#v}
+          version=${{ inputs.version }}
+          echo ::set-output name=version::${version#v}
         fi
     
     - name: tar docker-compose.tar.gz
