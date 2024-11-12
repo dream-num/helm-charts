@@ -30,7 +30,7 @@ jobs:
     - name: Version tag
       id: version
       run: |
-        if [[ -n "${GITHUB_REF##refs/tags/v*}" ]]; then
+        if [[ -z "${GITHUB_REF##refs/tags/v*}" ]]; then
           echo hello: "${GITHUB_REF##refs/tags/v*}"
           echo ::set-output name=version::${GITHUB_REF#refs/tags/v}
         else
