@@ -43,21 +43,21 @@ jobs:
         tar -czvf ~/docker-compose.tar.gz * .[!.]*
         cp ~/docker-compose.tar.gz ~/docker-compose.${{ steps.version.outputs.version }}.tar.gz
 
-    - name: Sync docker-compose.tar.gz to OSS
-      uses: hexf00/upload-to-oss@v1
-      with:
-        source: '~/docker-compose-test.tar.gz'
-        dest: 'release/docker-compose.tar.gz'
-        bucket: ${{secrets.OSS_BUCKET}}
-        region: "oss-cn-shenzhen"
-        accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
-        accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
-      if: ${{ github.event.inputs.sync-docker == 'true' }}
+    # - name: Sync docker-compose.tar.gz to OSS
+    #   uses: hexf00/upload-to-oss@v1
+    #   with:
+    #     source: '~/docker-compose.tar.gz'
+    #     dest: 'release/docker-compose.tar.gz'
+    #     bucket: ${{secrets.OSS_BUCKET}}
+    #     region: "oss-cn-shenzhen"
+    #     accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
+    #     accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
+    #   if: ${{ github.event.inputs.sync-docker == 'true' }}
 
     - name: Sync docker-compose.${{ steps.version.outputs.version }}.tar.gz to OSS
       uses: hexf00/upload-to-oss@v1
       with:
-        source: '~/docker-compose-test.${{ steps.version.outputs.version }}.tar.gz'
+        source: '~/docker-compose.${{ steps.version.outputs.version }}.tar.gz'
         dest: 'release/docker-compose.${{ steps.version.outputs.version }}.tar.gz'
         bucket: ${{secrets.OSS_BUCKET}}
         region: "oss-cn-shenzhen"
