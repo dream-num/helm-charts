@@ -12,7 +12,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.4.2 # VERSION
+  tag: 0.5.0-alpha.0 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -95,7 +95,7 @@ config:
     port: 5672
     username: guest
     password: guest
-    syncEvent: false
+    eventSync: false
     cluster:
       enabled: false
       addr: ""
@@ -106,6 +106,7 @@ config:
   redis:
     # if use redis cluster, use comma to separate multiple redis servers
     # for example: redis1:6379,redis2:6379
+    poolSize: 100
     addr: redis:6379
     read_timeout: 1s
     write_timeout: 1s
@@ -237,6 +238,7 @@ config:
   statsConf:
     timeInterval: 10
     maxRecords: 10000
+    addr: "https://www.univer.ai/univer-cloud/stats/report"
 
 license:
   LICENSE: ""
