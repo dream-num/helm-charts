@@ -160,7 +160,8 @@ jobs:
         dest: release/mysql.sql
         bucket: ${{secrets.OSS_BUCKET}}
         region: "oss-cn-shenzhen"
-        accessKeyId: ${{secrets
+        accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
+        accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
     
     - name: Sync gaussdb.sql to OSS
       uses: hexf00/upload-to-oss@v1
