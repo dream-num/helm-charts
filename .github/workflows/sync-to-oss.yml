@@ -147,7 +147,7 @@ jobs:
       uses: hexf00/upload-to-oss@v1
       with:
         source: '/tmp/sql/postgresql.sql'
-        dest: release/postgresql.sql
+        dest: release/sql/postgresql.sql
         bucket: ${{secrets.OSS_BUCKET}}
         region: "oss-cn-shenzhen"
         accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
@@ -157,7 +157,7 @@ jobs:
       uses: hexf00/upload-to-oss@v1
       with:
         source: '/tmp/sql/mysql.sql'
-        dest: release/mysql.sql
+        dest: release/sql/mysql.sql
         bucket: ${{secrets.OSS_BUCKET}}
         region: "oss-cn-shenzhen"
         accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
@@ -167,7 +167,7 @@ jobs:
       uses: hexf00/upload-to-oss@v1
       with:
         source: '/tmp/sql/gaussdb.sql'
-        dest: release/gaussdb.sql
+        dest: release/sql/gaussdb.sql
         bucket: ${{secrets.OSS_BUCKET}}
         region: "oss-cn-shenzhen"
         accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
@@ -177,7 +177,7 @@ jobs:
       uses: hexf00/upload-to-oss@v1
       with:
         source: '/tmp/sql/dameng.sql'
-        dest: release/dameng.sql
+        dest: release/sql/dameng.sql
         bucket: ${{secrets.OSS_BUCKET}}
         region: "oss-cn-shenzhen"
         accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
@@ -187,7 +187,7 @@ jobs:
       uses: hexf00/upload-to-oss@v1
       with:
         source: '/tmp/sql/temporal-sql.tar.gz'
-        dest: 'release/temporal-sql.tar.gz'
+        dest: 'release/sql/temporal-sql.tar.gz'
         bucket: ${{secrets.OSS_BUCKET}}
         region: "oss-cn-shenzhen"
         accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
