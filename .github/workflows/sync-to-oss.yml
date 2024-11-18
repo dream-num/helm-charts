@@ -49,7 +49,7 @@ jobs:
       - name: 🚚 Get release type
         id: release-type
         run: |
-            if [[ ${{ steps.version.outputs.version }} =~ -(alpha|beta|rc)\. ]]; then
+            if [[ ${{ steps.version.outputs.version }} =~ -(alpha|beta|rc|nightly|next|experimental)\. ]]; then
                 extracted_type="${BASH_REMATCH[1]}"
                 echo "value=$extracted_type" >> $GITHUB_OUTPUT
             else
