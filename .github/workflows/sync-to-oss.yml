@@ -67,7 +67,7 @@ jobs:
     name: Release docker compose
     runs-on: ubuntu-latest
     needs: [prepare]
-    if: ${{ github.event_name == 'push' || github.event.inputs.release-docker-compose }}
+    if: ${{ github.event_name == 'push' || github.event.inputs.release-docker-compose == 'true' }}
     steps:
     - name: default Checkout
       uses: actions/checkout@v4
@@ -101,7 +101,7 @@ jobs:
     name: Release install script
     runs-on: ubuntu-latest
     needs: [prepare]
-    if: ${{ (github.event_name == 'push' || github.event.inputs.release-install-script) && needs.prepare.outputs.release_type == 'stable' }}
+    if: ${{ (github.event_name == 'push' || github.event.inputs.release-install-script == 'true') && needs.prepare.outputs.release_type == 'stable' }}
     steps:
       - name: Release install.sh
         uses: hexf00/upload-to-oss@v1
@@ -135,7 +135,7 @@ jobs:
     name: Release helm chart
     runs-on: ubuntu-latest
     needs: [prepare]
-    if: ${{ (github.event_name == 'push' || github.event.inputs.release-helm-chart) && needs.prepare.outputs.release_type == 'stable' }}
+    if: ${{ (github.event_name == 'push' || github.event.inputs.release-helm-chart == 'true') && needs.prepare.outputs.release_type == 'stable' }}
     steps:
     - name: default Checkout
       uses: actions/checkout@v4
@@ -148,17 +148,17 @@ jobs:
         username: "${{ secrets.REGISTRY_USERNAME }}"
         password: "${{ secrets.REGISTRY_PASSWORD }}"
 
-    - name: Sync helm chart to oci
+    - name: Release helm chart to oci
       run: |
         helm repo add istio https://istio-release.storage.googleapis.com/charts
         helm repo update
         make all
 
-  update-sql:
-    name: Sync sql to oss
+  release-sql:
+    name: Release sql
     runs-on: ubuntu-latest
     needs: [prepare]
-    if: ${{ github.event_name == 'push' || github.event.inputs.release-sql }}
+    if: ${{ github.event_name == 'push' || github.event.inputs.release-sql == 'true' }}
     steps:
     - uses: actions/checkout@v4
 
