@@ -24,6 +24,10 @@ on:
         description: 'sql'
         type: boolean
         default: false
+      release-binary:
+        description: 'binary'
+        type: boolean
+        default: false
       version:
         description: 'version(eg: v0.0.1)'
         required: true
@@ -204,3 +208,14 @@ jobs:
         region: "oss-cn-shenzhen"
         accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
         accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
+
+  release-binary:
+    name: Release binary
+    needs: [prepare]
+    if: ${{ github.event_name == 'push' || github.event.inputs.release-binary == 'true' }}
+    uses: dream-num/universer/.github/workflows/push-release.yml@zsq/feat/binary
+    with:
+      version: v${{ needs.prepare.outputs.version }}
+      OSS_BUCKET: ${{ secrets.OSS_BUCKET }}
+      S3_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
+      S3_ACCESS_KEY_SECRET: ${{ secrets.S3_ACCESS_KEY_SECRET }}
