@@ -235,7 +235,7 @@ jobs:
     - name: Release univer-server-win-v${{ needs.prepare.outputs.version }}.zip
       uses: hexf00/upload-to-oss@v1
       with:
-        source: '~/univer-binary/univer-server-win-v${{ needs.prepare.outputs.version }}.zip'
+        source: '~/univer-server-win-v${{ needs.prepare.outputs.version }}.zip'
         dest: 'releases/v${{ needs.prepare.outputs.version }}/univer-server-win-v${{ needs.prepare.outputs.version }}.zip'
         bucket: ${{secrets.OSS_BUCKET}}
         region: "oss-cn-shenzhen"
