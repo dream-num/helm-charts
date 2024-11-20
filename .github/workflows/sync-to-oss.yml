@@ -229,16 +229,16 @@ jobs:
         cd /tmp/univer-binary
         tar -xzvf univer-binary.tar.gz
         rm -f univer-binary.tar.gz
-        zip -r univer-server-win-v${{ needs.prepare.outputs.version }}.zip .
-        ls -lh
+        zip -r ~/univer-server-win-v${{ needs.prepare.outputs.version }}.zip .
+        ls -lh ~/univer-server-win-v${{ needs.prepare.outputs.version }}.zip
 
-    # - name: Release univer-server-win-v${{ needs.prepare.outputs.version }}.zip
-    #   uses: hexf00/upload-to-oss@v1
-    #   with:
-    #     source: '/tmp/univer-binary/univer-server-win-v${{ needs.prepare.outputs.version }}.zip'
-    #     dest: 'releases/v${{ needs.prepare.outputs.version }}/univer-server-win-v${{ needs.prepare.outputs.version }}.zip'
-    #     bucket: ${{secrets.OSS_BUCKET}}
-    #     region: "oss-cn-shenzhen"
-    #     accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
-    #     accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
-    #     timeout: 1200s
+    - name: Release univer-server-win-v${{ needs.prepare.outputs.version }}.zip
+      uses: hexf00/upload-to-oss@v1
+      with:
+        source: '~/univer-binary/univer-server-win-v${{ needs.prepare.outputs.version }}.zip'
+        dest: 'releases/v${{ needs.prepare.outputs.version }}/univer-server-win-v${{ needs.prepare.outputs.version }}.zip'
+        bucket: ${{secrets.OSS_BUCKET}}
+        region: "oss-cn-shenzhen"
+        accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
+        accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
+        timeout: 1200s
