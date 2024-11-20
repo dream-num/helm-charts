@@ -212,11 +212,31 @@ jobs:
   release-binary:
     name: Release binary
     needs: [prepare]
+    runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' || github.event.inputs.release-binary == 'true' }}
-    uses: dream-num/universer/.github/workflows/push-release.yml@zsq/feat/binary
-    with:
-      version: v${{ needs.prepare.outputs.version }}
-    secrets:
-      OSS_BUCKET: ${{ secrets.OSS_BUCKET }}
-      S3_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
-      S3_ACCESS_KEY_SECRET: ${{ secrets.S3_ACCESS_KEY_SECRET }}
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download binary
+      run: |
+        mkdir -p /tmp/univer-binary
+        . docker-compose/.env
+        curl -o /tmp/univer-binary/universer.exe https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/v${UNIVERSER_VERSION}/binary/universer.exe
+        curl -o /tmp/univer-binary/collaboration.exe https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/v${COLLABORATION_SERVER_VERSION}/binary/collaboration.exe
+        curl -o /tmp/univer-binary/exchange.exe https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/v${UNIVER_WORKER_EXCHANGE_VERSION}/binary/exchange.exe
+        curl -o /tmp/univer-binary/demo-ui.exe https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/v${UNIVER_DEMO_UI_VERSION}/binary/demo-ui.exe
+        curl -o /tmp/univer-binary/univer-binary.tar.gz https://release-univer.oss-cn-shenzhen.aliyuncs.com/tool/univer-binary.tar.gz
+        cd /tmp/univer-binary
+        tar -xzvf univer-binary.tar.gz
+        rm -f univer-binary.tar.gz
+        zip -r univer-server-win-v${{ needs.prepare.outputs.version }}.zip .
+
+    - name: Release univer-server-win-v${{ needs.prepare.outputs.version }}.zip
+      uses: hexf00/upload-to-oss@v1
+      with:
+        source: '/tmp/univer-binary/univer-server-win-v${{ needs.prepare.outputs.version }}.zip'
+        dest: 'releases/v${{ needs.prepare.outputs.version }}/univer-server-win-v${{ needs.prepare.outputs.version }}.zip'
+        bucket: ${{secrets.OSS_BUCKET}}
+        region: "oss-cn-shenzhen"
+        accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
+        accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
