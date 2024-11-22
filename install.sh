@@ -234,6 +234,7 @@ getLicenseOnline "${token}"
 
 # check universer-experience directory
 tar_overwrite=""
+response="N"
 if [ -f universer-experience/.env ] && [ -f universer-experience/run.sh ]; then
     if [ "$_CI_TEST" == "true" ]; then
         response="N"
