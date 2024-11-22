@@ -98,13 +98,9 @@ checkPort() {
 
 tokenPath="${HOME}/.univer/"
 tokenFileName="${tokenPath}/deploy_token"
-confPath="universer-experience/configs"
-tokenVerifyResp="${confPath}/verify.json"
 
 getTokenURL="https://${_HOST}/cli-auth"
 verifyTokenURL="https://${_HOST}/license-manage-api/cli-auth/verify-token"
-getLicenseURL="https://${_HOST}/license-manage-api/license/cli-download?type=1"
-getLicenseKeyURL="https://${_HOST}/license-manage-api/license/cli-download?type=2"
 
 
 openURL() {
@@ -159,48 +155,17 @@ verifyToken() {
 
   if [[ "$http_code" -ne 200 ]] ; then
     ${verbose} && echo "That's not a valid token! (server response code:$http_code)"
-    echo "" > ${tokenVerifyResp}
     return 1
   else
     echo "Welcome! You're authenticated."
-    echo $http_body > ${tokenVerifyResp}
   fi
   return 0
-}
-
-getLicenseOnline(){
-  reqToken=$1
-  if [ "$_CI_TEST" == "true" ]; then
-    return
-  fi
-  response="$(curl -s -w "\n%{http_code}" ${getLicenseURL} -H 'X-Session-Token: '"${reqToken}")";
-  http_body="$(echo "${response}" | head -n 1)";
-  http_code="$(echo "${response}" | tail -n 1)";
-  if [[ "$http_code" -ne 200 ]] ; then
-    echo "Get License fail. (server response code:$http_code)"
-    return 1
-  elif [ -n "${http_body}" ]; then
-    echo -n  "${http_body}" > ${confPath}/license.txt
-  else
-    echo "You don't have any licenses! visit https://univer.ai/pro/license to unlock more features."
-    return
-  fi
-
-  response="$(curl -s -w "\n%{http_code}" ${getLicenseKeyURL} -H 'X-Session-Token: '"${reqToken}")";
-  http_body="$(echo "${response}" | head -n 1)";
-  http_code="$(echo "${response}" | tail -n 1)";
-  if [[ "$http_code" -ne 200 ]] ; then
-    echo "Get LicenseKey fail. (server response code:$http_code)"
-    return 1
-  elif [ -n "${http_body}" ]; then
-    echo -n "${http_body}" > ${confPath}/licenseKey.txt
-  fi
 }
 
 token=""
 
 getToken(){
-  if [[ -s ${tokenFileName} ]] && [[ -s ${tokenVerifyResp} ]]; then
+  if [ -s ${tokenFileName} ]; then
     # check saved token
     token=$(cat "${tokenFileName}")
     if ! verifyToken "${token}" false; then
@@ -226,63 +191,39 @@ getToken(){
   fi
 }
 
-mkdir -p ${confPath}
-
 getToken
 
-getLicenseOnline "${token}"
+# download specfied version
+work_dir=$PWD
+tmp_dir=$(mktemp -d)
 
-# check universer-experience directory
-tar_overwrite=""
-response="N"
-if [ -f universer-experience/.env ] && [ -f universer-experience/run.sh ]; then
-    if [ "$_CI_TEST" == "true" ]; then
-        response="N"
-    else
-        read -r -p "universer-experience directory already exists, do you want to overwrite it? [y/N] " response
-    fi
-fi
-if [ "$response" == "y" ] || [ "$response" == "Y" ]; then
-    case "$osType" in
-        "darwin")
-            tar_overwrite="-U"
-            ;;
-        "linux")
-            tar_overwrite="--overwrite"
-            ;;
-    esac
+mkdir -p "$tmp_dir" && cd "$tmp_dir"
+if [ $# == 1 ]; then
+    echo "start download version:$1..."
+    curl -s -o univer.tar.gz https://release-univer.oss-cn-shenzhen.aliyuncs.com/release/docker-compose.$1.tar.gz
 else
-    case "$osType" in
-        "darwin")
-            tar_overwrite="-k"
-            ;;
-        "linux")
-            tar_overwrite="--skip-old-files"
-            ;;
-        "mingw")
-            tar_overwrite="--skip-old-files"
-            ;;
-    esac
+    echo "start download the latest version..."
+    curl -s -o univer.tar.gz https://release-univer.oss-cn-shenzhen.aliyuncs.com/release/docker-compose.tar.gz
+fi
+tar -xzf univer.tar.gz && rm univer.tar.gz
+# get real version
+. .env
+version=$UNIVERSER_VERSION
+if [ $# == 1 ] && [ "$version" != "$1" ]; then
+    echo "the specified version:$1 not exists."
+    rm -r $tmp_dir
+    exit 1
 fi
 
-mkdir -p universer-experience \
-    && cd universer-experience \
-    && curl -s -o univer.tar.gz https://release-univer.oss-cn-shenzhen.aliyuncs.com/release/docker-compose.tar.gz \
-    && tar -xzf univer.tar.gz $tar_overwrite \
-    && rm univer.tar.gz \
-    && bash run.sh
+# mv to work dir
+cd "$work_dir"
+target_dir="$work_dir/universer-${version}"
 
-
-# check service health
-bash run.sh check
-if [ $? -eq 0 ] && [ "$_CI_TEST" != "true" ]; then
-    echo ""
-    echo "Congratulations! Univer Server is running on port 8000"
-    echo ""
-    echo "If you want try Demo ui, please run: 'cd universer-experience && bash run.sh start-demo-ui'"
-    echo ""
-    echo "More information about Univer Server, please refer to https://univer.ai/guides/sheet/server/docker"
-    echo "More information about Univer SDK, please refer to https://univer.ai/guides/sheet/getting-started/quickstart"
-    echo ""
+if [ -d "$target_dir" ]; then
+    echo "the version:${version} already exists."
+    rm -r $tmp_dir
+    exit 1
 fi
 
+mv "$tmp_dir" "$target_dir"
+echo "download success, target dir is:${target_dir}"
