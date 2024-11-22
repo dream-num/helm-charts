@@ -82,22 +82,22 @@ jobs:
         cd docker-compose
         tar -czvf ~/docker-compose.tar.gz * .[!.]*
 
-    - name: Sync univer-server-latest-docker-compose.tar.gz to OSS (latest)
+    - name: Sync univer-server-docker-compose-latest.tar.gz to OSS (latest)
       uses: hexf00/upload-to-oss@v1
       with:
         source: '~/docker-compose.tar.gz'
-        dest: 'releases/latest/univer-server-latest-docker-compose.tar.gz'
+        dest: 'releases/latest/univer-server-docker-compose-latest.tar.gz'
         bucket: ${{secrets.OSS_BUCKET}}
         region: "oss-cn-shenzhen"
         accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
         accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
       if: ${{ needs.prepare.outputs.release_type == 'stable' }}
 
-    - name: Sync univer-server-v${{ needs.prepare.outputs.version }}-docker-compose.tar.gz to OSS
+    - name: Sync univer-server-docker-compose-v${{ needs.prepare.outputs.version }}.tar.gz to OSS
       uses: hexf00/upload-to-oss@v1
       with:
         source: '~/docker-compose.tar.gz'
-        dest: 'releases/v${{ needs.prepare.outputs.version }}/univer-server-v${{ needs.prepare.outputs.version }}-docker-compose.tar.gz'
+        dest: 'releases/v${{ needs.prepare.outputs.version }}/univer-server-docker-compose-v${{ needs.prepare.outputs.version }}.tar.gz'
         bucket: ${{secrets.OSS_BUCKET}}
         region: "oss-cn-shenzhen"
         accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
@@ -188,11 +188,11 @@ jobs:
         cd /tmp/sql
         tar -czvf univer-sql.tar.gz *
     
-    - name: Release univer-server-latest-sql.tar.gz
+    - name: Release univer-server-sql-latest.tar.gz
       uses: hexf00/upload-to-oss@v1
       with:
         source: '/tmp/sql/univer-sql.tar.gz'
-        dest: 'releases/latest/univer-server-latest-sql.tar.gz'
+        dest: 'releases/latest/univer-server-sql-latest.tar.gz'
         bucket: ${{secrets.OSS_BUCKET}}
         region: "oss-cn-shenzhen"
         accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
@@ -203,7 +203,7 @@ jobs:
       uses: hexf00/upload-to-oss@v1
       with:
         source: '/tmp/sql/univer-sql.tar.gz'
-        dest: 'releases/v${{ needs.prepare.outputs.version }}/univer-server-v${{ needs.prepare.outputs.version }}-sql.tar.gz'
+        dest: 'releases/v${{ needs.prepare.outputs.version }}/univer-server-sql-v${{ needs.prepare.outputs.version }}.tar.gz'
         bucket: ${{secrets.OSS_BUCKET}}
         region: "oss-cn-shenzhen"
         accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}

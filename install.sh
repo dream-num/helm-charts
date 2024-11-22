@@ -108,10 +108,10 @@ getLicenseURL="https://${_HOST}/license-manage-api/license/cli-download?type=1"
 getLicenseKeyURL="https://${_HOST}/license-manage-api/license/cli-download?type=2"
 
 if [ "$_VERSION" == "latest" ]; then
-    downloadURL="https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/latest/universer-latest-docker-compose.tar.gz"
+    downloadURL="https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/latest/univer-server-docker-compose-latest.tar.gz"
 else
     version=${_VERSION#v}
-    downloadURL="https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/v${version}/universer-v${version}-docker-compose.tar.gz"
+    downloadURL="https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/v${version}/univer-server-docker-compose-v${version}.tar.gz"
 fi
 
 
