@@ -2,6 +2,7 @@
 
 _CI_TEST=${_CI_TEST:-false}
 _HOST=${_HOST:-"univer.ai"}
+UNIVER_VERSION=${UNIVER_VERSION:-"latest"}
 
 # get os type
 osType=$(uname)
@@ -95,16 +96,23 @@ checkPort() {
     fi
 }
 
-
+appPath="${PWD}/univer-server"
 tokenPath="${HOME}/.univer/"
 tokenFileName="${tokenPath}/deploy_token"
-confPath="docker-compose/configs"
+confPath="${appPath}/configs"
 tokenVerifyResp="${confPath}/verify.json"
 
 getTokenURL="https://${_HOST}/cli-auth"
 verifyTokenURL="https://${_HOST}/license-manage-api/cli-auth/verify-token"
 getLicenseURL="https://${_HOST}/license-manage-api/license/cli-download?type=1"
 getLicenseKeyURL="https://${_HOST}/license-manage-api/license/cli-download?type=2"
+
+if [ "$UNIVER_VERSION" == "latest" ]; then
+    downloadURL="https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/latest/univer-server-docker-compose-latest.tar.gz"
+else
+    version=${UNIVER_VERSION#v}
+    downloadURL="https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/v${version}/univer-server-docker-compose-v${version}.tar.gz"
+fi
 
 
 openURL() {
@@ -234,11 +242,12 @@ getLicenseOnline "${token}"
 
 # check docker-compose directory
 tar_overwrite=""
-if [ -f docker-compose/.env ] && [ -f docker-compose/run.sh ]; then
+response=""
+if [ -f ${appPath}/.env ] && [ -f ${appPath}/run.sh ]; then
     if [ "$_CI_TEST" == "true" ]; then
         response="N"
     else
-        read -r -p "docker-compose directory already exists, do you want to overwrite it? [y/N] " response
+        read -r -p "${appPath} directory already exists, do you want to overwrite it? [y/N] " response
     fi
 fi
 if [ "$response" == "y" ] || [ "$response" == "Y" ]; then
@@ -264,9 +273,9 @@ else
     esac
 fi
 
-mkdir -p docker-compose \
-    && cd docker-compose \
-    && curl -s -o univer.tar.gz https://release-univer.oss-cn-shenzhen.aliyuncs.com/release/docker-compose.tar.gz \
+mkdir -p ${appPath} \
+    && cd ${appPath} \
+    && curl -f -o univer.tar.gz $downloadURL \
     && tar -xzf univer.tar.gz $tar_overwrite \
     && rm univer.tar.gz \
     && bash run.sh
@@ -278,7 +287,7 @@ if [ $? -eq 0 ] && [ "$_CI_TEST" != "true" ]; then
     echo ""
     echo "Congratulations! Univer Server is running on port 8000"
     echo ""
-    echo "If you want try Demo ui, please run: 'cd docker-compose && bash run.sh start-demo-ui'"
+    echo "If you want try Demo ui, please run: 'cd ${appPath} && bash run.sh start-demo-ui'"
     echo ""
     echo "More information about Univer Server, please refer to https://univer.ai/guides/sheet/server/docker"
     echo "More information about Univer SDK, please refer to https://univer.ai/guides/sheet/getting-started/quickstart"

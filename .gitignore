@@ -3,3 +3,4 @@ docker-compose/configs/licenseKey.txt
 
 build/
 charts/*/charts
+univer-server/

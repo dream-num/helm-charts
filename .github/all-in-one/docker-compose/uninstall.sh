@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dir="docker-compose"
+dir="${PWD}/univer-server"
 
 clean_volumn=""
 if [ "$1" == "clean" ]; then
@@ -9,5 +9,5 @@ fi
 
 cd $dir \
     && docker compose down $clean_volumn \
-    && cd .. \
+    && cd - \
     && rm -rf $dir

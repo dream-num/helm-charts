@@ -1,4 +1,6 @@
-name: 🔄 Sync to OSS
+name: 🍰 Release
+
+run-name: Release ${{ github.event.inputs.version || github.ref_name }}
 
 on:
   push:
@@ -6,92 +8,142 @@ on:
       - 'v*.*.*'
   workflow_dispatch:
     inputs:
-      sync-docker:
-        description: 'can sync docker-compose.zip'
-        required: false
-        default: 'true'
-      sync-install:
-        description: 'can sync install.sh'
-        required: false
-        default: 'true'
+      release-docker-compose:
+        description: 'docker compose'
+        type: boolean
+        default: false
+      release-helm-chart:
+        description: 'helm chart'
+        type: boolean
+        default: false
+      release-install-script:
+        description: 'install script'
+        type: boolean
+        default: false
+      release-sql:
+        description: 'sql'
+        type: boolean
+        default: false
+      release-binary:
+        description: 'binary'
+        type: boolean
+        default: false
+      version:
+        description: 'version(eg: v0.0.1)'
+        required: true
 
 jobs:
-  update:
-    name: Sync to OSS
+  prepare:
     runs-on: ubuntu-latest
+    outputs:
+        release_type: ${{ steps.release-type.outputs.value }}
+        version: ${{ steps.version.outputs.version }}
     steps:
+      - name: default Checkout
+        uses: actions/checkout@v4
+      - name: Version tag
+        id: version
+        run: |
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+          else
+            version=${{ github.event.inputs.version }}
+            echo "version=${version#v}" >> $GITHUB_OUTPUT
+          fi
+      - name: 🚚 Get release type
+        id: release-type
+        run: |
+            if [[ ${{ steps.version.outputs.version }} =~ -(alpha|beta|rc|nightly|next|experimental)\. ]]; then
+                extracted_type="${BASH_REMATCH[1]}"
+                echo "value=$extracted_type" >> $GITHUB_OUTPUT
+            else
+                echo "value=stable" >> $GITHUB_OUTPUT
+            fi
+      - name: Print Workflow Info
+        run: |
+          echo "trigger: ${{ github.event_name }}"
+          echo "version: ${{ steps.version.outputs.version }}"
+          echo "release type: ${{ steps.release-type.outputs.value }}"
+          echo "release-docker-compose: ${{ github.event.inputs.release-docker-compose }}"
+          echo "release-helm-chart: ${{ github.event.inputs.release-helm-chart }}"
+          echo "release-install-script: ${{ github.event.inputs.release-install-script }}"
+          echo "release-sql: ${{ github.event.inputs.release-sql }}"
 
+  release-docker-compose:
+    name: Release docker compose
+    runs-on: ubuntu-latest
+    needs: [prepare]
+    if: ${{ github.event_name == 'push' || github.event.inputs.release-docker-compose == 'true' }}
+    steps:
     - name: default Checkout
       uses: actions/checkout@v4
-
-    - name: zip docker-compose.zip
-      run: |
-        cd docker-compose
-        zip -r ~/docker-compose.zip .
-    
     - name: tar docker-compose.tar.gz
       run: |
         cd docker-compose
         tar -czvf ~/docker-compose.tar.gz * .[!.]*
 
-    - name: Sync docker-compose.zip to OSS
-      uses: hexf00/upload-to-oss@v1
-      with:
-        source: '~/docker-compose.zip'
-        dest: 'release/docker-compose.zip'
-        bucket: ${{secrets.OSS_BUCKET}}
-        region: "oss-cn-shenzhen"
-        accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
-        accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
-      if: ${{ github.event.inputs.sync-docker == 'true' }}
-
-    - name: Sync docker-compose.tar.gz to OSS
+    - name: Sync univer-server-docker-compose-latest.tar.gz to OSS (latest)
       uses: hexf00/upload-to-oss@v1
       with:
         source: '~/docker-compose.tar.gz'
-        dest: 'release/docker-compose.tar.gz'
+        dest: 'releases/latest/univer-server-docker-compose-latest.tar.gz'
         bucket: ${{secrets.OSS_BUCKET}}
         region: "oss-cn-shenzhen"
         accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
         accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
-      if: ${{ github.event.inputs.sync-docker == 'true' }}
+      if: ${{ needs.prepare.outputs.release_type == 'stable' }}
 
-    - name: Sync install.sh to OSS
+    - name: Sync univer-server-docker-compose-v${{ needs.prepare.outputs.version }}.tar.gz to OSS
       uses: hexf00/upload-to-oss@v1
       with:
-        source: 'install.sh'
-        dest: tool/install.sh
+        source: '~/docker-compose.tar.gz'
+        dest: 'releases/v${{ needs.prepare.outputs.version }}/univer-server-docker-compose-v${{ needs.prepare.outputs.version }}.tar.gz'
         bucket: ${{secrets.OSS_BUCKET}}
         region: "oss-cn-shenzhen"
         accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
         accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
-      if: ${{ github.event.inputs.sync-install == 'true' }}
 
-    - name: Sync get-docker/get-docker-official-script.sh to OSS
-      uses: hexf00/upload-to-oss@v1
-      with:
-        source: 'get-docker/get-docker-official-script.sh'
-        dest: tool/get-docker-official-script.sh
-        bucket: ${{secrets.OSS_BUCKET}}
-        region: "oss-cn-shenzhen"
-        accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
-        accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
-      if: ${{ github.event.inputs.sync-install == 'true' }}
-
-    - name: Sync get-docker/get-docker.sh to OSS
-      uses: hexf00/upload-to-oss@v1
-      with:
-        source: 'get-docker/get-docker.sh'
-        dest: tool/get-docker.sh
-        bucket: ${{secrets.OSS_BUCKET}}
-        region: "oss-cn-shenzhen"
-        accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
-        accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
-      if: ${{ github.event.inputs.sync-install == 'true' }}
-
-  update-chart:
-    name: Sync helm chart to oci
+  release-install-script:
+    name: Release install script
     runs-on: ubuntu-latest
+    needs: [prepare]
+    if: ${{ (github.event_name == 'push' || github.event.inputs.release-install-script == 'true') && needs.prepare.outputs.release_type == 'stable' }}
+    steps:
+      - name: default Checkout
+        uses: actions/checkout@v4
+      - name: Release install.sh
+        uses: hexf00/upload-to-oss@v1
+        with:
+          source: 'install.sh'
+          dest: tool/install.sh
+          bucket: ${{secrets.OSS_BUCKET}}
+          region: "oss-cn-shenzhen"
+          accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
+          accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
+      - name: Release get-docker/get-docker-official-script.sh
+        uses: hexf00/upload-to-oss@v1
+        with:
+          source: 'get-docker/get-docker-official-script.sh'
+          dest: tool/get-docker-official-script.sh
+          bucket: ${{secrets.OSS_BUCKET}}
+          region: "oss-cn-shenzhen"
+          accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
+          accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
+      - name: Release get-docker/get-docker.sh
+        uses: hexf00/upload-to-oss@v1
+        with:
+          source: 'get-docker/get-docker.sh'
+          dest: tool/get-docker.sh
+          bucket: ${{secrets.OSS_BUCKET}}
+          region: "oss-cn-shenzhen"
+          accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
+          accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
+
+  release-helm-chart:
+    name: Release helm chart
+    runs-on: ubuntu-latest
+    needs: [prepare]
+    if: ${{ (github.event_name == 'push' || github.event.inputs.release-helm-chart == 'true') && needs.prepare.outputs.release_type == 'stable' }}
     steps:
     - name: default Checkout
       uses: actions/checkout@v4
@@ -104,8 +156,89 @@ jobs:
         username: "${{ secrets.REGISTRY_USERNAME }}"
         password: "${{ secrets.REGISTRY_PASSWORD }}"
 
-    - name: Sync helm chart to oci
+    - name: Release helm chart to oci
       run: |
         helm repo add istio https://istio-release.storage.googleapis.com/charts
         helm repo update
         make all
+
+  release-sql:
+    name: Release sql
+    runs-on: ubuntu-latest
+    needs: [prepare]
+    if: ${{ github.event_name == 'push' || github.event.inputs.release-sql == 'true' }}
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/checkout@v4
+      with:
+        repository: dream-num/container-images
+        path: container-images
+        token: ${{ secrets.GH_TOKEN }}
+
+    - name: tar sql.tar.gz
+      run: |
+        mkdir -p /tmp/sql
+        cp container-images/universer-sql/postgresql/sql/universer_schema.sql /tmp/sql/postgresql.sql
+        cp container-images/universer-sql/mysql/sql/univer.sql /tmp/sql/mysql.sql
+        cp container-images/universer-sql/gaussdb/sql/universer_schema.sql /tmp/sql/gaussdb.sql
+        cp container-images/universer-sql/dameng/sql/universer_schema.sql /tmp/sql/dameng.sql
+        cp -r temporal-sql /tmp/sql
+
+        cd /tmp/sql
+        tar -czvf univer-sql.tar.gz *
+    
+    - name: Release univer-server-sql-latest.tar.gz
+      uses: hexf00/upload-to-oss@v1
+      with:
+        source: '/tmp/sql/univer-sql.tar.gz'
+        dest: 'releases/latest/univer-server-sql-latest.tar.gz'
+        bucket: ${{secrets.OSS_BUCKET}}
+        region: "oss-cn-shenzhen"
+        accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
+        accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
+      if: ${{ needs.prepare.outputs.release_type == 'stable' }}
+      
+    - name: Release univer-server-v${{ needs.prepare.outputs.version }}-sql.tar.gz
+      uses: hexf00/upload-to-oss@v1
+      with:
+        source: '/tmp/sql/univer-sql.tar.gz'
+        dest: 'releases/v${{ needs.prepare.outputs.version }}/univer-server-sql-v${{ needs.prepare.outputs.version }}.tar.gz'
+        bucket: ${{secrets.OSS_BUCKET}}
+        region: "oss-cn-shenzhen"
+        accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
+        accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
+
+  release-binary:
+    name: Release binary
+    needs: [prepare]
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' || github.event.inputs.release-binary == 'true' }}
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download binary
+      run: |
+        mkdir -p /tmp/univer-binary
+        . docker-compose/.env
+        curl -o /tmp/univer-binary/universer.exe https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/v${UNIVERSER_VERSION}/binary/universer.exe
+        curl -o /tmp/univer-binary/collaboration.exe https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/v${COLLABORATION_SERVER_VERSION}/binary/collaboration.exe
+        curl -o /tmp/univer-binary/exchange.exe https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/v${UNIVER_WORKER_EXCHANGE_VERSION}/binary/exchange.exe
+        curl -o /tmp/univer-binary/demo-ui.exe https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/v${UNIVER_DEMO_UI_VERSION}/binary/demo-ui.exe
+        curl -o /tmp/univer-binary/univer-binary.tar.gz https://release-univer.oss-cn-shenzhen.aliyuncs.com/tool/univer-binary.tar.gz
+        cd /tmp/univer-binary
+        tar -xzvf univer-binary.tar.gz
+        rm -f univer-binary.tar.gz
+        zip -r ~/univer-server-win-v${{ needs.prepare.outputs.version }}.zip .
+        ls -lh ~/univer-server-win-v${{ needs.prepare.outputs.version }}.zip
+
+    - name: Release univer-server-win-v${{ needs.prepare.outputs.version }}.zip
+      uses: hexf00/upload-to-oss@v1
+      with:
+        source: '~/univer-server-win-v${{ needs.prepare.outputs.version }}.zip'
+        dest: 'releases/v${{ needs.prepare.outputs.version }}/univer-server-win-v${{ needs.prepare.outputs.version }}.zip'
+        bucket: ${{secrets.OSS_BUCKET}}
+        region: "oss-cn-shenzhen"
+        accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
+        accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
+        timeout: 1200s
