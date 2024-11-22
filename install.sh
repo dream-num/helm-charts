@@ -2,7 +2,7 @@
 
 _CI_TEST=${_CI_TEST:-false}
 _HOST=${_HOST:-"univer.ai"}
-_VERSION=${_VERSION:-"latest"}
+UNIVER_VERSION=${UNIVER_VERSION:-"latest"}
 
 # get os type
 osType=$(uname)
@@ -107,10 +107,10 @@ verifyTokenURL="https://${_HOST}/license-manage-api/cli-auth/verify-token"
 getLicenseURL="https://${_HOST}/license-manage-api/license/cli-download?type=1"
 getLicenseKeyURL="https://${_HOST}/license-manage-api/license/cli-download?type=2"
 
-if [ "$_VERSION" == "latest" ]; then
+if [ "$UNIVER_VERSION" == "latest" ]; then
     downloadURL="https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/latest/univer-server-docker-compose-latest.tar.gz"
 else
-    version=${_VERSION#v}
+    version=${UNIVER_VERSION#v}
     downloadURL="https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/v${version}/univer-server-docker-compose-v${version}.tar.gz"
 fi
 
