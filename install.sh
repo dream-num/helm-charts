@@ -98,7 +98,7 @@ checkPort() {
 
 tokenPath="${HOME}/.univer/"
 tokenFileName="${tokenPath}/deploy_token"
-confPath="docker-compose/configs"
+confPath="universer-experience/configs"
 tokenVerifyResp="${confPath}/verify.json"
 
 getTokenURL="https://${_HOST}/cli-auth"
@@ -232,13 +232,13 @@ getToken
 
 getLicenseOnline "${token}"
 
-# check docker-compose directory
+# check universer-experience directory
 tar_overwrite=""
-if [ -f docker-compose/.env ] && [ -f docker-compose/run.sh ]; then
+if [ -f universer-experience/.env ] && [ -f universer-experience/run.sh ]; then
     if [ "$_CI_TEST" == "true" ]; then
         response="N"
     else
-        read -r -p "docker-compose directory already exists, do you want to overwrite it? [y/N] " response
+        read -r -p "universer-experience directory already exists, do you want to overwrite it? [y/N] " response
     fi
 fi
 if [ "$response" == "y" ] || [ "$response" == "Y" ]; then
@@ -264,8 +264,8 @@ else
     esac
 fi
 
-mkdir -p docker-compose \
-    && cd docker-compose \
+mkdir -p universer-experience \
+    && cd universer-experience \
     && curl -s -o univer.tar.gz https://release-univer.oss-cn-shenzhen.aliyuncs.com/release/docker-compose.tar.gz \
     && tar -xzf univer.tar.gz $tar_overwrite \
     && rm univer.tar.gz \
@@ -278,7 +278,7 @@ if [ $? -eq 0 ] && [ "$_CI_TEST" != "true" ]; then
     echo ""
     echo "Congratulations! Univer Server is running on port 8000"
     echo ""
-    echo "If you want try Demo ui, please run: 'cd docker-compose && bash run.sh start-demo-ui'"
+    echo "If you want try Demo ui, please run: 'cd universer-experience && bash run.sh start-demo-ui'"
     echo ""
     echo "More information about Univer Server, please refer to https://univer.ai/guides/sheet/server/docker"
     echo "More information about Univer SDK, please refer to https://univer.ai/guides/sheet/getting-started/quickstart"
