@@ -1,7 +1,7 @@
 
 # docker compose
 
-使用Docker Compose 运行 Univer 服务端, 此方法不适用于生产环境。
+使用Docker Compose 运行 Univer 服务端。
 
 - [EN](./README.md)
 - [CN](./README-CN.md)
@@ -57,8 +57,8 @@ bash run.sh start-demo-ui
 
 2. 怎么启动可观测性组件？
 ```
-在 .env 文件中去掉下行的注释：
-# COMPOSE_PROFILES=observability
+在 .env 文件中设置：
+ENABLE_UNIVER_OBSERVABILITY=true
 ```
 
 3. 怎么解决端口冲突？

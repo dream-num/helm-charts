@@ -1,0 +1,128 @@
+services:
+  lb:
+    restart: always
+    image: nginx:alpine-slim
+    ports:
+     - ${HOST_NGINX_PORT}:8000
+    networks:
+      - univer
+    volumes:
+      - ./nginx:/etc/nginx/conf.d/
+
+  univer-postgres:
+    image: postgres:${POSTGRES_VERSION}
+    restart: always
+    container_name: univer-postgres
+    environment:
+      - POSTGRES_USER=${DATABASE_USERNAME}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - PGDATA=/var/lib/postgresql/data/
+    expose:
+      - 5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - univer
+    labels:
+      - com.univer.app=postgres
+    profiles:
+      - rds
+
+  init-db:
+    container_name: init-db
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:${UNIVERSER_SQL_VERSION}
+    environment:
+      - HOST=${DATABASE_HOST}
+      - PORT=${DATABASE_PORT}
+      - USERNAME=${DATABASE_USERNAME}
+      - PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE=${DATABASE_DBNAME}
+      - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},${DATABASE_HOST}
+    networks:
+      - univer
+    depends_on:
+      univer-postgres:
+        condition: service_started
+    labels:
+      - com.univer.app=init-db
+    profiles:
+      - rds
+
+  univer-rabbitmq:
+    restart: always
+    container_name: univer-rabbitmq
+    image: rabbitmq:${RABBITMQ_VERSION}
+    expose:
+      - 5672
+      - 15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    networks:
+      - univer
+    labels:
+      - com.univer.app=rabbitmq
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq/
+    profiles:
+      - mq
+
+  univer-redis:
+    restart: always
+    image: bitnami/redis:${REDIS_VERSION}
+    container_name: univer-redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    expose:
+      - 6379
+    networks:
+      - univer
+    labels:
+      - com.univer.app=redis
+    volumes:
+      - redis-data:/bitnami/redis/data
+    profiles:
+      - redis
+
+  univer-minio:
+    restart: always
+    image: bitnami/minio:${MINIO_VERSION}
+    user: root
+    container_name: univer-minio
+    environment:
+      - MINIO_ROOT_USER=${S3_USER}
+      - MINIO_ROOT_PASSWORD=${S3_PASSWORD}
+      - MINIO_DEFAULT_BUCKETS=${S3_DEFAULT_BUCKET}
+      - MINIO_DATA_DIR=/data
+    ports:
+      - ${HOST_MINIO_PORT}:9000
+    expose:
+      - 9000
+    networks:
+      - univer
+    labels:
+      - com.univer.app=minio
+    volumes:
+      - minio-data:/data
+      - minio-data:/bitnami/minio/data
+      - minio-data:/certs
+    profiles:
+      - s3
+
+networks:
+  univer:
+    name: univer-prod
+    driver: bridge
+    ipam:
+     config:
+       - subnet: ${DOCKER_NETWORK_SUBNET}
+
+volumes:
+  postgres-data:
+    name: univer-prod-postgres-data
+  redis-data:
+    name: univer-prod-redis-data
+  minio-data:
+    name: univer-prod-minio-data
+  rabbitmq-data:
+    name: univer-prod-rabbitmq-data

@@ -1,9 +1,11 @@
 bin/
+logs/
 
 configs/config.yaml
 configs/LICENSE
 configs/public_key.crt
 
 .env.enterprise
+.env.custom
 
 *.tar.gz

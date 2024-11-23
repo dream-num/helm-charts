@@ -2,13 +2,10 @@ server:
   http:
     addr: 0.0.0.0:8000
     timeout: 10s
-    corsAllowOrigins:
-    - "*"
+    corsAllowOrigins: ${CORS_ALLOW_ORIGINS}
   grpc:
     addr: 0.0.0.0:9000
     timeout: 10s
-  stats:
-    addr: ${STATS_ADDR}
 
 data:
   database:
@@ -21,7 +18,7 @@ data:
     replicaDSN: ${DATABASE_REPLICA_DSN}
   rabbitmq:
     addr: amqp://${RABBITMQ_USERNAME}:${RABBITMQ_PASSWORD}@${RABBITMQ_HOST}:${RABBITMQ_PORT}/
-    syncEvent: false
+    eventSync: ${EVENT_SYNC}
     cluster:
       enabled: ${RABBITMQ_CLUSTER_ENABLED}
       username: "${RABBITMQ_CLUSTER_USERNAME}"
@@ -35,6 +32,7 @@ data:
     addr: ${TEMPORAL_HOST}:${TEMPORAL_PORT}
     namespace: ${TEMPORAL_NAMESPACE}
   redis:
+    poolSize: 100
     addr: "${REDIS_ADDR}"
     db: ${REDIS_DB}
     username: "${REDIS_USERNAME}"
@@ -52,7 +50,7 @@ data:
     defaultBucket: "${S3_DEFAULT_BUCKET}"
 service:
   apply:
-    addr: collaboration-server:5002
+    addr: collaboration-envoy:10000
     timeout: 10s
 admin:
   - user: ${UNIVERSER_ADMIN_USERNAME}
@@ -93,9 +91,11 @@ sesConfig:
   accessKey: ""
   accessSecret: ""
   region: ""
-  templateName: ""
   redirectURL: ""
   loginErrorURL: ""
+  template: 
+    login: ""
+    clipsheetWorkflow: ""
 usip:
   enabled: ${USIP_ENBALED}
   uri:
@@ -110,3 +110,4 @@ entitlementConf:
 statsConf:
   maxRecords: 10000
   timeInterval: 10
+  addr: ${STATS_ADDR}

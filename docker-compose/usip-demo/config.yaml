@@ -1,0 +1,17 @@
+host: http://localhost:8080
+
+database:
+  driver: sqlite
+  dsn: demo.db
+
+redis:
+  addr: univer-redis:6379
+
+universer:
+  host: http://lb:8000
+
+univer:
+  docHost: ":3010/doc"
+  sheetHost: ":3010/sheet"
+
+font: web/public/font/SourceHanSansCN-VF.ttf

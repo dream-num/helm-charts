@@ -1,7 +1,7 @@
 
 # docker compose
 
-A temporary way to run univer servers using docker-compose. This is not intended for production use.
+A temporary way to run univer servers using docker-compose.
 
 - [EN](./README.md)
 - [CN](./README-CN.md)
@@ -57,8 +57,8 @@ Replace localhost with the local IP for S3_ENDPOINT_PUBLIC config in .env file, 
 
 2. How to enable observability compoment?
 ```
-uncomment the following line in .env file:
-# COMPOSE_PROFILES=observability
+set in the .env file:
+ENABLE_UNIVER_OBSERVABILITY=true
 ```
 
 3. How to deal with host port conflict?

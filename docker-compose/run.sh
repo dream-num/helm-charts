@@ -20,7 +20,10 @@ if [ $? -ne 0 ]; then
 fi
 
 COMPOSE_FILE="docker-compose.yaml"
+INFRA_COMPOSE_FILE="docker-compose-infra.yaml"
+OBSERVE_COMPOSE_FILE="docker-compose-observability.yaml"
 ENV_FILE=".env"
+ENV_CUSTOM_FILE=".env.custom"
 DATABASE_DSN='host=${DATABASE_HOST} port=${DATABASE_PORT} dbname=${DATABASE_DBNAME} user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} sslmode=disable TimeZone=Asia/Shanghai'
 DATABASE_REPLICA_DSN=""
 NOT_CHECK_REGION=${NOT_CHECK_REGION:-false}
@@ -87,6 +90,10 @@ check_docker_proxy() {
     if [ "$proxy" == "" ]; then
         return 1
     fi
+    local docker_desktop_proxy="http.docker.internal"
+    if [[ "${proxy:0:${#docker_desktop_proxy}}" == "$docker_desktop_proxy" ]]; then
+        return 1
+    fi
 }
 
 prepare_image() {
@@ -99,13 +106,21 @@ prepare_image() {
         check_docker_proxy
         if [ $? -ne 0 ]; then
             # not set proxy
-            $SED -e 's|image: nginx:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/nginx:|' $COMPOSE_FILE
-            $SED -e 's|image: postgres:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/postgres:|' $COMPOSE_FILE
-            $SED -e 's|image: rabbitmq:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/rabbitmq:|' $COMPOSE_FILE
-            $SED -e 's|image: bitnami/redis:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/redis:|' $COMPOSE_FILE
+            $SED -e 's|image: nginx:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/nginx:|' $INFRA_COMPOSE_FILE
+            $SED -e 's|image: postgres:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/postgres:|' $INFRA_COMPOSE_FILE
+            $SED -e 's|image: rabbitmq:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/rabbitmq:|' $INFRA_COMPOSE_FILE
+            $SED -e 's|image: bitnami/redis:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/redis:|' $INFRA_COMPOSE_FILE
             $SED -e 's|image: temporalio/auto-setup:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/temporal:|' $COMPOSE_FILE
-            $SED -e 's|image: bitnami/minio:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/minio:|' $COMPOSE_FILE
+            $SED -e 's|image: bitnami/minio:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/minio:|' $INFRA_COMPOSE_FILE
             $SED -e 's|image: mysql:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/mysql:|' $COMPOSE_FILE
+            $SED -e 's|image: envoyproxy/envoy:v|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/envoy:|' $COMPOSE_FILE
+            $SED -e 's|image: grafana/loki:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/loki:|' $OBSERVE_COMPOSE_FILE
+            $SED -e 's|image: grafana/promtail:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/promtail:|' $OBSERVE_COMPOSE_FILE
+            $SED -e 's|image: grafana/grafana:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/grafana:|' $OBSERVE_COMPOSE_FILE
+            $SED -e 's|image: bitnami/prometheus:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/prometheus:|' $OBSERVE_COMPOSE_FILE
+            $SED -e 's|image: oliver006/redis_exporter:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/redis-exporter:|' $OBSERVE_COMPOSE_FILE
+            $SED -e 's|image: bitnami/postgres-exporter:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/postgres-exporter:|' $OBSERVE_COMPOSE_FILE
+            $SED -e 's|image: kbudde/rabbitmq-exporter:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/rabbitmq-exporter:|' $OBSERVE_COMPOSE_FILE
         fi
     fi
 }
@@ -118,22 +133,89 @@ init_config() {
     s='s|${DATABASE_REPLICA_DSN}|'$DATABASE_REPLICA_DSN'|'
     $SED -e "$s" ./configs/config.yaml
 
-    # echo "" >> .env
+    local tmp_env_file="/tmp/.univer-env-$(date +%s)"
+    if [ -f $ENV_CUSTOM_FILE ] ; then
+        cp $ENV_CUSTOM_FILE $tmp_env_file
+        echo "" >> $tmp_env_file
+        cat $ENV_FILE >> $tmp_env_file
+    else
+        cp $ENV_FILE $tmp_env_file
+    fi
+    echo "" >> $tmp_env_file
     
     while IFS='=' read -r name value ; do
         # Replace variable with value. 
         $SED -e 's|${'"${name}"'}|'"${value}"'|' ./configs/config.yaml
-    done < .env
+    done < $tmp_env_file
     
-    $SED '${/^$/d;}' .env
+    rm -f $tmp_env_file
+}
+
+gen_profiles() {
+    profiles=""
+    if [ "$DISABLE_UNIVER_RDS" != "true" ]; then
+        profiles="${profiles} --profile rds "
+    fi
+    if [ "$DISABLE_UNIVER_MQ" != "true" ]; then
+        profiles="${profiles} --profile mq "
+    fi
+    if [ "$DISABLE_UNIVER_REDIS" != "true" ]; then
+        profiles="${profiles} --profile redis "
+    fi
+    if [ "$DISABLE_UNIVER_S3" != "true" ]; then
+        profiles="${profiles} --profile s3 "
+    fi
+
+    echo ${profiles}
+}
+
+gen_env_param() {
+    env_param="--env-file $ENV_FILE"
+    if [ -f $ENV_CUSTOM_FILE ]; then
+        env_param="$env_param --env-file $ENV_CUSTOM_FILE"
+    fi
+    echo ${env_param}
 }
 
 start() {
-    $DOCKER_COMPOSE -f $COMPOSE_FILE --env-file $ENV_FILE up -d
+    profiles=$(gen_profiles)
+    env_param=$(gen_env_param)
+
+    $DOCKER_COMPOSE -f $INFRA_COMPOSE_FILE $env_param $profiles up -d
+
+    sleep 1
+    $DOCKER_COMPOSE -f $COMPOSE_FILE $env_param up -d
+
+    if [ "$ENABLE_UNIVER_OBSERVABILITY" == "true" ]; then
+        sleep 1
+        $DOCKER_COMPOSE -f $OBSERVE_COMPOSE_FILE $env_param $profiles up -d
+    fi
 }
 
 stop() {
-    $DOCKER_COMPOSE -f $COMPOSE_FILE --env-file $ENV_FILE down
+    profiles=$(gen_profiles)
+    env_param=$(gen_env_param)
+
+    if [ "$ENABLE_UNIVER_OBSERVABILITY" == "true" ]; then
+        $DOCKER_COMPOSE -f $OBSERVE_COMPOSE_FILE $env_param $profiles down
+    fi
+
+    $DOCKER_COMPOSE -f $COMPOSE_FILE $env_param down
+
+    $DOCKER_COMPOSE -f $INFRA_COMPOSE_FILE $env_param $profiles down
+}
+
+uninstall() {
+    profiles=$(gen_profiles)
+    env_param=$(gen_env_param)
+
+    if [ "$ENABLE_UNIVER_OBSERVABILITY" == "true" ]; then
+        $DOCKER_COMPOSE -f $OBSERVE_COMPOSE_FILE $env_param $profiles down --volumes
+    fi
+
+    $DOCKER_COMPOSE -f $COMPOSE_FILE $env_param down --volumes
+
+    $DOCKER_COMPOSE -f $INFRA_COMPOSE_FILE $env_param $profiles down --volumes
 }
 
 enterprise() {
@@ -151,6 +233,9 @@ load_image() {
 
 _env() {
     . $ENV_FILE
+    if [ -f $ENV_CUSTOM_FILE ]; then
+        . $ENV_CUSTOM_FILE
+    fi
 }
 
 check_failed_message() {
@@ -203,6 +288,13 @@ start_demo_ui() {
     $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-ui rm -sf univer-demo-ui
 }
 
+start_demo_usip() {
+    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-ui up -d univer-demo-ui
+    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-usip up univer-demo-usip
+    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-ui down univer-demo-ui
+    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-usip rm -sf univer-demo-usip
+}
+
 help() {
     echo "Usage: ./run.sh [COMMAND] [OPTION]"
     echo "Options:"
@@ -212,9 +304,11 @@ help() {
     echo "Commands:"
     echo "  start             Start the service"
     echo "  stop              Stop the service"
+    echo "  uninstall         uninstall"
     echo "  restart           Restart the service"
     echo "  check             Check the service health"
     echo "  start-demo-ui     Start the sdk demo ui"
+    echo "  start-demo-usip   Start the usip demo"
     echo "Default command:"
     echo "  ./run.sh start"
 }
@@ -259,8 +353,22 @@ case "$command" in
             ;;
         esac
     done
+    _env
     choose_compose_file
     stop
+    ;;
+  "uninstall")
+    echo "uninstall the service..."
+    for ((i = $start_index; i <= $#; i++)); do
+        case "${options[$i - 1]}" in
+        "--enterprise")
+            ENV_FILE=".env.enterprise"
+            ;;
+        esac
+    done
+    _env
+    choose_compose_file
+    uninstall
     ;;
   "" | "restart")
     echo "Restarting the service..."
@@ -292,6 +400,10 @@ case "$command" in
   "start-demo-ui")
     _env
     start_demo_ui
+    ;;
+  "start-demo-usip")
+    _env
+    start_demo_usip
     ;;
   *)
     echo "Unknown option: $option"
