@@ -95,7 +95,7 @@ collaboration-demo:
 worker:
   image:
     repository: release/worker-exchange
-    tag: 0.4.2 # VERSION
+    tag: 0.5.0 # VERSION
   temporalServer:
     host: temporal-frontend:7233
     namespace: univer
@@ -296,7 +296,7 @@ minio:
     annotations: 
       helm.sh/resource-policy: "keep"
   apiIngress:
-    enabled: true
+    enabled: false
     hostname: "minio.example.com"
 
 istio-base:

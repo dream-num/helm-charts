@@ -6,65 +6,41 @@ services:
       - 8000
       - 9000
     environment:
-      - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},univer-temporal,collaboration-server,univer-minio
+      - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},univer-temporal,collaboration-envoy,univer-minio,univer-demo-usip
       - SERVICE_NAME=Universer
       - SERVICE_VERSION=${UNIVERSER_VERSION}
     volumes:
       - ./configs:/data/configs
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/univers:/tmp/univers
+      - ./logs/universer:/app/logs
     depends_on:
-      univer-mysql:
-        condition: service_started
-      univer-rabbitmq:
-        condition: service_started
       univer-temporal:
         condition: service_started
-      univer-redis:
-        condition: service_started
-      init-db:
-        condition: service_completed_successfully
     networks:
       - univer
     labels:
       - com.univer.app=universer
     deploy:
-      replicas: 2
+      replicas: ${UNIVERSER_REPLICATION_CNT}
       endpoint_mode: dnsrr
 
-  init-db:
-    container_name: init-db
-    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:${UNIVERSER_SQL_VERSION}-mysql
-    environment:
-      - HOST=${DATABASE_HOST}
-      - PORT=${DATABASE_PORT}
-      - USERNAME=${DATABASE_USERNAME}
-      - PASSWORD=${DATABASE_PASSWORD}
-      - DATABASE=${DATABASE_DBNAME}
-      - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},${DATABASE_HOST}
-    networks:
-      - univer
-    depends_on:
-      univer-mysql:
-        condition: service_started
-    labels:
-      - com.univer.app=init-db
-
-  lb:
+  collaboration-envoy:
     restart: always
-    image: nginx:alpine-slim
-    ports:
-     - ${HOST_NGINX_PORT}:8000
+    image: envoyproxy/envoy:v1.31.3
+    volumes:
+      - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
+    expose:
+      - 10000
     networks:
       - univer
     depends_on:
-      - universer
-    volumes:
-      - ./nginx:/etc/nginx/conf.d/
+      - collaboration-server
+    environment:
+      - no_proxy=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},collaboration-server
 
   collaboration-server:
     restart: always
-    container_name: collaboration-server
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration:${COLLABORATION_SERVER_VERSION}
     environment:
       - URL_OF_APPLY_SERVICE=0.0.0.0:5002
@@ -74,56 +50,20 @@ services:
       - SAVE_DOC_SNAPSHOT_INTERVAL=50
       - ENABLE_MUTATION_APPLY_INTERCEPTOR=true
       - no_proxy=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},universer
+      - NODE_OPTIONS=--max-old-space-size=${COLLABORATION_SERVER_MEMORY_LIMIT}
     expose:
       - 5002
+      - 9090
     networks:
       - univer
     labels:
       - com.univer.app=collaboration-server
-
-  univer-mysql:
-    image: mysql:${MYSQL_VERSION}
-    restart: always
-    container_name: univer-mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD}
-    expose:
-      - 3306
-    volumes:
-      - mysql-data:/var/lib/mysql
-    networks:
-      - univer
-    labels:
-      - com.univer.app=mysql
-
-  univer-rabbitmq:
-    restart: always
-    container_name: univer-rabbitmq
-    image: rabbitmq:${RABBITMQ_VERSION}
-    expose:
-      - 5672
-    environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
-    networks:
-      - univer
-    labels:
-      - com.univer.app=rabbitmq
-
-  univer-redis:
-    restart: always
-    image: bitnami/redis:${REDIS_VERSION}
-    container_name: univer-redis
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-    expose:
-      - 6379
-    networks:
-      - univer
-    labels:
-      - com.univer.app=redis
-    volumes:
-      - redis-data:/bitnami/redis/data
+    deploy:
+      replicas: ${COLLABORATION_SERVER_REPLICATION_CNT}
+      endpoint_mode: dnsrr
+      resources:
+        limits:
+          memory: ${COLLABORATION_SERVER_MEMORY_LIMIT}M
 
   univer-temporal:
     restart: always
@@ -142,37 +82,13 @@ services:
       - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
     expose:
       - 7233
-    depends_on:
-      - univer-mysql
     networks:
       - univer
     labels:
       - com.univer.app=temporal
-  
-  univer-minio:
-    restart: always
-    image: bitnami/minio:${MINIO_VERSION}
-    user: root
-    container_name: univer-minio
-    environment:
-      - MINIO_ROOT_USER=${S3_USER}
-      - MINIO_ROOT_PASSWORD=${S3_PASSWORD}
-      - MINIO_DEFAULT_BUCKETS=${S3_DEFAULT_BUCKET}
-      - MINIO_DATA_DIR=/data
-    ports:
-      - ${HOST_MINIO_PORT}:9000
-    expose:
-      - 9000
-    networks:
-      - univer
-    labels:
-      - com.univer.app=minio
-    volumes:
-      - minio-data:/data
 
   univer-worker-exchange:
     restart: always
-    container_name: univer-worker-exchange
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/worker-exchange:${UNIVER_WORKER_EXCHANGE_VERSION}
     environment:
       - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},univer-temporal,univer-minio,universer
@@ -180,12 +96,22 @@ services:
       - TEMPORAL_NAMESPACE=${TEMPORAL_NAMESPACE}
       - SERVICE_NAME=exchange-worker
       - SERVICE_VERSION=${UNIVER_WORKER_EXCHANGE_VERSION}
+      - IMPORT_CONCURRENT=${EXCHANGE_WORKER_IMPORT_CONCURRENT}
+      - EXPORT_CONCURRENT=${EXCHANGE_WORKER_EXPORT_CONCURRENT}
+    volumes:
+        - ./logs/worker-exchange:/app/logs
     depends_on:
       - univer-temporal
     networks:
       - univer
     labels:
       - com.univer.app=worker-exchange
+    deploy:
+      replicas: ${EXCHANGE_WORKER_REPLICATION_CNT}
+      endpoint_mode: dnsrr
+      resources:
+        limits:
+          memory: ${EXCHANGE_WORKER_MEMORY_LIMIT}M
 
   univer-demo-ui:
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:${UNIVER_DEMO_UI_VERSION}
@@ -200,19 +126,21 @@ services:
     profiles:
       - demo-ui
 
+  univer-demo-usip:
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/usip-server:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./usip-demo:/app/configs
+    networks:
+      - univer
+    restart: "no"
+    profiles:
+      - demo-usip
+    environment:
+      - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},lb
+
 networks:
   univer:
+    external: true
     name: univer-prod
-    driver: bridge
-    ipam:
-     config:
-       - subnet: ${DOCKER_NETWORK_SUBNET}
-
-volumes:
-  mysql-data:
-    name: univer-prod-mysql-data
-  redis-data:
-    name: univer-prod-redis-data
-  minio-data:
-    name: univer-prod-minio-data
-

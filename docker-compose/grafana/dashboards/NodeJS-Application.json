@@ -27,7 +27,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                "uid": "PBFA97CFB590B2093"
             },
             "fieldConfig": {
                 "defaults": {
@@ -92,7 +92,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                        "uid": "PBFA97CFB590B2093"
                     },
                     "editorMode": "code",
                     "expr": "nodejs_version_info{}",
@@ -110,7 +110,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                "uid": "PBFA97CFB590B2093"
             },
             "fieldConfig": {
                 "defaults": {
@@ -175,7 +175,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                        "uid": "PBFA97CFB590B2093"
                     },
                     "expr": "sum(changes(process_start_time_seconds{instance=~\"$instance\"}[1m]))",
                     "format": "time_series",
@@ -190,7 +190,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                "uid": "PBFA97CFB590B2093"
             },
             "fieldConfig": {
                 "defaults": {
@@ -272,7 +272,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                        "uid": "PBFA97CFB590B2093"
                     },
                     "editorMode": "builder",
                     "expr": "irate(process_cpu_user_seconds_total{instance=~\"$instance\"}[2m]) * 100",
@@ -285,7 +285,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                        "uid": "PBFA97CFB590B2093"
                     },
                     "editorMode": "code",
                     "expr": "irate(process_cpu_system_seconds_total{instance=~\"$instance\"}[2m]) * 100",
@@ -306,7 +306,7 @@
             "dashes": false,
             "datasource": {
                 "type": "prometheus",
-                "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                "uid": "PBFA97CFB590B2093"
             },
             "fill": 1,
             "fillGradient": 0,
@@ -349,7 +349,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                        "uid": "PBFA97CFB590B2093"
                     },
                     "expr": "nodejs_active_handles_total{instance=~\"$instance\"}",
                     "format": "time_series",
@@ -360,7 +360,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                        "uid": "PBFA97CFB590B2093"
                     },
                     "expr": "nodejs_active_requests_total{instance=~\"$instance\"}",
                     "format": "time_series",
@@ -402,7 +402,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                "uid": "PBFA97CFB590B2093"
             },
             "fieldConfig": {
                 "defaults": {
@@ -481,7 +481,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                        "uid": "PBFA97CFB590B2093"
                     },
                     "editorMode": "code",
                     "expr": "sum(rate(univer_requests_counter[5m])) by (method, service, code)",
@@ -496,7 +496,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                "uid": "PBFA97CFB590B2093"
             },
             "fieldConfig": {
                 "defaults": {
@@ -575,7 +575,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                        "uid": "PBFA97CFB590B2093"
                     },
                     "editorMode": "code",
                     "expr": "histogram_quantile(0.99, sum(rate(univer_requests_duration_sec_bucket[5m])) by (le, method, service, code))",
@@ -595,7 +595,7 @@
             "dashes": false,
             "datasource": {
                 "type": "prometheus",
-                "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                "uid": "PBFA97CFB590B2093"
             },
             "fill": 1,
             "fillGradient": 0,
@@ -638,7 +638,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                        "uid": "PBFA97CFB590B2093"
                     },
                     "expr": "nodejs_eventloop_lag_seconds{instance=~\"$instance\"}",
                     "format": "time_series",
@@ -684,7 +684,7 @@
             "dashes": false,
             "datasource": {
                 "type": "prometheus",
-                "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                "uid": "PBFA97CFB590B2093"
             },
             "fill": 1,
             "fillGradient": 0,
@@ -728,7 +728,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                        "uid": "PBFA97CFB590B2093"
                     },
                     "expr": "process_resident_memory_bytes{instance=~\"$instance\"}",
                     "format": "time_series",
@@ -739,7 +739,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                        "uid": "PBFA97CFB590B2093"
                     },
                     "expr": "nodejs_heap_size_total_bytes{instance=~\"$instance\"}",
                     "format": "time_series",
@@ -750,7 +750,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                        "uid": "PBFA97CFB590B2093"
                     },
                     "expr": "nodejs_heap_size_used_bytes{instance=~\"$instance\"}",
                     "format": "time_series",
@@ -761,7 +761,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                        "uid": "PBFA97CFB590B2093"
                     },
                     "expr": "nodejs_external_memory_bytes{instance=~\"$instance\"}",
                     "format": "time_series",
@@ -807,7 +807,7 @@
             "dashes": false,
             "datasource": {
                 "type": "prometheus",
-                "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                "uid": "PBFA97CFB590B2093"
             },
             "fill": 1,
             "fillGradient": 0,
@@ -851,7 +851,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                        "uid": "PBFA97CFB590B2093"
                     },
                     "expr": "nodejs_heap_space_size_total_bytes{instance=~\"$instance\"}",
                     "format": "time_series",
@@ -897,7 +897,7 @@
             "dashes": false,
             "datasource": {
                 "type": "prometheus",
-                "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                "uid": "PBFA97CFB590B2093"
             },
             "fill": 1,
             "fillGradient": 0,
@@ -941,7 +941,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                        "uid": "PBFA97CFB590B2093"
                     },
                     "expr": "nodejs_heap_space_size_used_bytes{instance=~\"$instance\"}",
                     "format": "time_series",
@@ -987,7 +987,7 @@
             "dashes": false,
             "datasource": {
                 "type": "prometheus",
-                "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                "uid": "PBFA97CFB590B2093"
             },
             "fill": 1,
             "fillGradient": 0,
@@ -1031,7 +1031,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                        "uid": "PBFA97CFB590B2093"
                     },
                     "expr": "nodejs_heap_space_size_available_bytes{instance=~\"$instance\"}",
                     "format": "time_series",
@@ -1086,7 +1086,7 @@
                 },
                 "datasource": {
                     "type": "prometheus",
-                    "uid": "f67bb76d-6ccf-40c7-80c8-228faeb9e8c3"
+                    "uid": "PBFA97CFB590B2093"
                 },
                 "definition": "label_values(nodejs_version_info, instance)",
                 "hide": 0,
