@@ -17,6 +17,7 @@ data:
     dsn: ${DATABASE_DSN}
     replicaDSN: ${DATABASE_REPLICA_DSN}
   rabbitmq:
+    enabled: true
     addr: amqp://${RABBITMQ_USERNAME}:${RABBITMQ_PASSWORD}@${RABBITMQ_HOST}:${RABBITMQ_PORT}/
     eventSync: ${EVENT_SYNC}
     cluster:
@@ -97,7 +98,7 @@ sesConfig:
     login: ""
     clipsheetWorkflow: ""
 usip:
-  enabled: ${USIP_ENBALED}
+  enabled: ${USIP_ENABLED}
   uri:
     credential: ${USIP_URI_CREDENTIAL}
     userinfo: ${USIP_URI_USERINFO}

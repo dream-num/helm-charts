@@ -19,6 +19,7 @@ data:
     dsn: {{ include "universer.database.dsn" .Values.config.database }}
     replicaDSN: {{ include "universer.database.replicaDSN" .Values.config.database }}
   rabbitmq:
+    enabled: {{ .Values.config.rabbitmq.enabled }}
     addr: amqp://{{ .Values.config.rabbitmq.username }}:{{ .Values.config.rabbitmq.password }}@{{ tpl .Values.config.rabbitmq.host . }}:{{ .Values.config.rabbitmq.port }}/
     {{- with .Values.config.rabbitmq.cluster }}
     cluster:
