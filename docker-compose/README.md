@@ -55,7 +55,7 @@ Replace localhost with the local IP for S3_ENDPOINT_PUBLIC config in .env file, 
 # Replace to: S3_ENDPOINT_PUBLIC=http://192.168.50.172:19000
 ```
 
-2. How to enable observability compoment?
+2. How to enable observability component?
 ```
 set in the .env file:
 ENABLE_UNIVER_OBSERVABILITY=true
