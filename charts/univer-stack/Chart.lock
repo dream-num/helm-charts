@@ -44,5 +44,5 @@ dependencies:
 - name: virtualservicemerge
   repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
   version: 0.1.0
-digest: sha256:6c21e63d60add9a1550e9e9409f47d2f09eecc16b8b0dd57d959866b063a33fb
-generated: "2024-10-14T15:11:26.860805384+08:00"
+digest: sha256:17ba48b95a9efa243dacd9e303a420b6cb357f8a53b28177359981611593d7d0
+generated: "2024-12-05T18:09:32.385974+08:00"
