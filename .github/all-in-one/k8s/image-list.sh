@@ -16,7 +16,7 @@ images=(
     "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/redis-exporter:1.56.0-debian-11-r1"
     "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/rabbitmq:3.12.3-debian-11-r0"
     "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/minio:2024.8.3-debian-12-r1"
-    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/install-cni:1.20.1"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/install-cni:1.23.3"
     "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/pilot:1.23.3"
     "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/proxyv2:1.23.3"
 )
