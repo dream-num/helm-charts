@@ -62,26 +62,26 @@ dependencies:
     version: 0.1.2
     repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
   - name: base
-    version: 1.20.1
+    version: 1.23.3
     repository: https://istio-release.storage.googleapis.com/charts
     tags:
       - "istio"
     alias: istio-base
   - name: istiod
-    version: 1.20.1
+    version: 1.23.3
     repository: https://istio-release.storage.googleapis.com/charts
     tags:
       - "istio"
     alias: istio-istiod
   - name: cni
-    version: 1.20.1
+    version: 1.23.3
     repository: https://istio-release.storage.googleapis.com/charts
     condition: istio-istiod.istio_cni.enabled
     tags:
       - "istio"
     alias: istio-cni
   - name: gateway
-    version: 1.20.1
+    version: 1.23.3
     repository: https://istio-release.storage.googleapis.com/charts
     condition: istio-gateway.enabled
     tags:

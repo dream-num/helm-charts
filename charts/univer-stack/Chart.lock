@@ -31,16 +31,16 @@ dependencies:
   version: 0.1.2
 - name: base
   repository: https://istio-release.storage.googleapis.com/charts
-  version: 1.20.1
+  version: 1.23.3
 - name: istiod
   repository: https://istio-release.storage.googleapis.com/charts
-  version: 1.20.1
+  version: 1.23.3
 - name: cni
   repository: https://istio-release.storage.googleapis.com/charts
-  version: 1.20.1
+  version: 1.23.3
 - name: gateway
   repository: https://istio-release.storage.googleapis.com/charts
-  version: 1.20.1
+  version: 1.23.3
 - name: virtualservicemerge
   repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
   version: 0.1.0
