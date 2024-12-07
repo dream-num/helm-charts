@@ -311,13 +311,20 @@ istio-istiod:
     enablePrometheusMerge: true
     enableTracing: true
     defaultConfig:
-      concurrency: 4
+      proxyResources:
+        requests:
+          cpu: 500m
+          memory: 512Mi
+        limits:
+          cpu: 2000m
+          memory: 1024Mi
       tracing:
         sampling: 50.0
       proxyMetadata:
         EXIT_ON_ZERO_ACTIVE_CONNECTIONS: "true"
-        CONCURRENT_STREAM_LIMIT: "1500"
-        HTTP2_MAX_CONCURRENT_STREAMS: "1024"
+        CONCURRENT_STREAM_LIMIT: "50000"
+        HTTP2_MAX_CONCURRENT_STREAMS: "50000"
+        CONNECTION_POOL_MAX_CONNECTIONS: "10000"
   istio_cni:
     enabled: false
 
