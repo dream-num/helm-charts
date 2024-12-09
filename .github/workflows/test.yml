@@ -61,8 +61,8 @@ jobs:
             }
           }'
   
-  build-test-binary:
-    name: Build Test Binary
+  build-test-windows-binary:
+    name: Build Test Windows Binary
     runs-on: ubuntu-latest
     if: ${{ inputs.binary }}
     steps:
