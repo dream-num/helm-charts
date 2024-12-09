@@ -2,6 +2,17 @@ name: 🩺 Test
 
 on:
   workflow_dispatch:
+    inputs:
+      binary:
+        description: 'Binary to test'
+        required: false
+        default: false
+        type: boolean
+      binary-version:
+        description: 'Binary version'
+        required: false
+        default: 'staging'
+        type: string
   
   pull_request:
     types:
@@ -23,6 +34,7 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    if: ${{ ! inputs.binary }}
     strategy:
       fail-fast: true
       matrix:
@@ -48,3 +60,32 @@ jobs:
               >enviroment: docker-compose"
             }
           }'
+  
+  build-test-binary:
+    name: Build Test Binary
+    runs-on: ubuntu-latest
+    if: ${{ inputs.binary }}
+    steps:
+    - name: Download binary
+      run: |
+        mkdir -p /tmp/univer-binary
+        curl -o /tmp/univer-binary/universer.exe https://release-univer.oss-cn-shenzhen.aliyuncs.com/test/${{ inputs.binary-version }}/universer.exe
+        curl -o /tmp/univer-binary/collaboration.exe https://release-univer.oss-cn-shenzhen.aliyuncs.com/test/${{ inputs.binary-version }}/collaboration.exe
+        curl -o /tmp/univer-binary/exchange.exe https://release-univer.oss-cn-shenzhen.aliyuncs.com/test/${{ inputs.binary-version }}/exchange.exe
+        curl -o /tmp/univer-binary/demo-ui.exe https://release-univer.oss-cn-shenzhen.aliyuncs.com/test/${{ inputs.binary-version }}/demo-ui.exe
+        curl -o /tmp/univer-binary/launch.exe https://release-univer.oss-cn-shenzhen.aliyuncs.com/test/${{ inputs.binary-version }}/launch.exe
+        curl -o /tmp/univer-binary/univer-binary.tar.gz https://release-univer.oss-cn-shenzhen.aliyuncs.com/tool/univer-binary.tar.gz
+        cd /tmp/univer-binary
+        tar -xzvf univer-binary.tar.gz
+        rm -f univer-binary.tar.gz
+        zip -r ~/univer-server-win.zip .
+
+    - uses: hexf00/upload-to-oss@v1
+      with:
+        source: '~/univer-server-win.zip'
+        dest: 'test/${{ inputs.binary-version }}/univer-server-win.zip'
+        bucket: ${{secrets.OSS_BUCKET}}
+        region: "oss-cn-shenzhen"
+        accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
+        accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
+        timeout: 1200s
