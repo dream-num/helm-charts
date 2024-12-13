@@ -3,11 +3,7 @@
 dir="docker-compose"
 
 pwd
-cp -r ../docker-compose ./
-cd docker-compose
-tar -czvf ./univer.tar.gz * .[!.]*
-mv ./univer.tar.gz ../
-cd ../
+cp -r ../docker-compose ./univer-server-${UNIVERSER_VERSION}
 
 source ${dir}/.env
 
@@ -63,7 +59,10 @@ docker save \
 
 rm -rf $dir
 
-tar -cvf all-in-one.$1.${UNIVERSER_VERSION}.tar univer-image.tar.gz observability-image.tar.gz univer.tar.gz install.sh uninstall.sh
+mkdir all-in-one.$1.${UNIVERSER_VERSION}
+mv univer-image.tar.gz observability-image.tar.gz univer-server-${UNIVERSER_VERSION}/ load-images.sh ./all-in-one.$1.${UNIVERSER_VERSION}
+
+tar -cvf all-in-one.$1.${UNIVERSER_VERSION}.tar ./all-in-one.$1.${UNIVERSER_VERSION}
 
 echo "ALLINONE_PATH=$(echo $PWD/all-in-one.$1.${UNIVERSER_VERSION}.tar)" >> $GITHUB_ENV
 echo "ALLINONE_TAR=$(echo all-in-one.$1.${UNIVERSER_VERSION}.tar)" >> $GITHUB_ENV
