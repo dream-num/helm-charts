@@ -1,11 +1,11 @@
 #!/bin/bash
 
-dir="docker-compose"
-
 pwd
-cp -r ../docker-compose ./univer-server-${UNIVERSER_VERSION}
+cp -r ../docker-compose ./
 
-source ${dir}/.env
+source docker-compose/.env
+
+mv docker-compose univer-server-${UNIVERSER_VERSION}
 
 echo "save univer image"
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer:${UNIVERSER_VERSION}
@@ -56,8 +56,6 @@ docker save \
     bitnami/postgres-exporter:${POSTGRES_EXPORTER_VERSION} \
     kbudde/rabbitmq-exporter:${RABBITMQ_EXPORTER_VERSION} \
     | gzip > observability-image.tar.gz
-
-rm -rf $dir
 
 mkdir all-in-one.$1.${UNIVERSER_VERSION}
 mv univer-image.tar.gz observability-image.tar.gz univer-server-${UNIVERSER_VERSION}/ load-images.sh ./all-in-one.$1.${UNIVERSER_VERSION}
