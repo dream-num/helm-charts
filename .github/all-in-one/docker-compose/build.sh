@@ -1,15 +1,11 @@
 #!/bin/bash
 
-dir="docker-compose"
-
 pwd
 cp -r ../docker-compose ./
-cd docker-compose
-tar -czvf ./univer.tar.gz * .[!.]*
-mv ./univer.tar.gz ../
-cd ../
 
-source ${dir}/.env
+source docker-compose/.env
+
+mv docker-compose univer-server-${UNIVERSER_VERSION}
 
 echo "save univer image"
 docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer:${UNIVERSER_VERSION}
@@ -61,9 +57,10 @@ docker save \
     kbudde/rabbitmq-exporter:${RABBITMQ_EXPORTER_VERSION} \
     | gzip > observability-image.tar.gz
 
-rm -rf $dir
+mkdir all-in-one.$1.${UNIVERSER_VERSION}
+mv univer-image.tar.gz observability-image.tar.gz univer-server-${UNIVERSER_VERSION}/ load-images.sh ./all-in-one.$1.${UNIVERSER_VERSION}
 
-tar -cvf all-in-one.$1.${UNIVERSER_VERSION}.tar univer-image.tar.gz observability-image.tar.gz univer.tar.gz install.sh uninstall.sh
+tar -cvf all-in-one.$1.${UNIVERSER_VERSION}.tar ./all-in-one.$1.${UNIVERSER_VERSION}
 
 echo "ALLINONE_PATH=$(echo $PWD/all-in-one.$1.${UNIVERSER_VERSION}.tar)" >> $GITHUB_ENV
 echo "ALLINONE_TAR=$(echo all-in-one.$1.${UNIVERSER_VERSION}.tar)" >> $GITHUB_ENV
