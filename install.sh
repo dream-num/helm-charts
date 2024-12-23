@@ -218,11 +218,12 @@ getToken(){
   fi
 
   if [ -z "$token" ]; then
-    echo "Please authenticate the CLI to subscribe to our upgrade notifications"
+    # echo "Please authenticate the CLI to subscribe to our upgrade notifications"
     openURL "${getTokenURL}" &&
-          echo -e "Your browser has been opened to visit:\n\n\t ${getTokenURL} \n" ||
-          echo -e "Open the following in your browser:\n\n\t ${getTokenURL} \n"
+          echo -e "Your browser has been opened to retrieve auth token:\n\n\t ${getTokenURL} \n" ||
+          echo -e "Open the following url to retrieve auth token:\n\n\t ${getTokenURL} \n"
 
+    echo "Token is used for CLI authentication"
     while [ "$_CI_TEST" != "true" ] ; do
       read -r -p "> Paste your token here: " token
       if verifyToken "${token}" true; then
