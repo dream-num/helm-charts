@@ -93,9 +93,10 @@ collaboration-demo:
             pathType: Prefix
 
 worker:
+  fullnameOverride: worker-exchange
   image:
     repository: release/worker-exchange
-    tag: 0.5.1 # VERSION
+    tag: 0.5.2 # VERSION
   temporalServer:
     host: temporal-frontend:7233
     namespace: univer

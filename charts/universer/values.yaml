@@ -12,7 +12,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.5.1 # VERSION
+  tag: 0.5.2 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -123,6 +123,8 @@ config:
   apply:
     host: collaboration-server
     port: 5002
+  nodeRuntime:
+    addr: http://localhost:14400
   admin: []
   s3:
     accessKeyID: ""
@@ -133,6 +135,7 @@ config:
     usePathStyle: false
     presignExpires: 3600s
     defaultBucket: univer
+    publicBucket: ""
   temporal:
     addr: univer-temporal:7233
     namespace: default
@@ -174,15 +177,12 @@ config:
       customerStrategies: ""
     admin:
       userIDs: []
+      liteServer: false
   apiLimit:
-    method:
-      tokens: 600
-      interval: 30s
+    method: {}
     ip: {}
     perMethod: {}
-    user:
-      tokens: 300
-      interval: 30s
+    user: {}
     perMethodUser: {}
   sentryConfig:
     dsn: ""
@@ -243,6 +243,9 @@ config:
     timeInterval: 10
     maxRecords: 10000
     addr: "https://www.univer.ai/univer-cloud/stats/report"
+  jaegerConf:
+    enabled: false
+    grpcEndpoint: "jaeger:4317"
 
 license:
   LICENSE: ""
@@ -259,7 +262,7 @@ job:
     registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
     repository: release/universer-sql
     pullPolicy: IfNotPresent
-    tag: "0.0.12"
+    tag: "0.0.14"
 
 istio:
   enabled: false

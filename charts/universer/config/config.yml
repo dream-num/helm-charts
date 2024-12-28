@@ -35,18 +35,16 @@ data:
   redis:
     {{- toYaml . | nindent 4 }}
   {{- end }}
+  {{- with .Values.config.s3 }}
   s3:
-    accessKeyID: {{ .Values.config.s3.accessKeyID }}
-    accessKeySecret: {{ .Values.config.s3.accessKeySecret }}
-    region: {{ .Values.config.s3.region }}
-    endpoint: {{ .Values.config.s3.endpoint }}
-    endpointPublic: {{ .Values.config.s3.endpointPublic }}
-    usePathStyle: {{ .Values.config.s3.usePathStyle }}
-    presignExpires: {{ .Values.config.s3.presignExpires }}
-    defaultBucket: {{ .Values.config.s3.defaultBucket }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 service:
   apply:
     addr: "{{ tpl .Values.config.apply.host . }}:{{ .Values.config.apply.port }}"
+    timeout: 10s
+  nodeRuntime:
+    addr: {{ .Values.config.nodeRuntime.addr }}
     timeout: 10s
 apiLimit:
   {{- with .Values.config.apiLimit }}
@@ -91,6 +89,7 @@ auth:
     {{- range .Values.config.auth.admin.userIDs }}
     - {{ . | quote }}
     {{- end }}
+    liteServer: {{ .Values.config.auth.admin.liteServer }}
 usip:
   enabled: {{ .Values.config.usip.enabled }}
   {{- with .Values.config.usip.uri }}
@@ -152,5 +151,9 @@ workspace:
 {{- end }}
 statsConf:
 {{- with .Values.config.statsConf }}
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+jaegerConf:
+{{- with .Values.config.jaegerConf }}
   {{- toYaml . | nindent 2 }}
 {{- end }}

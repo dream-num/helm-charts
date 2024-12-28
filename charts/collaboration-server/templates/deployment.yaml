@@ -76,6 +76,8 @@ spec:
               value: {{ .Values.stats | quote }}
             - name: NODE_OPTIONS
               value: --max-old-space-size={{ .Values.maxMemoryLimit }}
+            - name: LRU_CACHE_CAPACITY
+              value: "10000"
               
       {{- with .Values.nodeSelector }}
       nodeSelector:
