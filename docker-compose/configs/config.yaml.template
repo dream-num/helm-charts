@@ -75,10 +75,7 @@ auth:
     defaultShareRole: "${AUTH_PERMISSION_DEFAULT_SHARE_ROLE}"
     enableObjInherit: ${AUTH_PERMISSION_ENABLE_OBJ_INHERIT}
     customerStrategies: ${AUTH_PERMISSION_CUSTOMER_STRATEGIES}
-apiLimit:
-  method:
-    tokens: 600
-    interval: 30s
+apiLimit: {}
 sentryConfig:
   dsn: ${SENTRY_DSN}
   debug: false

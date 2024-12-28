@@ -99,6 +99,7 @@ services:
       - com.univer.app=prometheus
 
   redis-exporter:
+    restart: always
     image: oliver006/redis_exporter:${REDIS_EXPORTER_VERSION}
     expose:
       - 9121
@@ -110,6 +111,7 @@ services:
       - redis
 
   postgres-exporter:
+    restart: always
     image: bitnami/postgres-exporter:${POSTGRES_EXPORTER_VERSION}
     expose:
       - 9187
@@ -121,6 +123,7 @@ services:
       - rds
 
   rabbitmq-exporter:
+    restart: always
     image: kbudde/rabbitmq-exporter:${RABBITMQ_EXPORTER_VERSION}
     expose:
       - 9419
