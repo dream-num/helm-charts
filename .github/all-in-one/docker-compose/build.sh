@@ -2,6 +2,7 @@
 
 pwd
 cp -r ../docker-compose ./
+sed -i -e 's/^\s*prepare_image$/#&/' ./docker-compose/run.sh
 
 source docker-compose/.env
 
