@@ -44,6 +44,13 @@ for image in "${images[@]}"; do
     docker push $REGISTRY/$IMAGE_NAMESPACE/$(basename $image)
 done
 
+docker load -i observability-image.tar.gz
+
+for image in "${observability_images[@]}"; do
+    docker tag $image $REGISTRY/$IMAGE_NAMESPACE/$(basename $image)
+    docker push $REGISTRY/$IMAGE_NAMESPACE/$(basename $image)
+done
+
 SED="sed -i"
 if [ "$(uname)" == "Darwin" ]; then
     SED="sed -i \"\""
@@ -51,3 +58,6 @@ fi
 
 $SED -e 's#${REGISTRY}#'${REGISTRY}'#' values.yaml
 $SED -e 's#${IMAGE_NAMESPACE}#'${IMAGE_NAMESPACE}'#' values.yaml
+
+$SED -e 's#${REGISTRY}#'${REGISTRY}'#' values-observability.yaml
+$SED -e 's#${IMAGE_NAMESPACE}#'${IMAGE_NAMESPACE}'#' values-observability.yaml

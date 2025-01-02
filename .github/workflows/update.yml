@@ -32,6 +32,7 @@ jobs:
           mv tmp/charts/univer-stack charts/
           mv tmp/charts/universer charts/
           mv tmp/charts/worker charts/
+          mv tmp/charts/univer-observability charts/
           rm -rf tmp
         COMMIT_MESSAGE: 'chore: update repository'
         COMMIT_NAME: 'GitHub Actions'
