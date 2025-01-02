@@ -218,11 +218,12 @@ getToken(){
   fi
 
   if [ -z "$token" ]; then
-    echo "Please authenticate the CLI to subscribe to our upgrade notifications"
+    # echo "Please authenticate the CLI to subscribe to our upgrade notifications"
     openURL "${getTokenURL}" &&
-          echo -e "Your browser has been opened to visit:\n\n\t ${getTokenURL} \n" ||
-          echo -e "Open the following in your browser:\n\n\t ${getTokenURL} \n"
+          echo -e "Your browser has been opened to retrieve auth token:\n\n\t ${getTokenURL} \n" ||
+          echo -e "Open the following url to retrieve auth token:\n\n\t ${getTokenURL} \n"
 
+    echo "Token is used for CLI authentication"
     while [ "$_CI_TEST" != "true" ] ; do
       read -r -p "> Paste your token here: " token
       if verifyToken "${token}" true; then
@@ -291,6 +292,7 @@ if [ $? -eq 0 ] && [ "$_CI_TEST" != "true" ]; then
     echo ""
     echo "More information about Univer Server, please refer to https://univer.ai/guides/sheet/server/docker"
     echo "More information about Univer SDK, please refer to https://univer.ai/guides/sheet/getting-started/quickstart"
+    echo "More information about data collection, please refer to https://docs.univer.ai/en-US/guides/sheets/troubleshooting#does-univer-collect-my-data"
     echo ""
 fi
 

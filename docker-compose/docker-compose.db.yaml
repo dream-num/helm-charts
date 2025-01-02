@@ -51,6 +51,7 @@ services:
       - ENABLE_MUTATION_APPLY_INTERCEPTOR=true
       - no_proxy=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},universer
       - NODE_OPTIONS=--max-old-space-size=${COLLABORATION_SERVER_MEMORY_LIMIT}
+      - LRU_CACHE_CAPACITY=10000
     expose:
       - 5002
       - 9090
