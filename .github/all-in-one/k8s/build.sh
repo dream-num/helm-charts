@@ -47,7 +47,7 @@ tar -cvf k8s-all-in-one.${version}.tar \
     univer-image.tar.gz \
     $chart \
     univer-observability-*.tgz \
-    image-list.sh install.sh load-image.sh uninstall.sh
+    image-list.sh load-image.sh
 
 echo "ALLINONE_PATH=$(echo $PWD/k8s-all-in-one.${version}.tar)" >> $GITHUB_ENV
 echo "ALLINONE_TAR=$(echo k8s-all-in-one.${version}.tar)" >> $GITHUB_ENV
