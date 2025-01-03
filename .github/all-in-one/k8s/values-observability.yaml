@@ -1,0 +1,48 @@
+prometheus:
+  server:
+    image:
+      registry: ${REGISTRY}
+      repository: ${IMAGE_NAMESPACE}/prometheus
+
+
+node-exporter:
+  image:
+    registry: ${REGISTRY}
+    repository: ${IMAGE_NAMESPACE}/node-exporter
+
+
+kube-state-metrics:
+  image:
+    registry: ${REGISTRY}
+    repository: ${IMAGE_NAMESPACE}/kube-state-metrics
+
+
+kubernetes-event-exporter:
+  image:
+    registry: ${REGISTRY}
+    repository: ${IMAGE_NAMESPACE}/kubernetes-event-exporter
+
+
+loki:
+  image:
+    repository: ${REGISTRY}/${IMAGE_NAMESPACE}/loki
+
+
+promtail:
+  image:
+    registry: ${REGISTRY}
+    repository: ${IMAGE_NAMESPACE}/promtail
+  configmap:
+    enabled: true
+
+
+grafana:
+  image:
+    repository: ${REGISTRY}/${IMAGE_NAMESPACE}/grafana
+  initChownData:
+    image:
+      repository: ${REGISTRY}/${IMAGE_NAMESPACE}/busybox
+      tag: "1.31.1"
+  sidecar:
+    image:
+      repository: ${REGISTRY}/${IMAGE_NAMESPACE}/grafana-sidecar

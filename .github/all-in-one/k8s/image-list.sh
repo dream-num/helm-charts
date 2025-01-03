@@ -20,3 +20,15 @@ images=(
     "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/pilot:1.20.1"
     "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/proxyv2:1.20.1"
 )
+
+observability_images=(
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/prometheus:2.49.1-debian-11-r0"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/node-exporter:1.7.0"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/kube-state-metrics:2.10.1-debian-11-r6"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/kubernetes-event-exporter:1.6.1-debian-11-r6"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/loki:2.9.10"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/promtail:2.9.0"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/grafana:10.2.2-dev"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/busybox:1.31.1"
+    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/grafana-sidecar:1.19.2"
+)
