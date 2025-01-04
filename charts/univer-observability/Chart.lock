@@ -1,0 +1,24 @@
+dependencies:
+- name: prometheus
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 0.8.0
+- name: node-exporter
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 3.11.2
+- name: kube-state-metrics
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 3.11.3
+- name: kubernetes-event-exporter
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 2.12.3
+- name: loki
+  repository: https://grafana.github.io/helm-charts
+  version: 2.16.0
+- name: promtail
+  repository: https://grafana.github.io/helm-charts
+  version: 6.15.5
+- name: grafana
+  repository: https://grafana.github.io/helm-charts
+  version: 6.43.5
+digest: sha256:436c13379bdcb094c2099689837478d173fedecd4b75c57fd320154dfa80807d
+generated: "2024-09-02T10:44:45.631066256+08:00"

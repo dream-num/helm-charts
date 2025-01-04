@@ -1,0 +1,480 @@
+global:
+  univerNamespace: univer
+
+
+prometheus:
+  enabled: true
+
+  fullnameOverride: prometheus
+
+  alertmanager:
+    enabled: false
+
+  server:
+    image:
+      registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+      repository: release/prometheus
+      tag: 2.49.1-debian-11-r0
+
+    persistence:
+      enabled: true
+      size: 20Gi
+
+    extraScrapeConfigs:
+      - job_name: 'collaboration'
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels: [ __meta_kubernetes_pod_name ]
+            action: keep
+            regex: '^collaboration-server-.*'
+          - source_labels: [ __meta_kubernetes_pod_ip ]
+            target_label: '__address__'
+            replacement: '${1}:9090'
+        metrics_path: /metrics
+
+      - job_name: 'universer'
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels: [ __meta_kubernetes_pod_name ]
+            regex: 'universer-.*'
+            action: keep
+          - source_labels: [ __meta_kubernetes_pod_controller_kind ]
+            regex: 'Job'
+            action: drop
+          - source_labels: [ __meta_kubernetes_pod_ip ]
+            action: replace
+            replacement: $1:8000
+            target_label: __address__
+        metrics_path: /universer-api/metrics
+
+      - job_name: 'temporal-worker'
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels: [ __meta_kubernetes_pod_name ]
+            regex: '^worker-exchange-.*'
+            action: keep
+          - source_labels: [ __meta_kubernetes_pod_ip ]
+            target_label: '__address__'
+            replacement: '${1}:9090'
+        metrics_path: /metrics
+
+      - job_name: 'postgresql'
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels: [ __meta_kubernetes_pod_name ]
+            regex: 'postgresql-(.*)'
+            action: keep
+          - source_labels: [ __meta_kubernetes_pod_ip ]
+            action: replace
+            replacement: $1:9187
+            target_label: __address__
+        metrics_path: /metrics
+
+      - job_name: 'redis'
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels: [ __meta_kubernetes_pod_name ]
+            regex: 'redis-(.*)'
+            action: keep
+          - source_labels: [ __meta_kubernetes_pod_ip ]
+            action: replace
+            replacement: $1:9121
+            target_label: __address__
+
+      - job_name: 'rabbitmq'
+        kubernetes_sd_configs:
+        - role: pod
+        relabel_configs:
+        - source_labels:
+          - __meta_kubernetes_pod_name
+          regex: rabbitmq-(.*)
+          action: keep
+        - source_labels: [ __meta_kubernetes_pod_ip ]
+          action: replace
+          replacement: $1:9419
+          target_label: __address__
+
+      - job_name: 'node'
+        metrics_path: /metrics
+        kubernetes_sd_configs:
+          - role: node
+        relabel_configs:
+          - source_labels: [__address__]
+            action: replace
+            regex: ([^:]+):.*
+            replacement: $1:19100
+            target_label: __address__
+
+      - job_name: 'kube-state-metrics'
+        scrape_interval: 20s
+        kubernetes_sd_configs:
+          - role: endpoints
+        relabel_configs:
+          - source_labels: [ __meta_kubernetes_service_name ]
+            regex: 'kube-state-metrics'
+            action: keep
+        metrics_path: /metrics
+
+      - job_name: 'kubernetes-cadvisor'
+        scrape_interval: 20s
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        kubernetes_sd_configs:
+        - role: node
+        relabel_configs:
+        - target_label: __address__
+          replacement: kubernetes.default.svc:443
+        - source_labels: [__meta_kubernetes_node_name]
+          regex: (.+)
+          replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
+          target_label: __metrics_path__
+        - action: labelmap
+          regex: __meta_kubernetes_node_label_(.+)
+        - source_labels: [__meta_kubernetes_node_name]
+          action: replace
+          target_label: node
+        - source_labels: [__meta_kubernetes_node_label_node]
+          action: replace
+          target_label: node_name
+
+    service:
+      type: ClusterIP
+
+    affinity: {}
+
+
+node-exporter:
+  enabled: true
+
+  image:
+    registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+    repository: release/node-exporter
+    tag: 1.7.0
+
+  containerPorts:
+    metrics: 19100
+
+  service:
+    ports:
+      metrics: 19100
+    clusterIP: None
+
+
+kube-state-metrics:
+  enabled: true
+  image:
+    registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+    repository: release/kube-state-metrics
+    tag: 2.10.1-debian-11-r6
+
+
+kubernetes-event-exporter:
+  enabled: true
+  image:
+    registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+    repository: release/kubernetes-event-exporter
+    tag: 1.6.1-debian-11-r6
+
+  config:
+    logLevel: debug
+    logFormat: pretty
+    metricsNamePrefix: 'event_exporter_'
+    receivers:
+      - name: "dump"
+        file:
+          path: "/dev/stdout"
+          layout: {}
+      - name: "loki"
+        loki:
+          streamLabels:
+            job: event-exporter
+            container: event-exporter
+            namespace: observability
+          url: http://loki:3100/loki/api/v1/push
+    route:
+      routes:
+        - match:
+            - receiver: "dump"
+            - receiver: "loki"
+
+
+loki:
+  enabled: true
+  isDefault: true
+  fullnameOverride: loki
+  url: http://loki:3100
+  readinessProbe:
+    httpGet:
+      path: /ready
+      port: http-metrics
+    initialDelaySeconds: 45
+  livenessProbe:
+    httpGet:
+      path: /ready
+      port: http-metrics
+    initialDelaySeconds: 45
+  datasource:
+    jsonData: "{}"
+    uid: ""
+  replicas: 1
+  image:
+    repository: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/loki
+    tag: "2.9.10"
+  persistence:
+    enabled: true
+    size: 20Gi
+  config:
+    limits_config:
+      reject_old_samples: true   # 是否拒绝旧样本
+      reject_old_samples_max_age: 15d   # 15天之前的样本被拒绝
+    chunk_store_config:
+      max_look_back_period: 10d
+    table_manager:
+      retention_deletes_enabled: true
+      retention_period: 15d
+  affinity: {}
+
+
+promtail:
+  enabled: true
+  image:
+    registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+    repository: release/promtail
+    tag: "2.9.0"
+  configmap:
+    enabled: true
+  config:
+    logLevel: info
+    serverPort: 3101
+    clients:
+      - url: http://loki:3100/loki/api/v1/push
+    snippets:
+      scrapeConfigs: |
+        # See also https://github.com/grafana/loki/blob/master/production/ksonnet/promtail/scrape_config.libsonnet for reference
+        - job_name: kubernetes-pods
+          pipeline_stages:
+            - cri: {}
+            - match:
+                selector: '{namespace="{{ .Values.global.univerNamespace }}",app=~"universer|worker|collaboration-server"}'
+                action: drop
+          kubernetes_sd_configs:
+            - role: pod
+              namespaces:
+                names:
+                  - {{ .Values.global.univerNamespace }}
+          relabel_configs:
+            - source_labels: [ __meta_kubernetes_pod_container_name ]
+              regex: istio-proxy
+              action: drop
+            - source_labels: [ __meta_kubernetes_pod_name ]
+              regex: coder-.*
+              action: drop
+            - source_labels:
+                - __meta_kubernetes_pod_controller_name
+              regex: ([0-9a-z-.]+?)(-[0-9a-f]{8,10})?
+              action: replace
+              target_label: __tmp_controller_name
+            - source_labels:
+                - __meta_kubernetes_pod_label_app_kubernetes_io_name
+                - __meta_kubernetes_pod_label_app
+                - __tmp_controller_name
+                - __meta_kubernetes_pod_name
+              regex: ^;*([^;]+)(;.*)?$
+              action: replace
+              target_label: app
+            - source_labels:
+                - __meta_kubernetes_pod_label_version
+              regex: ^;*([^;]+)(;.*)?$
+              action: replace
+              target_label: feature
+            - source_labels:
+                - __meta_kubernetes_pod_label_app_kubernetes_io_instance
+                - __meta_kubernetes_pod_label_release
+              regex: ^;*([^;]+)(;.*)?$
+              action: replace
+              target_label: instance
+            - source_labels:
+                - __meta_kubernetes_pod_label_app_kubernetes_io_component
+                - __meta_kubernetes_pod_label_component
+              regex: ^;*([^;]+)(;.*)?$
+              action: replace
+              target_label: component
+            {{- if .Values.config.snippets.addScrapeJobLabel }}
+            - replacement: kubernetes-pods
+              target_label: scrape_job
+            {{- end }}
+            {{- toYaml .Values.config.snippets.common | nindent 4 }}
+            {{- with .Values.config.snippets.extraRelabelConfigs }}
+            {{- toYaml . | nindent 4 }}
+            {{- end }}
+        - job_name: kubernetes-pods-go
+          pipeline_stages:
+            - cri: {}
+            - match:
+                selector: '{namespace="{{ .Values.global.univerNamespace }}",app!~"universer|worker"}'
+                action: drop
+            - match:
+                selector: '{app="universer"} |= "/grpc.health.v1.Health/Check"'
+                action: drop
+            - multiline:
+                firstline: '^(\033\[0m|\033\[31m|\033\[32m|\033\[33m|\033\[34m|\033\[35m|\033\[36m|\033\[37m|\033\[34;1m|\033\[35;1m|\033\[31;1m|\033\[33;1m)?(DEBUG|INFO|WARN|ERROR|FATAL|panic:|panic occurred:|\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2})'
+                max_wait_time: 5s
+          kubernetes_sd_configs:
+            - role: pod
+              namespaces:
+                names:
+                  - {{ .Values.global.univerNamespace }}
+          relabel_configs:
+            - source_labels: [ __meta_kubernetes_pod_container_name ]
+              regex: istio-proxy
+              action: drop
+            - source_labels: [ __meta_kubernetes_pod_name ]
+              regex: coder-.*
+              action: drop
+            - source_labels:
+                - __meta_kubernetes_pod_controller_name
+              regex: ([0-9a-z-.]+?)(-[0-9a-f]{8,10})?
+              action: replace
+              target_label: __tmp_controller_name
+            - source_labels:
+                - __meta_kubernetes_pod_label_app_kubernetes_io_name
+                - __meta_kubernetes_pod_label_app
+                - __tmp_controller_name
+                - __meta_kubernetes_pod_name
+              regex: ^;*([^;]+)(;.*)?$
+              action: replace
+              target_label: app
+            - source_labels:
+                - __meta_kubernetes_pod_label_version
+              regex: ^;*([^;]+)(;.*)?$
+              action: replace
+              target_label: feature
+            - source_labels:
+                - __meta_kubernetes_pod_label_app_kubernetes_io_instance
+                - __meta_kubernetes_pod_label_release
+              regex: ^;*([^;]+)(;.*)?$
+              action: replace
+              target_label: instance
+            - source_labels:
+                - __meta_kubernetes_pod_label_app_kubernetes_io_component
+                - __meta_kubernetes_pod_label_component
+              regex: ^;*([^;]+)(;.*)?$
+              action: replace
+              target_label: component
+            {{- if .Values.config.snippets.addScrapeJobLabel }}
+            - replacement: kubernetes-pods-universer
+              target_label: scrape_job
+            {{- end }}
+            {{- toYaml .Values.config.snippets.common | nindent 4 }}
+            {{- with .Values.config.snippets.extraRelabelConfigs }}
+            {{- toYaml . | nindent 4 }}
+            {{- end }}
+        - job_name: kubernetes-pods-nodejs
+          pipeline_stages:
+            - cri: {}
+            - match:
+                selector: '{namespace="{{ .Values.global.univerNamespace }}",app!~"collaboration-server"}'
+                action: drop
+            - multiline:
+                firstline: '^(\033\[0m|\033\[31m|\033\[32m|\033\[33m|\033\[34m|\033\[35m|\033\[36m|\033\[37m|\033\[34;1m|\033\[35;1m|\033\[31;1m|\033\[33;1m|\033\[97;104m)\['
+                max_wait_time: 5s
+          kubernetes_sd_configs:
+            - role: pod
+              namespaces:
+                names:
+                  - {{ .Values.global.univerNamespace }}
+          relabel_configs:
+            - source_labels: [ __meta_kubernetes_pod_container_name ]
+              regex: istio-proxy
+              action: drop
+            - source_labels: [ __meta_kubernetes_pod_name ]
+              regex: coder-.*
+              action: drop
+            - source_labels:
+                - __meta_kubernetes_pod_controller_name
+              regex: ([0-9a-z-.]+?)(-[0-9a-f]{8,10})?
+              action: replace
+              target_label: __tmp_controller_name
+            - source_labels:
+                - __meta_kubernetes_pod_label_app_kubernetes_io_name
+                - __meta_kubernetes_pod_label_app
+                - __tmp_controller_name
+                - __meta_kubernetes_pod_name
+              regex: ^;*([^;]+)(;.*)?$
+              action: replace
+              target_label: app
+            - source_labels:
+                - __meta_kubernetes_pod_label_version
+              regex: ^;*([^;]+)(;.*)?$
+              action: replace
+              target_label: feature
+            - source_labels:
+                - __meta_kubernetes_pod_label_app_kubernetes_io_instance
+                - __meta_kubernetes_pod_label_release
+              regex: ^;*([^;]+)(;.*)?$
+              action: replace
+              target_label: instance
+            - source_labels:
+                - __meta_kubernetes_pod_label_app_kubernetes_io_component
+                - __meta_kubernetes_pod_label_component
+              regex: ^;*([^;]+)(;.*)?$
+              action: replace
+              target_label: component
+            {{- if .Values.config.snippets.addScrapeJobLabel }}
+            - replacement: kubernetes-pods-nodejs
+              target_label: scrape_job
+            {{- end }}
+            {{- toYaml .Values.config.snippets.common | nindent 4 }}
+            {{- with .Values.config.snippets.extraRelabelConfigs }}
+            {{- toYaml . | nindent 4 }}
+            {{- end }}
+
+
+grafana:
+  enabled: true
+  fullnameOverride: grafana
+  image:
+    repository: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/grafana
+    tag: "10.2.2-dev"
+  initChownData:
+    enabled: true
+    image:
+      repository: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/busybox
+      tag: "1.31.1"
+      pullPolicy: IfNotPresent
+  adminUser: admin
+  adminPassword: "admin12345"
+  sidecar:
+    image:
+      repository: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/grafana-sidecar
+      tag: "1.19.2"
+    datasources:
+      label: ""
+      labelValue: ""
+      enabled: true
+      maxLines: 1000
+  affinity: {}
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Loki
+          type: loki
+          access: proxy
+          url: http://loki:3100
+          version: 1
+          isDefault: true
+        - name: Prometheus
+          type: prometheus
+          orgId: 1
+          url: http://prometheus-server:80
+          basicAuth: false
+          editable: true
+
