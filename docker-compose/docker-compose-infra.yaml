@@ -1,6 +1,7 @@
 services:
   lb:
     restart: always
+    container_name: univer-lb
     image: nginx:alpine-slim
     ports:
      - ${HOST_NGINX_PORT}:8000
@@ -29,7 +30,8 @@ services:
       - rds
 
   init-db:
-    container_name: init-db
+    restart: no
+    container_name: univer-init-db
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:${UNIVERSER_SQL_VERSION}
     environment:
       - HOST=${DATABASE_HOST}
