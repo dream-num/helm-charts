@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RELEASE_TIME="1735964047" # RELEASE_TIME
+RELEASE_TIME="1736739269" # RELEASE_TIME
 
 PLATFORM=$(uname)
 SED="sed -i"
@@ -177,13 +177,24 @@ gen_env_param() {
     echo ${env_param}
 }
 
+wait_db_init_success() {
+    # wait init db completed if need
+    if [ "$DISABLE_UNIVER_RDS" != "true" ]; then
+        exit_code=$(docker wait univer-init-db)
+        if [ "$exit_code" -ne 0 ]; then
+            echo "db init fail with code: $exit_code, please check!"
+            exit $exit_code
+        fi
+    fi
+}
+
 start() {
     profiles=$(gen_profiles)
     env_param=$(gen_env_param)
 
     $DOCKER_COMPOSE -f $INFRA_COMPOSE_FILE $env_param $profiles up -d
-
-    sleep 1
+    
+    wait_db_init_success
     $DOCKER_COMPOSE -f $COMPOSE_FILE $env_param up -d
 
     if [ "$ENABLE_UNIVER_OBSERVABILITY" == "true" ]; then

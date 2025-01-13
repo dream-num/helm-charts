@@ -10,5 +10,3 @@ data:
 #    licnese v2
   license.txt:
     {{ .Values.license.licenseV2 | quote }}
-  LICENSE:
-    {{ .Values.license.LICENSE | quote }}

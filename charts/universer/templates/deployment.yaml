@@ -63,12 +63,6 @@ spec:
             - name: conf
               mountPath: /data/configs/license.txt
               subPath: license.txt
-            - name: conf
-              mountPath: /data/configs/LICENSE
-              subPath: LICENSE
-            - name: secret
-              mountPath: /data/configs/public_key.crt
-              subPath: public_key.crt
             - name: secret
               mountPath: /data/configs/casdoor.pem
               subPath: casdoor.pem
