@@ -46,6 +46,9 @@ service:
   nodeRuntime:
     addr: {{ .Values.config.nodeRuntime.addr }}
     timeout: 10s
+  pythonRuntime:
+    addr: {{ .Values.config.pythonRuntime.addr }}
+    timeout: 10s
 apiLimit:
   {{- with .Values.config.apiLimit }}
   {{- toYaml . | nindent 2 }}
