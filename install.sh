@@ -274,12 +274,16 @@ else
     esac
 fi
 
-mkdir -p ${appPath} \
-    && cd ${appPath} \
-    && curl -f -o univer.tar.gz $downloadURL \
-    && tar -xzf univer.tar.gz $tar_overwrite \
-    && rm univer.tar.gz \
-    && bash run.sh
+if [ "$_CI_TEST" == "true" ]; then
+    cd docker-compose && bash run.sh
+else
+    mkdir -p ${appPath} \
+        && cd ${appPath} \
+        && curl -f -o univer.tar.gz $downloadURL \
+        && tar -xzf univer.tar.gz $tar_overwrite \
+        && rm univer.tar.gz \
+        && bash run.sh
+fi
 
 
 # check service health
