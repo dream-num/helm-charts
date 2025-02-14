@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RELEASE_TIME="1737376965" # RELEASE_TIME
+RELEASE_TIME="1739541886" # RELEASE_TIME
 
 PLATFORM=$(uname)
 SED="sed -i"
@@ -72,10 +72,10 @@ checkLicense() {
       mv -f configs/license.txt configs/license.txt.bak 2>/dev/null || true
       mv -f configs/licenseKey.txt configs/licenseKey.txt.bak 2>/dev/null || true
       formatted_date=$(date -d @"$fourth_part" +"%Y-%m-%d")
-      echo "Your commercial license expired on ${formatted_date}. Visit https://univer.ai/pro/license or contact sales@univer.ai for renewal."
+      echo "Your commercial license expired on ${formatted_date}. Visit https://univer.ai/license or contact sales@univer.ai for renewal."
     fi
   else
-    echo "No license has been configured, which will limit some functionalities. More information can be found here: https://univer.ai/pro/license"
+    echo "No license has been configured, which will limit some functionalities. More information can be found here: https://univer.ai/license"
   fi
 }
 check_abroad_region() {
