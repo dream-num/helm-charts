@@ -12,7 +12,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.6.0 # VERSION
+  tag: 0.6.1 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -127,6 +127,8 @@ config:
     addr: http://localhost:14400
   pythonRuntime:
     addr: localhost:50052
+  yuumi:
+    addr: yuumi:5000
   admin: []
   s3:
     accessKeyID: ""

@@ -102,6 +102,14 @@ spec:
             port: 
               number: {{ .Values.service.grpc }}
             subset: default
+    - match:
+        - port: {{ .Values.service.http }}
+      route:
+        - destination:
+            host: {{ include "universer.fullname" . }}
+            port: 
+              number: {{ .Values.service.http }}
+            subset: default
 {{- else -}}
 ---
 apiVersion: networking.istio.io/v1alpha3

@@ -56,3 +56,6 @@ temporalWorker:
   totalImportTimeout: 3660
   singleExportTimeout: 1200
   totalExportTimeout: 3660
+
+config:
+  openaiApiKey: ""
