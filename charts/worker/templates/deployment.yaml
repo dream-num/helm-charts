@@ -53,6 +53,8 @@ spec:
               value: "exchange-worker"
             - name: SERVICE_VERSION
               value: {{ .Values.image.tag | quote }}
+            - name: OPENAI_API_KEY
+              value: {{ .Values.config.openaiApiKey | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

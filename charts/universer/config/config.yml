@@ -49,6 +49,8 @@ service:
   pythonRuntime:
     addr: {{ .Values.config.pythonRuntime.addr }}
     timeout: 10s
+  yuumi:
+    addr: {{ .Values.config.yuumi.addr }}
 apiLimit:
   {{- with .Values.config.apiLimit }}
   {{- toYaml . | nindent 2 }}

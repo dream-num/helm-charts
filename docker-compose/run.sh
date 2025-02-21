@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RELEASE_TIME="1739541886" # RELEASE_TIME
+RELEASE_TIME="1740110755" # RELEASE_TIME
 
 PLATFORM=$(uname)
 SED="sed -i"
@@ -68,7 +68,7 @@ checkLicense() {
     IFS='-' read -r -a license_parts <<< "$license_content"
     fourth_part=${license_parts[4]}
     # echo "Fourth part of the license: $fourth_part"
-    if [ "$fourth_part" -lt "$RELEASE_TIME" ]; then
+    if [ "$(expr "$fourth_part" \< "$RELEASE_TIME")" == "1" ]; then
       mv -f configs/license.txt configs/license.txt.bak 2>/dev/null || true
       mv -f configs/licenseKey.txt configs/licenseKey.txt.bak 2>/dev/null || true
       formatted_date=$(date -d @"$fourth_part" +"%Y-%m-%d")
