@@ -16,13 +16,7 @@ spec:
   http:
   - match:
       - uri:
-          prefix: "/doc/"
-      - uri:
-          prefix: "/sheet/"
-      - uri:
-          prefix: "/slide/"
-      - uri:
-          prefix: "/ot/"
+          prefix: "/pro-demo/"
     delegate:
       name: {{ include "collaboration-demo.fullname" . }}
     headers:
@@ -47,13 +41,7 @@ spec:
   http:
   - match:
       - uri:
-          prefix: "/doc/"
-      - uri:
-          prefix: "/sheet/"
-      - uri:
-          prefix: "/slide/"
-      - uri:
-          prefix: "/ot/"
+          prefix: "/pro-demo/"
     delegate:
       name: {{ include "collaboration-demo.fullname" . }}
 {{- end }}

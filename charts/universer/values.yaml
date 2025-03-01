@@ -12,7 +12,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.6.1 # VERSION
+  tag: 0.6.2 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -220,6 +220,12 @@ config:
     template:
       login: ""
       clipsheetWorkflow: ""
+  smsConf:
+    accessKey: ""
+    accessSecret: ""
+    endpoint: ""
+    signName: ""
+    templateCodeForLogin: ""
   postHogConf:
     enabled: false
     endpoint: ""
@@ -266,7 +272,7 @@ job:
     registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
     repository: release/universer-sql
     pullPolicy: IfNotPresent
-    tag: "0.0.14"
+    tag: "0.0.15"
 
 istio:
   enabled: false

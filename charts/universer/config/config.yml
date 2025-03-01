@@ -129,6 +129,10 @@ sesConfig:
 {{- with .Values.config.sesConfig }}
   {{- toYaml . | nindent 2 }}
 {{- end }}
+smsConf:
+{{- with .Values.config.smsConf }}
+  {{- toYaml . | nindent 2 }}
+{{- end }}
 postHogConf:
   enabled: {{ .Values.config.postHogConf.enabled}}
   endpoint: {{ default "" .Values.config.postHogConf.endpoint}}
