@@ -120,6 +120,15 @@ jobs:
           region: "oss-cn-shenzhen"
           accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
           accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
+      - name: Release install.sh (US)
+        uses: hexf00/upload-to-oss@v1
+        with:
+          source: 'install.sh'
+          dest: tool/install.sh
+          bucket: "release-univer-us-east"
+          region: "oss-us-east-1"
+          accessKeyId: ${{secrets.S3_ACCESS_KEY_ID}}
+          accessKeySecret: ${{secrets.S3_ACCESS_KEY_SECRET}}
       - name: Release get-docker/get-docker-official-script.sh
         uses: hexf00/upload-to-oss@v1
         with:
