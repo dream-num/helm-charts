@@ -58,4 +58,5 @@ temporalWorker:
   totalExportTimeout: 3660
 
 config:
-  openaiApiKey: ""
+  LlmName: ""
+  LlmKey: ""
