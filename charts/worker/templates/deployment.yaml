@@ -57,6 +57,8 @@ spec:
               value: {{ .Values.config.LlmName | quote }}
             - name: EXCHANGE_LLM_KEY
               value: {{ .Values.config.LlmKey | quote }}
+            - name: EXCHANGE_LLM_URL
+              value: {{ .Values.config.LlmUrl | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

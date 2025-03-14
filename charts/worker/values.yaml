@@ -60,3 +60,4 @@ temporalWorker:
 config:
   LlmName: ""
   LlmKey: ""
+  LlmUrl: ""
