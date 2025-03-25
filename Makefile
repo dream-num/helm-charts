@@ -1,4 +1,4 @@
-REGISTRY = univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
+REGISTRY ?= univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
 NS = helm-charts
 BUILD_DIR = build
 
