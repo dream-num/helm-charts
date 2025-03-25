@@ -150,7 +150,7 @@ jobs:
 
   release-helm-chart:
     name: Release helm chart
-    runs-on: shenzhen
+    runs-on: ubuntu-latest
     needs: [prepare]
     if: ${{ (github.event_name == 'push' || github.event.inputs.release-helm-chart == 'true') && needs.prepare.outputs.release_type == 'stable' }}
     steps:
@@ -164,7 +164,7 @@ jobs:
     - name: Login to Aliyun Container Registry (ACR)
       uses: aliyun/acr-login@v1
       with:
-        login-server: univer-acr-registry-vpc.cn-shenzhen.cr.aliyuncs.com
+        login-server: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
         region-id: cn-shenzhen
         username: "${{ secrets.REGISTRY_USERNAME }}"
         password: "${{ secrets.REGISTRY_PASSWORD }}"
@@ -173,7 +173,7 @@ jobs:
       run: |
         helm repo add istio https://istio-release.storage.googleapis.com/charts
         helm repo update
-        make all REGISTRY=univer-acr-registry-vpc.cn-shenzhen.cr.aliyuncs.com
+        make all REGISTRY=univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
 
   release-sql:
     name: Release sql
