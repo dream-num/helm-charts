@@ -147,6 +147,9 @@ config:
     enabled: false
     univerEnabled: false
     cookieDomain: "abc.example.com"
+    loginErrorURL: ""
+    mobileBindURL: ""
+    homepageURL: ""
     casdoorSDK:
       organizationName: ""
       applicationName: ""
@@ -182,6 +185,7 @@ config:
     admin:
       userIDs: []
       liteServer: false
+
   apiLimit:
     method: {}
     ip: {}
@@ -216,7 +220,6 @@ config:
     region: ""
     templateName: ""
     redirectURL: "http://example.com/oidc/email-callback"
-    loginErrorURL: "http://example.com/fail"
     template:
       login: ""
       clipsheetWorkflow: ""
@@ -256,6 +259,9 @@ config:
   jaegerConf:
     enabled: false
     grpcEndpoint: "jaeger:4317"
+  models: []
+  invitationCode:
+    enabled: false
 
 license:
   LICENSE: ""

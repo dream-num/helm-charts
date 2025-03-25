@@ -46,25 +46,19 @@ bash run.sh start-demo-ui
 | minio     | 19000 | s3 object storage server |
 | grafana   | 13000  | grafana dashboard server |
 
-## [Q&A](https://www.univer.ai/pro/enterprises/trial-version/)
-1. How to deal "Save as" error？
+## [Q&A](https://docs.univer.ai/zh-CN/guides/sheets/pro-features/server/deploy)
+1. How to enable observability component?
 ```
-Replace localhost with the local IP for S3_ENDPOINT_PUBLIC config in .env file, it make people can use Download as in local area network.
-
-# Example: S3_ENDPOINT_PUBLIC=http://127.0.0.1:9000
-# Replace to: S3_ENDPOINT_PUBLIC=http://192.168.50.172:19000
-```
-
-2. How to enable observability component?
-```
-set in the .env file:
+set in the .env.custom file:
 ENABLE_UNIVER_OBSERVABILITY=true
 ```
 
-3. How to deal with host port conflict?
+2. How to deal with host port conflict?
 ```
-# change the host ports in .env file:
+# change the host ports in .env.custom file:
 HOST_NGINX_PORT=8000
 HOST_MINIO_PORT=19000
 HOST_GRAFANA_PORT=13000
 ```
+
+3. If you need the server sql schema, you can get from [this](https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/latest/univer-server-sql-latest.tar.gz)
