@@ -67,6 +67,8 @@ services:
           memory: ${COLLABORATION_SERVER_MEMORY_LIMIT}M
 
   univer-temporal:
+    privileged: true
+    user: "0"
     restart: always
     container_name: univer-temporal
     image: temporalio/auto-setup:${TEMPORAL_VERSION}

@@ -90,7 +90,6 @@ sesConfig:
   accessSecret: ""
   region: ""
   redirectURL: ""
-  loginErrorURL: ""
   template: 
     login: ""
     clipsheetWorkflow: ""

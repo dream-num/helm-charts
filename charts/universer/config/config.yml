@@ -69,6 +69,9 @@ auth:
   enabled: {{ .Values.config.auth.enabled }}
   univerEnabled: {{ .Values.config.auth.univerEnabled }}
   cookieDomain: {{ .Values.config.auth.cookieDomain }}
+  loginErrorURL: {{ .Values.config.auth.loginErrorURL }}
+  mobileBindURL: {{ .Values.config.auth.mobileBindURL }}
+  homepageURL: {{ .Values.config.auth.homepageURL }}
   {{- with .Values.config.auth.casdoorSDK }}
   casdoorSDK:
     {{- toYaml . | nindent 4 }}
@@ -166,3 +169,13 @@ jaegerConf:
 {{- with .Values.config.jaegerConf }}
   {{- toYaml . | nindent 2 }}
 {{- end }}
+models:
+{{- if .Values.config.models -}}
+  {{- range .Values.config.models }}
+  - id: {{ .id }}
+    name: {{ .name }}
+  {{- end }}
+{{- else }} []
+{{- end }}
+invitationCode:
+  enabled: {{ .Values.config.invitationCode.enabled}}
