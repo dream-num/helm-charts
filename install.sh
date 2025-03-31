@@ -296,7 +296,6 @@ if [ $? -eq 0 ] && [ "$_CI_TEST" != "true" ]; then
     echo ""
     echo "More information about Univer Server, please refer to https://univer.ai/guides/sheet/server/docker"
     echo "More information about Univer SDK, please refer to https://univer.ai/guides/sheet/getting-started/quickstart"
-    echo "More information about data collection, please refer to https://docs.univer.ai/en-US/guides/sheets/troubleshooting#does-univer-collect-my-data"
     echo ""
 fi
 
