@@ -30,17 +30,13 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: {{ include "common.images.image" (dict "imageRoot" .Values.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - "/app/worker"
+            - "-conf"
+            - "/data/configs/config.yaml"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
-            - name: TEMPORAL_SERVER
-              value: {{ tpl .Values.temporalServer.host . | quote }}
-            - name: TEMPORAL_NAMESPACE
-              value: {{ .Values.temporalServer.namespace | quote }}
-            - name: IMPORT_CONCURRENT
-              value: {{ .Values.temporalWorker.importConcurrent | quote }}
-            - name: EXPORT_CONCURRENT
-              value: {{ .Values.temporalWorker.exportConcurrent | quote }}
             - name: SINGLE_IMPORT_TIMEOUT
               value: {{ .Values.temporalWorker.singleImportTimeout | quote }}
             - name: TOTAL_IMPORT_TIMEOUT
@@ -59,6 +55,18 @@ spec:
               value: {{ .Values.config.LlmKey | quote }}
             - name: EXCHANGE_LLM_URL
               value: {{ .Values.config.LlmUrl | quote }}
+          ports:
+            - name: grpc
+              containerPort: {{ .Values.service.grpc }}
+              protocol: TCP
+          volumeMounts:
+            - name: conf
+              mountPath: /data/configs/config.yaml
+              subPath: config.yaml
+      volumes:
+        - name: conf
+          configMap: 
+            name: {{ include "worker.fullname" . }}-config
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

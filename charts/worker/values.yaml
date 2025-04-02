@@ -56,8 +56,31 @@ temporalWorker:
   totalImportTimeout: 3660
   singleExportTimeout: 1200
   totalExportTimeout: 3660
+  task_timeout: 120s
 
 config:
   LlmName: ""
   LlmKey: ""
   LlmUrl: ""
+
+service:
+  enabled: false
+  type: ClusterIP
+  grpc: 9004
+
+redis:
+  # if use redis cluster, use comma to separate multiple redis servers
+  # for example: redis1:6379,redis2:6379
+  poolSize: 10
+  addr: redis:6379
+  read_timeout: 1s
+  write_timeout: 1s
+  db: 0
+  username: ""
+  password: ""
+  sentinel:
+    enabled: false
+    masterName: ""
+    sentinelAddr: ""
+    username: ""
+    password: ""
