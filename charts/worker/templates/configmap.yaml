@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "worker.fullname" . }}-config
+  labels:
+    {{- include "worker.labels" . | nindent 4 }}
+data:
+  config.yaml: |
+    grpc-server:
+      enable: {{ .Values.service.enabled }}
+      addr: 0.0.0.0:9004
+      timeout: 30s
+
+    temporal:
+      enable: true
+      addr: {{ tpl .Values.temporalServer.host . | quote }}
+      namespace: {{ .Values.temporalServer.namespace | quote }}
+      PrometheusListenAddress: 0.0.0.0:9090
+      export_concurrent: {{ .Values.temporalWorker.exportConcurrent }}
+      import_concurrent: {{ .Values.temporalWorker.importConcurrent }}
+      task_timeout: {{ .Values.temporalWorker.task_timeout }}
+
+    client:
+      universer:
+        addr: universer:9000
+        timeout: 20s
+
+    {{- with .Values.redis }}
+    redis:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}

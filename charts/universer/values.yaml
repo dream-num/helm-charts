@@ -12,7 +12,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.6.7 # VERSION
+  tag: 0.6.9 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -35,8 +35,6 @@ service:
   type: ClusterIP
   http: 8000
   grpc: 9000
-  stats:
-    addr: ""
 
 ingress:
   enabled: false
@@ -129,6 +127,9 @@ config:
     addr: localhost:50052
   yuumi:
     addr: yuumi:5000
+  fileExchange:
+    enabled: false
+    addr: worker-exchange:9004
   admin: []
   s3:
     accessKeyID: ""
@@ -153,6 +154,7 @@ config:
     casdoorSDK:
       organizationName: ""
       applicationName: ""
+      domain: ""
     oidc:
       enabled: false
       issuer: https://accounts.google.com
@@ -223,6 +225,7 @@ config:
     template:
       login: ""
       clipsheetWorkflow: ""
+      emailAuthCode: ""
   smsConf:
     accessKey: ""
     accessSecret: ""
@@ -255,13 +258,16 @@ config:
   statsConf:
     timeInterval: 10
     maxRecords: 10000
-    addr: "https://www.univer.ai/univer-cloud/stats/report"
+    addr: ""
   jaegerConf:
     enabled: false
     grpcEndpoint: "jaeger:4317"
   models: []
   invitationCode:
     enabled: false
+  wechat:
+    appID: ""
+    appSecret: ""
 
 license:
   LICENSE: ""

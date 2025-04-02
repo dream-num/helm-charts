@@ -107,4 +107,4 @@ entitlementConf:
 statsConf:
   maxRecords: 10000
   timeInterval: 10
-  addr: ${STATS_ADDR}
+  addr: ""

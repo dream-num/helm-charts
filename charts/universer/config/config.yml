@@ -1,14 +1,14 @@
 server:
   http:
     addr: 0.0.0.0:{{ .Values.service.http }}
-    timeout: 10s
+    timeout: 60s # max timeout, not real timeout
     corsAllowOrigins:
     {{- range .Values.config.server.http.corsAllowOrigins }}
     - {{ . | quote}}
     {{- end }}
   grpc:
     addr: 0.0.0.0:{{ .Values.service.grpc }}
-    timeout: 10s
+    timeout: 60s # max timeout, not real timeout
 data:
   database:
     maxOpenConns: {{ .Values.config.database.maxOpenConns }}
@@ -51,6 +51,10 @@ service:
     timeout: 10s
   yuumi:
     addr: {{ .Values.config.yuumi.addr }}
+  {{- if .Values.config.fileExchange.enabled }}
+  fileExchange:
+    addr: {{ .Values.config.fileExchange.addr }}
+  {{- end }}
 apiLimit:
   {{- with .Values.config.apiLimit }}
   {{- toYaml . | nindent 2 }}
@@ -179,3 +183,6 @@ models:
 {{- end }}
 invitationCode:
   enabled: {{ .Values.config.invitationCode.enabled}}
+wechat:
+  appID: {{ .Values.config.wechat.appID }}
+  appSecret: {{ .Values.config.wechat.appSecret }}
