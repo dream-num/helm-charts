@@ -56,7 +56,7 @@ temporalWorker:
   totalImportTimeout: 3660
   singleExportTimeout: 1200
   totalExportTimeout: 3660
-  task_timeout: 120s
+  task_timeout: 240s
 
 config:
   LlmName: ""
@@ -84,3 +84,7 @@ redis:
     sentinelAddr: ""
     username: ""
     password: ""
+
+jaeger:
+  enabled: false
+  grpcEndpoint: jaeger:4317

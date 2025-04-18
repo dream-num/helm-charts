@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RELEASE_TIME="1743593807" # RELEASE_TIME
+RELEASE_TIME="1744956683" # RELEASE_TIME
 
 PLATFORM=$(uname)
 SED="sed -i"
@@ -127,6 +127,8 @@ prepare_image() {
 
 init_config() {
     cp ./configs/config.yaml.template ./configs/config.yaml
+    cp ./exchange/config.yaml.template ./exchange/config.yaml
+
     s='s|${DATABASE_DSN}|'$DATABASE_DSN'|'
     $SED -e "$s" ./configs/config.yaml
 
@@ -146,6 +148,7 @@ init_config() {
     while IFS='=' read -r name value ; do
         # Replace variable with value. 
         $SED -e 's|${'"${name}"'}|'"${value}"'|' ./configs/config.yaml
+        $SED -e 's|${'"${name}"'}|'"${value}"'|' ./exchange/config.yaml
     done < $tmp_env_file
     
     rm -f $tmp_env_file

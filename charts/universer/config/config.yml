@@ -186,3 +186,6 @@ invitationCode:
 wechat:
   appID: {{ .Values.config.wechat.appID }}
   appSecret: {{ .Values.config.wechat.appSecret }}
+{{- if .Values.innerConfig }}
+{{ toYaml .Values.innerConfig }}
+{{- end }}

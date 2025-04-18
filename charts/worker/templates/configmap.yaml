@@ -24,8 +24,16 @@ data:
       universer:
         addr: universer:9000
         timeout: 20s
+      yuumi:
+        addr: yuumi:5000
+        timeout: 60s
 
     {{- with .Values.redis }}
     redis:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+
+    {{- with .Values.jaeger }}
+    jaeger:
       {{- toYaml . | nindent 6 }}
     {{- end }}
