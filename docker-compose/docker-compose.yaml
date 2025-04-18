@@ -93,16 +93,14 @@ services:
   univer-worker-exchange:
     restart: always
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/worker-exchange:${UNIVER_WORKER_EXCHANGE_VERSION}
+    command: ["/app/worker", "-conf", "/data/configs/config.yaml"]
     environment:
       - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},univer-temporal,univer-minio,universer
-      - TEMPORAL_SERVER=${TEMPORAL_HOST}:${TEMPORAL_PORT}
-      - TEMPORAL_NAMESPACE=${TEMPORAL_NAMESPACE}
       - SERVICE_NAME=exchange-worker
       - SERVICE_VERSION=${UNIVER_WORKER_EXCHANGE_VERSION}
-      - IMPORT_CONCURRENT=${EXCHANGE_WORKER_IMPORT_CONCURRENT}
-      - EXPORT_CONCURRENT=${EXCHANGE_WORKER_EXPORT_CONCURRENT}
     volumes:
-        - ./logs/worker-exchange:/app/logs
+      - ./logs/worker-exchange:/app/logs
+      - ./exchange:/data/configs
     depends_on:
       - univer-temporal
     networks:
