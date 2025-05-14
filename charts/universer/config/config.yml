@@ -9,6 +9,7 @@ server:
   grpc:
     addr: 0.0.0.0:{{ .Values.service.grpc }}
     timeout: 60s # max timeout, not real timeout
+  shutdownTimeout: {{ .Values.config.server.shutdownTimeout }}
 data:
   database:
     maxOpenConns: {{ .Values.config.database.maxOpenConns }}
@@ -74,6 +75,8 @@ auth:
   univerEnabled: {{ .Values.config.auth.univerEnabled }}
   cookieDomain: {{ .Values.config.auth.cookieDomain }}
   loginErrorURL: {{ .Values.config.auth.loginErrorURL }}
+  loginURL: {{ .Values.config.auth.loginURL }}
+  ssoAuthOrigin: {{ .Values.config.auth.ssoAuthOrigin }}
   mobileBindURL: {{ .Values.config.auth.mobileBindURL }}
   homepageURL: {{ .Values.config.auth.homepageURL }}
   {{- with .Values.config.auth.casdoorSDK }}
