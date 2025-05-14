@@ -54,6 +54,10 @@ spec:
               port: {{ .Values.service.grpc }}
             initialDelaySeconds: 10
             periodSeconds: 5
+          lifecycle:
+              preStop:
+                  exec:
+                      command: ["sh", "-c", "sleep 10"]
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
@@ -88,6 +92,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      terminationGracePeriodSeconds: 320
       volumes:
         - name: conf
           configMap: 

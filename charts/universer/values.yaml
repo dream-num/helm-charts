@@ -12,7 +12,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.6.10 # VERSION
+  tag: 0.7.0 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -76,6 +76,7 @@ config:
   server:
     http: 
       corsAllowOrigins: []
+    shutdownTimeout: 300s
   database:
     maxOpenConns: 100
     maxIdleConns: 10
@@ -151,6 +152,8 @@ config:
     loginErrorURL: ""
     mobileBindURL: ""
     homepageURL: ""
+    loginURL: ""
+    ssoAuthOrigin: ""
     casdoorSDK:
       organizationName: ""
       applicationName: ""
@@ -226,6 +229,8 @@ config:
       login: ""
       clipsheetWorkflow: ""
       emailAuthCode: ""
+      inviteCode: ""
+    senderAddr: ""
   smsConf:
     accessKey: ""
     accessSecret: ""
@@ -286,7 +291,7 @@ job:
     registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
     repository: release/universer-sql
     pullPolicy: IfNotPresent
-    tag: "0.0.15"
+    tag: "0.0.16"
 
 istio:
   enabled: false
