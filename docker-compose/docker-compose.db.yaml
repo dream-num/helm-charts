@@ -1,4 +1,17 @@
 services:
+  lb:
+    restart: always
+    container_name: univer-lb
+    image: nginx:alpine-slim
+    ports:
+     - ${HOST_NGINX_PORT}:8000
+    networks:
+      - univer
+    depends_on:
+      - universer
+    volumes:
+      - ./nginx:/etc/nginx/conf.d/
+
   universer:
     restart: always
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/${EDITION}/universer:${UNIVERSER_VERSION}
@@ -111,6 +124,7 @@ services:
   univer-worker-exchange:
     restart: always
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/worker-exchange:${UNIVER_WORKER_EXCHANGE_VERSION}
+    command: ["/app/worker", "-conf", "/data/configs/config.yaml"]
     environment:
       - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},univer-temporal,univer-minio,universer
       - TEMPORAL_SERVER=${TEMPORAL_HOST}:${TEMPORAL_PORT}

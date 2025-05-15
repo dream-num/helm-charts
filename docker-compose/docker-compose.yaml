@@ -1,4 +1,17 @@
 services:
+  lb:
+    restart: always
+    container_name: univer-lb
+    image: nginx:alpine-slim
+    ports:
+     - ${HOST_NGINX_PORT}:8000
+    networks:
+      - univer
+    depends_on:
+      - universer
+    volumes:
+      - ./nginx:/etc/nginx/conf.d/
+
   universer:
     restart: always
     image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/${EDITION}/universer:${UNIVERSER_VERSION}

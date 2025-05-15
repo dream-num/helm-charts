@@ -135,23 +135,15 @@ init_config() {
     s='s|${DATABASE_REPLICA_DSN}|'$DATABASE_REPLICA_DSN'|'
     $SED -e "$s" ./configs/config.yaml
 
-    local tmp_env_file="/tmp/.univer-env-$(date +%s)"
-    if [ -f $ENV_CUSTOM_FILE ] ; then
-        cp $ENV_CUSTOM_FILE $tmp_env_file
-        echo "" >> $tmp_env_file
-        cat $ENV_FILE >> $tmp_env_file
-    else
-        cp $ENV_FILE $tmp_env_file
-    fi
-    echo "" >> $tmp_env_file
-    
     while IFS='=' read -r name value ; do
-        # Replace variable with value. 
+        # Replace variable with value.
+        case "$name" in
+            \#*) continue ;;
+        esac
+        value=$(eval echo \$$name)
         $SED -e 's|${'"${name}"'}|'"${value}"'|' ./configs/config.yaml
         $SED -e 's|${'"${name}"'}|'"${value}"'|' ./exchange/config.yaml
-    done < $tmp_env_file
-    
-    rm -f $tmp_env_file
+    done < .env
 }
 
 gen_profiles() {
