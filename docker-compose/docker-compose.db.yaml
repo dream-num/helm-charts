@@ -121,6 +121,7 @@ services:
       - EXPORT_CONCURRENT=${EXCHANGE_WORKER_EXPORT_CONCURRENT}
     volumes:
         - ./logs/worker-exchange:/app/logs
+        - ./exchange:/data/configs
     depends_on:
       - univer-temporal
     networks:
