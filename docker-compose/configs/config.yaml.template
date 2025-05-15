@@ -27,8 +27,6 @@ data:
       addr: "${RABBITMQ_CLUSTER_ADDR}"
       vhost: "${RABBITMQ_CLUSTER_VHOST}"
       schema: "${RABBITMQ_CLUSTER_SCHEMA}"
-  clickhouse:
-    dsn: clickhouse://${CLICKHOUSE_USERNAME}:${CLICKHOUSE_PASSWORD}@${CLICKHOUSE_HOST}:${CLICKHOUSE_PORT}/univer?dial_timeout=10s&read_timeout=20s
   temporal:
     addr: ${TEMPORAL_HOST}:${TEMPORAL_PORT}
     namespace: ${TEMPORAL_NAMESPACE}
@@ -53,9 +51,7 @@ service:
   apply:
     addr: collaboration-envoy:10000
     timeout: 10s
-admin:
-  - user: ${UNIVERSER_ADMIN_USERNAME}
-    password: ${UNIVERSER_ADMIN_PASSWORD}
+admin: []
 extra:
   celldataMaxSize: 10485760 # 10M bytes
 auth:
@@ -76,23 +72,12 @@ auth:
     enableObjInherit: ${AUTH_PERMISSION_ENABLE_OBJ_INHERIT}
     customerStrategies: ${AUTH_PERMISSION_CUSTOMER_STRATEGIES}
 apiLimit: {}
-sentryConfig:
-  dsn: ${SENTRY_DSN}
-  debug: false
-  enableTracing: true
-  TracesSampleRate: 1.0
+sentryConfig: {}
 dataProtectionConf:
   enableProtection: false
   dataKeyRotate: 5s
   dataKeyCacheExpiration: 30s
-sesConfig:
-  accessKey: ""
-  accessSecret: ""
-  region: ""
-  redirectURL: ""
-  template: 
-    login: ""
-    clipsheetWorkflow: ""
+sesConfig: {}
 usip:
   enabled: ${USIP_ENABLED}
   uri:
@@ -104,7 +89,4 @@ postHogConf:
   enabled: false
 entitlementConf:
   enable: false
-statsConf:
-  maxRecords: 10000
-  timeInterval: 10
-  addr: ""
+statsConf: {}
