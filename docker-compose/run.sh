@@ -106,7 +106,7 @@ prepare_image() {
         check_docker_proxy
         if [ $? -ne 0 ]; then
             # not set proxy
-            $SED -e 's|image: nginx:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/nginx:|' $INFRA_COMPOSE_FILE
+            $SED -e 's|image: nginx:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/nginx:|' $COMPOSE_FILE
             $SED -e 's|image: postgres:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/postgres:|' $INFRA_COMPOSE_FILE
             $SED -e 's|image: rabbitmq:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/rabbitmq:|' $INFRA_COMPOSE_FILE
             $SED -e 's|image: bitnami/redis:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/redis:|' $INFRA_COMPOSE_FILE
