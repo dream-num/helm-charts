@@ -56,6 +56,9 @@ service:
   fileExchange:
     addr: {{ .Values.config.fileExchange.addr }}
   {{- end }}
+  ssc:
+    addr: "{{ tpl .Values.config.ssc.host . }}:{{ .Values.config.ssc.port }}"
+    timeout: 10s
 apiLimit:
   {{- with .Values.config.apiLimit }}
   {{- toYaml . | nindent 2 }}
@@ -164,6 +167,15 @@ entitlementConf:
     apiSK: {{ .Values.config.entitlementConf.stripeConf.apiSK | quote }}
     whSK: {{ .Values.config.entitlementConf.stripeConf.whSK | quote }}
     timeout: {{ .Values.config.entitlementConf.stripeConf.timeout }}
+  wechatPayConf:
+    appID: {{ .Values.config.entitlementConf.wechatPayConf.appID | quote }}
+    mchCertificateSerialNumber: {{ .Values.config.entitlementConf.wechatPayConf.mchCertificateSerialNumber | quote }}
+    mchID: {{ .Values.config.entitlementConf.wechatPayConf.mchID | quote }}
+    apiKey: {{ .Values.config.entitlementConf.wechatPayConf.apiKey | quote }}
+    expireTime: {{ .Values.config.entitlementConf.wechatPayConf.expireTime }}
+    notifyUrl: {{ .Values.config.entitlementConf.wechatPayConf.notifyUrl | quote }}
+  orderExpireInterval: {{ .Values.config.entitlementConf.orderExpireInterval }} # 24 hours
+  intentExpireInterval: {{ .Values.config.entitlementConf.intentExpireInterval }} # 15 minutes
 workspace:
 {{- with .Values.config.workspace }}
   {{- toYaml . | nindent 2 }}

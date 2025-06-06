@@ -122,6 +122,9 @@ config:
   apply:
     host: collaboration-server
     port: 5002
+  ssc:
+    host: univer-ssc
+    port: 5005
   nodeRuntime:
     addr: http://localhost:14400
   pythonRuntime:
@@ -245,7 +248,7 @@ config:
     enable: false
     defaultEntiConf:
       anonymousDefaultEntiId: 1
-      registeredDefaultEntiId: 2
+      registeredDefaultEntiId: 1
     cronConf:
       reportRetryCron: "@every 10s"
       minRetryInterval: 10
@@ -258,6 +261,15 @@ config:
       apiSK: ""
       whSK: ""
       timeout: 10
+    wechatPayConf:
+      appID: ""
+      mchCertificateSerialNumber: ""
+      mchID: ""
+      apiKey: ""
+      expireTime: 15
+      notifyUrl: ""
+    orderExpireInterval: 1440 # 24 hours
+    intentExpireInterval: 15 # 15 minutes
   workspace:
     enabled: false
   statsConf:
@@ -276,6 +288,8 @@ config:
 
 innerConfig: {}
 
+wechatPay:
+  apiclient_key: ""
 license:
   LICENSE: ""
   publicKey: ""
@@ -283,7 +297,7 @@ license:
   licenseKeyV2: ""
 
 casdoorLicense:
-    publicKey: ""
+  publicKey: ""
 
 job:
   enabled: true
