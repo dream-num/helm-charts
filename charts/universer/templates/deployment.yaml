@@ -73,6 +73,9 @@ spec:
             - name: secret
               mountPath: /data/configs/licenseKey.txt
               subPath: licenseKey.txt
+            - name: secret
+              mountPath: /data/configs/apiclient_key.pem
+              subPath: apiclient_key.pem
           env:
             - name: SERVICE_NAME
               value: "Universer"
