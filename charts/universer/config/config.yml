@@ -198,6 +198,8 @@ models:
 {{- end }}
 invitationCode:
   enabled: {{ .Values.config.invitationCode.enabled}}
+permissionBasedExport:
+  enabled: {{ .Values.config.permissionBasedExport.enabled }}
 wechat:
   appID: {{ .Values.config.wechat.appID }}
   appSecret: {{ .Values.config.wechat.appSecret }}
