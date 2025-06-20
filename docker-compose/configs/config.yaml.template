@@ -90,3 +90,5 @@ postHogConf:
 entitlementConf:
   enable: false
 statsConf: {}
+permissionBasedExport:
+  enabled: ${PERMISSION_BASED_EXPORT_ENABLED}
