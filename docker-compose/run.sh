@@ -160,7 +160,9 @@ gen_profiles() {
     if [ "$DISABLE_UNIVER_S3" != "true" ]; then
         profiles="${profiles} --profile s3 "
     fi
-
+    if [ "$SSC_SERVER_ENABLED" == "true" ]; then
+        profiles="${profiles} --profile ssc "
+    fi
     echo ${profiles}
 }
 
@@ -188,9 +190,14 @@ start() {
     env_param=$(gen_env_param)
 
     $DOCKER_COMPOSE -f $INFRA_COMPOSE_FILE $env_param $profiles up -d
-    
+
     wait_db_init_success
     $DOCKER_COMPOSE -f $COMPOSE_FILE $env_param up -d
+
+    if [ "$SSC_SERVER_ENABLED" == "true" ]; then
+        sleep 1
+        $DOCKER_COMPOSE -f $COMPOSE_FILE $env_param $profiles up -d
+    fi
 
     if [ "$ENABLE_UNIVER_OBSERVABILITY" == "true" ]; then
         sleep 1
