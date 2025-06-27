@@ -15,7 +15,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.8.2 # VERSION
+version: 0.8.3 # VERSION
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
@@ -25,13 +25,13 @@ appVersion: "1.16.0"
 
 dependencies:
   - name: universer
-    version: 0.8.2 # VERSION
+    version: 0.8.3 # VERSION
     repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
   - name: collaboration-server
-    version: 0.8.2 # VERSION
+    version: 0.8.3 # VERSION
     repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
   - name: collaboration-demo
-    version: 0.8.2 # VERSION
+    version: 0.8.3 # VERSION
     repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
     condition: collaboration-demo.enabled
   - name: postgresql
@@ -59,7 +59,7 @@ dependencies:
     repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
     condition: temporal.enabled
   - name: worker
-    version: 0.8.2 # VERSION
+    version: 0.8.3 # VERSION
     repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
   - name: base
     version: 1.20.1
