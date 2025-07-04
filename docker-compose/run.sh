@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RELEASE_TIME="1751013695" # RELEASE_TIME
+RELEASE_TIME="1751616698" # RELEASE_TIME
 
 PLATFORM=$(uname)
 SED="sed -i"
@@ -190,7 +190,7 @@ start() {
     env_param=$(gen_env_param)
 
     $DOCKER_COMPOSE -f $INFRA_COMPOSE_FILE $env_param $profiles up -d
-
+    
     wait_db_init_success
     $DOCKER_COMPOSE -f $COMPOSE_FILE $env_param up -d
 

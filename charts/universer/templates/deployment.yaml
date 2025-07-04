@@ -76,6 +76,15 @@ spec:
             - name: secret
               mountPath: /data/configs/apiclient_key.pem
               subPath: apiclient_key.pem
+            - name: secret
+              mountPath: /data/configs/alipayAppPublicCert.crt
+              subPath: alipayAppPublicCert.crt
+            - name: secret
+              mountPath: /data/configs/alipayRootCert.crt
+              subPath: alipayRootCert.crt
+            - name: secret
+              mountPath: /data/configs/alipayPublicCert.crt
+              subPath: alipayPublicCert.crt
           env:
             - name: SERVICE_NAME
               value: "Universer"
