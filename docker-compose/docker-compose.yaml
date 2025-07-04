@@ -4,7 +4,7 @@ services:
     container_name: univer-lb
     image: nginx:alpine-slim
     ports:
-      - ${HOST_NGINX_PORT}:8000
+     - ${HOST_NGINX_PORT}:8000
     networks:
       - univer
     depends_on:

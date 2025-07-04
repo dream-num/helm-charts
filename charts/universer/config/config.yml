@@ -172,8 +172,12 @@ entitlementConf:
     mchCertificateSerialNumber: {{ .Values.config.entitlementConf.wechatPayConf.mchCertificateSerialNumber | quote }}
     mchID: {{ .Values.config.entitlementConf.wechatPayConf.mchID | quote }}
     apiKey: {{ .Values.config.entitlementConf.wechatPayConf.apiKey | quote }}
-    expireTime: {{ .Values.config.entitlementConf.wechatPayConf.expireTime }}
     notifyUrl: {{ .Values.config.entitlementConf.wechatPayConf.notifyUrl | quote }}
+  aliPayConf:
+    appID: {{ .Values.config.entitlementConf.aliPayConf.appID | quote }}
+    privateKey: {{ .Values.config.entitlementConf.aliPayConf.privateKey | quote }}
+    apiKey: {{ .Values.config.entitlementConf.aliPayConf.apiKey | quote }}
+    notifyUrl: {{ .Values.config.entitlementConf.aliPayConf.notifyUrl | quote }}
   orderExpireInterval: {{ .Values.config.entitlementConf.orderExpireInterval }} # 24 hours
   intentExpireInterval: {{ .Values.config.entitlementConf.intentExpireInterval }} # 15 minutes
 workspace:
