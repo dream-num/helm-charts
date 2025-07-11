@@ -1,0 +1,20 @@
+{{- if .Values.istio.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "univer-ssc.fullname" . }}
+  labels:
+    {{- include "univer-ssc.labels" . | nindent 4 }}
+spec:
+  hosts:
+    - {{ include "univer-ssc.fullname" . | quote }}
+  http:
+    - match:
+        - port: {{ .Values.service.apply }}
+      route:
+        - destination:
+            host: {{ include "univer-ssc.fullname" . }}
+            port: 
+              number: {{ .Values.service.apply }}
+            subset: default
+{{- end -}}
