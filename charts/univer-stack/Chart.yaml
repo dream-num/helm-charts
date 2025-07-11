@@ -94,6 +94,6 @@ dependencies:
     tags:
       - "istio"
     alias: istio-virtualservicemerge
-  - name: ssc
+  - name: univer-ssc
     version: 0.9.2 # VERSION
     repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts

@@ -1,0 +1,18 @@
+{{- if .Values.istio.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: {{ include "univer-ssc.fullname" . }}
+  labels:
+    {{- include "univer-ssc.labels" . | nindent 4 }}
+spec:
+  host: {{ include "univer-ssc.fullname" . }}
+  trafficPolicy:
+    loadBalancer:
+      consistentHash:
+        httpHeaderName: x-session-id
+  subsets:
+  - name: default
+    labels:
+      version: default
+{{- end -}}
