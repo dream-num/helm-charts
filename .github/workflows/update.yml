@@ -24,8 +24,10 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         EXECUTE_COMMANDS: |
           ls tmp
+          rm Makefile
           rm -rf docker-compose
           rm -rf charts/*
+          mv tmp/Makefile .
           mv tmp/docker-compose .
           mv tmp/charts/collaboration-demo charts/
           mv tmp/charts/collaboration-server charts/
@@ -33,6 +35,7 @@ jobs:
           mv tmp/charts/universer charts/
           mv tmp/charts/worker charts/
           mv tmp/charts/univer-observability charts/
+          mv tmp/charts/univer-ssc charts/
           rm -rf tmp
         COMMIT_MESSAGE: 'chore: update repository'
         COMMIT_NAME: 'GitHub Actions'
