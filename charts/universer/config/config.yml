@@ -178,6 +178,7 @@ entitlementConf:
     privateKey: {{ .Values.config.entitlementConf.aliPayConf.privateKey | quote }}
     apiKey: {{ .Values.config.entitlementConf.aliPayConf.apiKey | quote }}
     notifyUrl: {{ .Values.config.entitlementConf.aliPayConf.notifyUrl | quote }}
+    isProd: {{ .Values.config.entitlementConf.aliPayConf.isProd }}
   orderExpireInterval: {{ .Values.config.entitlementConf.orderExpireInterval }} # 24 hours
   intentExpireInterval: {{ .Values.config.entitlementConf.intentExpireInterval }} # 15 minutes
 workspace:
