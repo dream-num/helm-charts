@@ -335,5 +335,5 @@ istio-virtualservicemerge:
 tags:
   istio: true
 
-ssc:
+univer-ssc:
   enabled: false
