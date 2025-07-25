@@ -59,6 +59,9 @@ service:
   ssc:
     addr: "{{ tpl .Values.config.ssc.host . }}:{{ .Values.config.ssc.port }}"
     timeout: 10s
+  univerOps:
+    addr: "{{ tpl .Values.config.univerOps.host . }}:{{ .Values.config.univerOps.port }}"
+    timeout: 10s
 apiLimit:
   {{- with .Values.config.apiLimit }}
   {{- toYaml . | nindent 2 }}
@@ -211,3 +214,7 @@ wechat:
 {{- if .Values.innerConfig }}
 {{ toYaml .Values.innerConfig }}
 {{- end }}
+notifyConf:
+  {{- with .Values.config.notifyConf }}
+  {{- toYaml . | nindent 2 }}
+  {{- end }}
