@@ -25,7 +25,8 @@ spec:
       body:
         string: "Forbbiden"
   {{- end }}
-  - match:
+  - name: universer-gws
+    match:
       - uri:
           prefix: "/universer-api/"
     delegate:
@@ -61,7 +62,8 @@ spec:
       body:
         string: "Forbbiden"
   {{- end }}
-  - match:
+  - name: universer-feat-gws
+    match:
       - uri:
           prefix: "/universer-api/"
     delegate:
@@ -94,7 +96,8 @@ spec:
   hosts:
     - {{ include "universer.fullname" . | quote }}
   http:
-    - match:
+    - name: universer-internal-grpc
+      match:
         - port: {{ .Values.service.grpc }}
       route:
         - destination:
@@ -102,7 +105,8 @@ spec:
             port: 
               number: {{ .Values.service.grpc }}
             subset: default
-    - match:
+    - name: universer-internal-http
+      match:
         - port: {{ .Values.service.http }}
       route:
         - destination:
@@ -122,7 +126,8 @@ spec:
   hosts:
     - {{ include "universer.fullname" . | quote }}
   http:
-    - match:
+    - name: universer-grpc
+      match:
         - port: {{ .Values.service.grpc }}
       route:
         - destination:
@@ -130,7 +135,8 @@ spec:
             port: 
               number: {{ .Values.service.grpc }}
             subset: default
-    - route:
+    - name: universer-http
+      route:
         - destination:
             host: {{ include "universer.fullname" . }}
             port: 
