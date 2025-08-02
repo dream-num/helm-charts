@@ -218,3 +218,6 @@ notifyConf:
   {{- with .Values.config.notifyConf }}
   {{- toYaml . | nindent 2 }}
   {{- end }}
+ip2AddrCliConf:
+  pathFmt: {{ .Values.config.ip2AddrCliConf.pathFmt | quote }}
+  token: {{ .Values.config.ip2AddrCliConf.token | quote }}
