@@ -96,7 +96,7 @@ worker:
   fullnameOverride: worker-exchange
   image:
     repository: release/worker-exchange
-    tag: 0.9.2 # VERSION
+    tag: 0.10.2 # VERSION
   temporalServer:
     host: temporal-frontend:7233
     namespace: univer
@@ -335,5 +335,5 @@ istio-virtualservicemerge:
 tags:
   istio: true
 
-ssc:
+univer-ssc:
   enabled: false

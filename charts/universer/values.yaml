@@ -12,7 +12,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.9.2 # VERSION
+  tag: 0.10.2 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -134,6 +134,9 @@ config:
   fileExchange:
     enabled: false
     addr: worker-exchange:9004
+  univerOps:
+    host: univer-ops
+    port: 9500
   admin: []
   s3:
     accessKeyID: ""
@@ -292,6 +295,15 @@ config:
     appSecret: ""
   permissionBasedExport:
     enabled: false
+  notifyConf:
+    purchase:
+      - channel: 1
+        templateId: ""
+        locale: ""
+  ip2AddrCliConf:
+    pathFmt: ""
+    token: ""
+
 
 innerConfig: {}
 

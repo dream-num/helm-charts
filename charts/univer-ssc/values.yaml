@@ -1,9 +1,6 @@
-# Default values for collaboration-server.
+# Default values for univer-ssc.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-
-global:
-  istioDefaultRevision: default
 
 replicaCount: 1
 
@@ -31,24 +28,15 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-sentry:
-  # only enable sentry when sentry.enabled is true
-  enabled: false
-  dsn: ""
-  tracesSampleRate: 1.0
-  # like "staging" or "production"
-  environment: ""
+enabled: false
 
 service:
   type: ClusterIP
-  apply: 5002
+  apply: 5005
 
 config:
   univerServer: universer:8000
   snapshotServer: universer:9000
-  saveSheetSnapshotInterval: 50
-  saveDocSnapshotInterval: 50
-  enableMutationApplyInterceptor: false
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -57,10 +45,10 @@ resources:
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   limits:
     cpu: 2000m
-    memory: 4Gi
+    memory: 2Gi
   requests:
-    cpu: 50m
-    memory: 50Mi
+    cpu: 10m
+    memory: 64Mi
 
 nodeSelector: {}
 
@@ -69,7 +57,5 @@ tolerations: []
 affinity: {}
 
 istio:
+  version: default
   enabled: false
-
-stats: ""
-maxMemoryLimit: 4096
