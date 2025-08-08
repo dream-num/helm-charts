@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RELEASE_TIME="1754133245" # RELEASE_TIME
+RELEASE_TIME="1754641167" # RELEASE_TIME
 
 PLATFORM=$(uname)
 SED="sed -i"
@@ -209,6 +209,10 @@ stop() {
     profiles=$(gen_profiles)
     env_param=$(gen_env_param)
 
+    if [ "$SSC_SERVER_ENABLED" == "true" ]; then
+        $DOCKER_COMPOSE -f $COMPOSE_FILE $env_param $profiles down
+    fi
+
     if [ "$ENABLE_UNIVER_OBSERVABILITY" == "true" ]; then
         $DOCKER_COMPOSE -f $OBSERVE_COMPOSE_FILE $env_param $profiles down
     fi
@@ -221,6 +225,10 @@ stop() {
 uninstall() {
     profiles=$(gen_profiles)
     env_param=$(gen_env_param)
+
+    if [ "$SSC_SERVER_ENABLED" == "true" ]; then
+        $DOCKER_COMPOSE -f $COMPOSE_FILE $env_param $profiles down --volumes
+    fi
 
     if [ "$ENABLE_UNIVER_OBSERVABILITY" == "true" ]; then
         $DOCKER_COMPOSE -f $OBSERVE_COMPOSE_FILE $env_param $profiles down --volumes
