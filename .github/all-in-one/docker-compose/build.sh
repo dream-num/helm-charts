@@ -8,21 +8,29 @@ source docker-compose/.env
 
 mv docker-compose univer-server-${UNIVERSER_VERSION}
 
+pull_image() {
+    docker pull "$1"
+    if [ $? -ne 0 ]; then
+        echo "Failed to pull image: $1"
+        exit 1
+    fi
+}
+
 echo "save univer image"
-docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer:${UNIVERSER_VERSION}
-docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:${UNIVERSER_SQL_VERSION}
-docker pull nginx:alpine-slim
-docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration:${COLLABORATION_SERVER_VERSION}
-docker pull postgres:${POSTGRES_VERSION}
-docker pull rabbitmq:${RABBITMQ_VERSION}
-docker pull bitnami/redis:${REDIS_VERSION}
-docker pull temporalio/auto-setup:${TEMPORAL_VERSION}
-docker pull bitnami/minio:${MINIO_VERSION}
-docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/worker-exchange:${UNIVER_WORKER_EXCHANGE_VERSION}
-docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:${UNIVER_DEMO_UI_VERSION}
-docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-check:0.0.1
-docker pull envoyproxy/envoy:v1.31.3
-docker pull univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/usip-server:latest
+pull_image univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer:${UNIVERSER_VERSION}
+pull_image univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:${UNIVERSER_SQL_VERSION}
+pull_image nginx:alpine-slim
+pull_image univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration:${COLLABORATION_SERVER_VERSION}
+pull_image postgres:${POSTGRES_VERSION}
+pull_image rabbitmq:${RABBITMQ_VERSION}
+pull_image bitnami/redis:${REDIS_VERSION}
+pull_image temporalio/auto-setup:${TEMPORAL_VERSION}
+pull_image bitnami/minio:${MINIO_VERSION}
+pull_image univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/worker-exchange:${UNIVER_WORKER_EXCHANGE_VERSION}
+pull_image univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:${UNIVER_DEMO_UI_VERSION}
+pull_image univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-check:0.0.1
+pull_image envoyproxy/envoy:v1.31.3
+pull_image univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/usip-server:latest
 docker save \
     univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer:${UNIVERSER_VERSION} \
     univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:${UNIVERSER_SQL_VERSION} \
@@ -41,13 +49,13 @@ docker save \
     | gzip > univer-image.tar.gz
 
 echo "save observability image"
-docker pull grafana/loki:${LOKI_VERSION}
-docker pull grafana/promtail:${PROMTAIL_VERSION}
-docker pull grafana/grafana:${GRAFANA_VERSION}
-docker pull bitnami/prometheus:${PROMETHEUS_VERSION}
-docker pull oliver006/redis_exporter:${REDIS_EXPORTER_VERSION}
-docker pull bitnami/postgres-exporter:${POSTGRES_EXPORTER_VERSION}
-docker pull kbudde/rabbitmq-exporter:${RABBITMQ_EXPORTER_VERSION}
+pull_image grafana/loki:${LOKI_VERSION}
+pull_image grafana/promtail:${PROMTAIL_VERSION}
+pull_image grafana/grafana:${GRAFANA_VERSION}
+pull_image bitnami/prometheus:${PROMETHEUS_VERSION}
+pull_image oliver006/redis_exporter:${REDIS_EXPORTER_VERSION}
+pull_image bitnami/postgres-exporter:${POSTGRES_EXPORTER_VERSION}
+pull_image kbudde/rabbitmq-exporter:${RABBITMQ_EXPORTER_VERSION}
 docker save \
     grafana/loki:${LOKI_VERSION} \
     grafana/promtail:${PROMTAIL_VERSION} \
