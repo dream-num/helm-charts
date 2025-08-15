@@ -92,6 +92,8 @@ spec:
               value: {{ .Values.image.tag | quote }}
             - name: DISABLE_LOG_MASK
               value: {{ .Values.config.logs.disableLogMask | quote }}
+            - name: APP_NAME
+              value: {{ .Values.service.appName | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
