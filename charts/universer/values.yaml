@@ -12,7 +12,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.10.3 # VERSION
+  tag: 0.10.4 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -35,6 +35,7 @@ service:
   type: ClusterIP
   http: 8000
   grpc: 9000
+  appName: ""
 
 ingress:
   enabled: false
@@ -278,6 +279,9 @@ config:
       isProd: false # default false
     orderExpireInterval: 86400000 # 24 hours
     intentExpireInterval: 900000 # 15 minutes
+    identityExpireNtfConf:
+      toNtfLeftDays: [1,3,7]
+      ntfRate: 20
   workspace:
     enabled: false
   statsConf:
@@ -300,6 +304,11 @@ config:
       - channel: 1
         templateId: ""
         locale: ""
+    identityExpiring:
+      - channel: 1
+        templateId: ""
+      - channel: 2
+        templateId: ""
   ip2AddrCliConf:
     pathFmt: ""
     token: ""

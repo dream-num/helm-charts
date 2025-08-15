@@ -184,6 +184,9 @@ entitlementConf:
     isProd: {{ .Values.config.entitlementConf.aliPayConf.isProd }}
   orderExpireInterval: {{ .Values.config.entitlementConf.orderExpireInterval }} # 24 hours
   intentExpireInterval: {{ .Values.config.entitlementConf.intentExpireInterval }} # 15 minutes
+  identityExpireNtfConf:
+    toNtfLeftDays: [{{ join ", " .Values.config.entitlementConf.identityExpireNtfConf.toNtfLeftDays }}]
+    ntfRate: {{ .Values.config.entitlementConf.identityExpireNtfConf.ntfRate }}
 workspace:
 {{- with .Values.config.workspace }}
   {{- toYaml . | nindent 2 }}
