@@ -1,6 +1,6 @@
 temporal:
   enable: true
-  addr: ${TEMPORAL_HOST}:${TEMPORAL_PORT}
+  addr: no-txt:///${TEMPORAL_HOST}:${TEMPORAL_PORT}
   namespace: ${TEMPORAL_NAMESPACE}
   PrometheusListenAddress: 0.0.0.0:9090
   export_concurrent: ${EXCHANGE_WORKER_EXPORT_CONCURRENT}
