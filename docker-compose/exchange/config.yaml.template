@@ -1,11 +1,11 @@
 temporal:
   enable: true
-  addr: no-txt:///${TEMPORAL_HOST}:${TEMPORAL_PORT}
+  addr: ${TEMPORAL_HOST}:${TEMPORAL_PORT}
   namespace: ${TEMPORAL_NAMESPACE}
   PrometheusListenAddress: 0.0.0.0:9090
   export_concurrent: ${EXCHANGE_WORKER_EXPORT_CONCURRENT}
   import_concurrent: ${EXCHANGE_WORKER_IMPORT_CONCURRENT}
-  task_timeout: 300s
+  task_timeout: 600s
 
 client:
   universer:
@@ -15,6 +15,7 @@ client:
 redis:
   addr: "${REDIS_ADDR}"
   db: ${REDIS_DB}
+  username: "${REDIS_USERNAME}"
   password: "${REDIS_PASSWORD}"
   read_timeout: 1s
   write_timeout: 1s
