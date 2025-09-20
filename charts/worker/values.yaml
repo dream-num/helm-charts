@@ -56,7 +56,7 @@ temporalWorker:
   totalImportTimeout: 3660
   singleExportTimeout: 1200
   totalExportTimeout: 3660
-  task_timeout: 240s
+  task_timeout: 600s
 
 config:
   LlmName: ""
