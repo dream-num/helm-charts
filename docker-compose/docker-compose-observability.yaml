@@ -83,7 +83,7 @@ services:
   univer-prometheus:
     restart: always
     container_name: univer-prometheus
-    image: bitnami/prometheus:${PROMETHEUS_VERSION}
+    image: univerai/prometheus:${PROMETHEUS_VERSION}
     user: root
     expose:
       - 9090
@@ -112,7 +112,7 @@ services:
 
   postgres-exporter:
     restart: always
-    image: bitnami/postgres-exporter:${POSTGRES_EXPORTER_VERSION}
+    image: univerai/postgres-exporter:${POSTGRES_EXPORTER_VERSION}
     expose:
       - 9187
     networks:

@@ -109,17 +109,17 @@ prepare_image() {
             $SED -e 's|image: nginx:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/nginx:|' $COMPOSE_FILE
             $SED -e 's|image: postgres:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/postgres:|' $INFRA_COMPOSE_FILE
             $SED -e 's|image: rabbitmq:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/rabbitmq:|' $INFRA_COMPOSE_FILE
-            $SED -e 's|image: bitnami/redis:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/redis:|' $INFRA_COMPOSE_FILE
+            $SED -e 's|image: univerai/redis:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/redis:|' $INFRA_COMPOSE_FILE
             $SED -e 's|image: temporalio/auto-setup:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/temporal:|' $COMPOSE_FILE
-            $SED -e 's|image: bitnami/minio:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/minio:|' $INFRA_COMPOSE_FILE
+            $SED -e 's|image: univerai/minio:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/minio:|' $INFRA_COMPOSE_FILE
             $SED -e 's|image: mysql:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/mysql:|' $COMPOSE_FILE
             $SED -e 's|image: envoyproxy/envoy:v|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/envoy:|' $COMPOSE_FILE
             $SED -e 's|image: grafana/loki:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/loki:|' $OBSERVE_COMPOSE_FILE
             $SED -e 's|image: grafana/promtail:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/promtail:|' $OBSERVE_COMPOSE_FILE
             $SED -e 's|image: grafana/grafana:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/grafana:|' $OBSERVE_COMPOSE_FILE
-            $SED -e 's|image: bitnami/prometheus:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/prometheus:|' $OBSERVE_COMPOSE_FILE
+            $SED -e 's|image: univerai/prometheus:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/prometheus:|' $OBSERVE_COMPOSE_FILE
             $SED -e 's|image: oliver006/redis_exporter:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/redis-exporter:|' $OBSERVE_COMPOSE_FILE
-            $SED -e 's|image: bitnami/postgres-exporter:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/postgres-exporter:|' $OBSERVE_COMPOSE_FILE
+            $SED -e 's|image: univerai/postgres-exporter:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/postgres-exporter:|' $OBSERVE_COMPOSE_FILE
             $SED -e 's|image: kbudde/rabbitmq-exporter:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/rabbitmq-exporter:|' $OBSERVE_COMPOSE_FILE
         fi
     fi

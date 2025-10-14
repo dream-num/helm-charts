@@ -60,7 +60,7 @@ services:
 
   univer-redis:
     restart: always
-    image: bitnami/redis:${REDIS_VERSION}
+    image: univerai/redis:${REDIS_VERSION}
     container_name: univer-redis
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
@@ -77,7 +77,7 @@ services:
 
   univer-minio:
     restart: always
-    image: bitnami/minio:${MINIO_VERSION}
+    image: univerai/minio:${MINIO_VERSION}
     user: root
     container_name: univer-minio
     environment:
