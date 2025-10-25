@@ -158,6 +158,10 @@ entitlementConf:
   defaultEntiConf:
     anonymousDefaultEntiId: {{ .Values.config.entitlementConf.defaultEntiConf.anonymousDefaultEntiId }}
     registeredDefaultEntiId: {{ .Values.config.entitlementConf.defaultEntiConf.registeredDefaultEntiId }}
+  registerAwardConf:
+    {{- with .Values.config.entitlementConf.registerAwardConf }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
   cronConf:
     reportRetryCron: {{ .Values.config.entitlementConf.cronConf.reportRetryCron | quote }}
     minRetryInterval: {{ .Values.config.entitlementConf.cronConf.minRetryInterval }}
@@ -165,6 +169,7 @@ entitlementConf:
     pendingSubCleanCron: {{ .Values.config.entitlementConf.cronConf.pendingSubCleanCron | quote }}
     detectInterval: {{ .Values.config.entitlementConf.cronConf.detectInterval }}
     cleanRate: {{ .Values.config.entitlementConf.cronConf.cleanRate }}
+    maxActionBlockInterval: {{ .Values.config.entitlementConf.cronConf.maxActionBlockInterval }}
   stripeConf:
     apiPK: {{ .Values.config.entitlementConf.stripeConf.apiPK | quote }}
     apiSK: {{ .Values.config.entitlementConf.stripeConf.apiSK | quote }}
@@ -224,3 +229,11 @@ notifyConf:
 ip2AddrCliConf:
   pathFmt: {{ .Values.config.ip2AddrCliConf.pathFmt | quote }}
   token: {{ .Values.config.ip2AddrCliConf.token | quote }}
+googleConf:
+{{- with .Values.config.googleConf }}
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+proxyConf:
+{{- with .Values.config.proxyConf }}
+  {{- toYaml . | nindent 2 }}
+{{- end }}

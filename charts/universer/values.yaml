@@ -12,7 +12,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.10.12 # VERSION
+  tag: 0.10.13 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -253,6 +253,16 @@ config:
     defaultEntiConf:
       anonymousDefaultEntiId: 1
       registeredDefaultEntiId: 1
+    registerAwardConf:
+      entiId: 7
+      entiInterval: 1
+      entiIntervalCnt: 7
+      quotaConfs:
+        CreditGeneral:
+          quotaKey: "CreditGeneral"
+          quotaTotal: 20000
+      quotaInterval: 4
+      quotaIntervalCnt: 1
     cronConf:
       reportRetryCron: "@every 10s"
       minRetryInterval: 10
@@ -260,6 +270,7 @@ config:
       pendingSubCleanCron: "@every 60s"
       detectInterval: 300
       cleanRate: 2
+      maxActionBlockInterval: 900 # 15min
     stripeConf:
       apiPK: ""
       apiSK: ""
@@ -278,7 +289,7 @@ config:
       notifyUrl: ""
       isProd: false # default false
     orderExpireInterval: 86400000 # 24 hours
-    intentExpireInterval: 900000 # 15 minutes
+    intentExpireInterval: 1800000 # 30 minutes
     identityExpireNtfConf:
       toNtfLeftDays: [1,3,7]
       ntfRate: 20
@@ -312,7 +323,10 @@ config:
   ip2AddrCliConf:
     pathFmt: ""
     token: ""
-
+  googleConf:
+    enabled: false
+  proxyConf:
+    proxyUrl: ""
 
 innerConfig: {}
 
