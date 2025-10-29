@@ -10,7 +10,8 @@ services:
     depends_on:
       - universer
     volumes:
-      - ./nginx:/etc/nginx/conf.d/
+      - ./nginx/conf.d:/etc/nginx/conf.d/
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
 
   universer:
     restart: always
@@ -112,6 +113,8 @@ services:
       - POSTGRES_PWD=${DATABASE_PASSWORD}
       - TEMPORAL_CLI_SHOW_STACKS=1
       - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET}
+      - SKIP_SCHEMA_SETUP=${DISABLE_UNIVER_RDS}
+      - SKIP_DB_CREATE=${DISABLE_UNIVER_RDS}
     volumes:
       - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
     expose:
