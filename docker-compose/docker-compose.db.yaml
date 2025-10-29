@@ -10,7 +10,8 @@ services:
     depends_on:
       - universer
     volumes:
-      - ./nginx:/etc/nginx/conf.d/
+      - ./nginx/conf.d:/etc/nginx/conf.d/
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
 
   universer:
     restart: always
