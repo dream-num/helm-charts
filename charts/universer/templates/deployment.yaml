@@ -94,6 +94,8 @@ spec:
               value: {{ .Values.config.logs.disableLogMask | quote }}
             - name: APP_NAME
               value: {{ .Values.service.appName | quote }}
+            - name: DEPLOY_ENV
+              value: {{ .Values.global.deployEnv | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

@@ -88,6 +88,7 @@ usip:
     userinfo: ${USIP_URI_USERINFO}
     role: ${USIP_URI_ROLE}
     collaborators: ${USIP_URI_COLLABORATORS}
+    unitEditTime: ${USIP_URI_UNITEDITTIME}
 postHogConf:
   enabled: false
 entitlementConf:

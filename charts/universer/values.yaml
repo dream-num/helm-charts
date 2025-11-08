@@ -4,6 +4,7 @@
 
 global: 
   istioDefaultRevision: default
+  deployEnv: ""
 
 replicaCount: 1
 
@@ -12,7 +13,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.10.14 # VERSION
+  tag: 0.11.0 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -213,6 +214,7 @@ config:
       collaborators: "http://usip:8080/collaborators"
       role: "http://usip:8080/role"
       credential: "http://usip:8080/credential"
+      unitEditTime: "http://usip:8080/unitEditTime"
   dataProtectionConf:
     enableProtection: false
     kmsServiceName: "none"
@@ -251,10 +253,10 @@ config:
   entitlementConf:
     enable: false
     defaultEntiConf:
-      anonymousDefaultEntiId: 1
-      registeredDefaultEntiId: 1
+      anonymousDefaultEntiId: 1001
+      registeredDefaultEntiId: 1001
     registerAwardConf:
-      entiId: 7
+      entiId: 1004
       entiInterval: 1
       entiIntervalCnt: 7
       quotaConfs:
