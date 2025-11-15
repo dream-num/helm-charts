@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RELEASE_TIME="1762591481" # RELEASE_TIME
+RELEASE_TIME="1763211727" # RELEASE_TIME
 
 PLATFORM=$(uname)
 SED="sed -i"
@@ -330,6 +330,7 @@ help() {
     echo "  check             Check the service health"
     echo "  start-demo-ui     Start the sdk demo ui"
     echo "  start-demo-usip   Start the usip demo"
+    echo "  log               Cat error logs for troubleshooting"
     echo "Default command:"
     echo "  ./run.sh start"
 }
@@ -425,6 +426,9 @@ case "$command" in
   "start-demo-usip")
     _env
     start_demo_usip
+    ;;
+  "log")
+    ./log.sh
     ;;
   *)
     echo "Unknown option: $option"

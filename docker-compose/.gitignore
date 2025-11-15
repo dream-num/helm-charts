@@ -1,5 +1,6 @@
 bin/
 logs/
+cat-logs/
 
 configs/config.yaml
 configs/LICENSE

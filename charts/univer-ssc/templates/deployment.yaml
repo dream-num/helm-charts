@@ -60,6 +60,8 @@ spec:
               value: {{ .Values.config.snapshotServer }}
             - name: X_FEATURE_ID
               value: {{ .Values.istio.version | quote }}
+            - name: CLIENT_LICENSE_TEXT
+              value: {{ .Values.license | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

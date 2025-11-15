@@ -96,7 +96,7 @@ worker:
   fullnameOverride: worker-exchange
   image:
     repository: release/worker-exchange
-    tag: 0.11.0 # VERSION
+    tag: 0.12.0 # VERSION
   temporalServer:
     host: temporal-frontend:7233
     namespace: univer
