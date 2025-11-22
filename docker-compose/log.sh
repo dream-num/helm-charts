@@ -14,8 +14,12 @@ fi
 minutes=1
 time_period="$minutes minutes"
 hours=6
+jump_hours=0
+since_time=$(date -d "$((jump_hours + hours)) hours ago" +"%Y-%m-%dT%H:%M:%SZ")
+until_time=$(date -d "$jump_hours hours ago" +"%Y-%m-%dT%H:%M:%SZ")
 log_dir="cat-logs"
 server="all"
+container=""
 trace_id=""
 
 mkdir -p $log_dir
@@ -39,24 +43,53 @@ function _stdin {
         hours="$input_hours"
     fi
 
+    read -p "$(echo -e "${GREEN}Enter jump hours to search back (integer, default $jump_hours): ${NC}")" input_jump_hours
+    if [[ -n "$input_jump_hours" && "$input_jump_hours" =~ ^[0-9]+$ ]]; then
+        jump_hours="$input_jump_hours"
+    fi
+
     read -p "$(echo -e "${GREEN}Enter trace-id to search back (string, optional): ${NC}")" input_trace_id
     if [[ -n "$input_trace_id" ]]; then
         trace_id="$input_trace_id"
     fi
 
-    echo
-    echo -e "${BLUE}Select server to cat logs:${NC}"
-    server_options=("all" "collaboration-server" "universer" "exchange" "univer-ssc")
-    PS3="$(echo -e "${GREEN}Choose server (number): ${NC}")"
-    select opt in "${server_options[@]}"; do
-        if [[ -z "$opt" ]]; then
+    read -p "$(echo -e "${GREEN}Enter container name to filter (string, optional): ${NC}")" input_container
+    if [[ -n "$input_container" ]]; then
+        container="$input_container"
+    fi
+
+    if [[ -z "$container" ]]; then
+        echo
+        echo -e "${BLUE}Select server to cat logs:${NC}"
+        server_options=("all" "collaboration-server" "universer" "exchange" "univer-ssc" "frontend")
+        PS3="$(echo -e "${GREEN}Choose server (number): ${NC}")"
+        select opt in "${server_options[@]}"; do
+            if [[ -z "$opt" ]]; then
+                break
+            fi
+            server="$opt"
             break
-        fi
-        server="$opt"
-        break
-    done
+        done
+    fi
+
 
     echo "Using time_period='$time_period', hours=$hours, server='$server'"
+    echo "Using trace_id='$trace_id', container='$container'"
+
+    since_time=$(date -d "$((jump_hours + hours)) hours ago" +"%Y-%m-%dT%H:%M:%SZ")
+    until_time=$(date -d "$jump_hours hours ago" +"%Y-%m-%dT%H:%M:%SZ")
+    echo "since_time: $since_time, until_time: $until_time"
+}
+
+
+function _check_log_file_empty {
+    log_file="$1"
+    if [[ ! -s "$log_file" ]]; then
+        echo "Log file $log_file is empty. Removing it."
+        rm -f "$log_file"
+        return 1
+    fi
+    return 0
 }
 
 
@@ -70,8 +103,8 @@ function log_collaboration_server_loop {
     end_time=$(date +"%Y-%m-%dT%H:%M:%S")
 
     for i in $(seq 0 $hours); do
-        start_time=$(date -d "$i hours ago" +"%Y-%m-%dT%H:%M:%S")
-        next_time=$(date -d "$((i+1)) hours ago" +"%Y-%m-%dT%H:%M:%S")
+        start_time=$(date -d "$i hours ago" +"%Y-%m-%dT%H:%M:%SZ")
+        next_time=$(date -d "$((i+1)) hours ago" +"%Y-%m-%dT%H:%M:%SZ")
         
         echo "Checking: $next_time to $start_time (UTC)"
         log_output=$($DOCKER_COMPOSE logs --since "$next_time" --until "$start_time" -t collaboration-server 2>&1 | grep -m 1 "\[Error\] _logOriginTransform")
@@ -136,7 +169,12 @@ function log_collaboration_server_loop {
                         echo "--------------------------------------"
                         echo "📄 Full log file: $loop_error_log_file"
 
-                        return 0
+                        if _check_log_file_empty "$loop_error_log_file"; then
+                            echo "📄 Full log file: $loop_error_log_file"
+                            return 0
+                        else
+                            return 1
+                        fi
                     else
                         echo "❌ Failed to parse time format"
                         return 1
@@ -152,6 +190,8 @@ function log_collaboration_server_loop {
             return 1
         fi
     done
+
+    return 1
 }
 
 
@@ -166,8 +206,8 @@ function log_collaboration_server_throw {
     end_time=$(date +"%Y-%m-%dT%H:%M:%S")
 
     for i in $(seq 0 $hours); do
-        start_time=$(date -d "$i hours ago" +"%Y-%m-%dT%H:%M:%S")
-        next_time=$(date -d "$((i+1)) hours ago" +"%Y-%m-%dT%H:%M:%S")
+        start_time=$(date -d "$i hours ago" +"%Y-%m-%dT%H:%M:%SZ")
+        next_time=$(date -d "$((i+1)) hours ago" +"%Y-%m-%dT%H:%M:%SZ")
         
         echo "Checking: $next_time to $start_time (UTC)"
         log_output=$($DOCKER_COMPOSE logs --since "$next_time" --until "$start_time" -t collaboration-server 2>&1 | grep -m 1 "throw error;")
@@ -228,7 +268,13 @@ function log_collaboration_server_throw {
                         # Get full logs for that container
                         $DOCKER_COMPOSE logs -t --since "$log_start" --until "$log_end" collaboration-server 2>&1 | grep "$container" > $throw_error_log_file
                         echo "--------------------------------------"
-                        echo "📄 Full log file: $throw_error_log_file"
+
+                        if _check_log_file_empty "$throw_error_log_file"; then
+                            echo "📄 Full log file: $throw_error_log_file"
+                            return 0
+                        else
+                            return 1
+                        fi
 
                         return 0
                     else
@@ -246,63 +292,74 @@ function log_collaboration_server_throw {
             return 1
         fi
     done
+
+    return 1
 }
 
 
 function log_collaboration_server_error {
     error_log_file="$log_dir/collaboration-server-error.log"
 
-    _m=$((hours * 60))
-
     echo "======================================"
     echo "🛠️  Start recording Collaboration Server Error logs..."
     echo "======================================"
 
     if [[ -n "$trace_id" ]]; then
-        $DOCKER_COMPOSE logs -t --since "$_m" collaboration-server 2>&1 | grep "$trace_id" > $error_log_file
+        $DOCKER_COMPOSE logs -t --since "$since_time" --until "$until_time" collaboration-server 2>&1 | grep "$trace_id" > $error_log_file
     else
-        $DOCKER_COMPOSE logs -t --since "$_m" collaboration-server 2>&1 | grep "\[Error\]" > $error_log_file
+        $DOCKER_COMPOSE logs -t --since "$since_time" --until "$until_time" collaboration-server 2>&1 | grep "Error" > $error_log_file
     fi
 
-    echo "📄 Full log file: $error_log_file"
+    if _check_log_file_empty "$error_log_file"; then
+        echo "📄 Full log file: $error_log_file"
+        return 0
+    else
+        return 1
+    fi
 }
 
 
 function log_universer_error {
     error_log_file="$log_dir/universer-error.log"
 
-    _m=$((hours * 60))
-
     echo "======================================"
     echo "🛠️  Start recording Universer Error logs..."
     echo "======================================"
 
     if [[ -n "$trace_id" ]]; then
-        $DOCKER_COMPOSE logs -t --since "$_m" universer 2>&1 | grep "$trace_id" > $error_log_file
+        $DOCKER_COMPOSE logs -t --since "$since_time" --until "$until_time" universer 2>&1 | grep "$trace_id" > $error_log_file
     else
-        $DOCKER_COMPOSE logs -t --since "$_m" universer 2>&1 | grep "ERROR" > $error_log_file
+        $DOCKER_COMPOSE logs -t --since "$since_time" --until "$until_time" universer 2>&1 | grep "ERROR" > $error_log_file
     fi
 
-    echo "📄 Full log file: $error_log_file"
+    if _check_log_file_empty "$error_log_file"; then
+        echo "📄 Full log file: $error_log_file"
+        return 0
+    else
+        return 1
+    fi
 }
 
 
 function log_exchange_error {
     error_log_file="$log_dir/exchange-error.log"
 
-    _m=$((hours * 60))
-
     echo "======================================"
     echo "🛠️  Start recording Exchange Error logs..."
     echo "======================================"
 
     if [[ -n "$trace_id" ]]; then
-        $DOCKER_COMPOSE logs -t --since "$_m" univer-worker-exchange 2>&1 | grep "$trace_id" | grep -v "too_many_pings" > $error_log_file
+        $DOCKER_COMPOSE logs -t --since "$since_time" --until "$until_time" univer-worker-exchange 2>&1 | grep "$trace_id" | grep -v "too_many_pings" > $error_log_file
     else
-        $DOCKER_COMPOSE logs -t --since "$_m" univer-worker-exchange 2>&1 | grep "ERROR" | grep -v "too_many_pings" > $error_log_file
+        $DOCKER_COMPOSE logs -t --since "$since_time" --until "$until_time" univer-worker-exchange 2>&1 | grep "ERROR" | grep -v "too_many_pings" > $error_log_file
     fi
 
-    echo "📄 Full log file: $error_log_file"
+    if _check_log_file_empty "$error_log_file"; then
+        echo "📄 Full log file: $error_log_file"
+        return 0
+    else
+        return 1
+    fi
 
     return 0
 }
@@ -311,19 +368,66 @@ function log_exchange_error {
 function log_univer_ssc_error {
     error_log_file="$log_dir/univer-ssc-error.log"
 
-    _m=$((hours * 60))
-
     echo "======================================"
     echo "🛠️  Start recording Universer SSC Error logs..."
     echo "======================================"
 
     if [[ -n "$trace_id" ]]; then
-        $DOCKER_COMPOSE logs -t --since "$_m" ssc-server 2>&1 | grep "$trace_id" > $error_log_file
+        $DOCKER_COMPOSE logs -t --since "$since_time" --until "$until_time" ssc-server 2>&1 | grep "$trace_id" > $error_log_file
     else
-        $DOCKER_COMPOSE logs -t --since "$_m" ssc-server 2>&1 | grep "\[Error\]" > $error_log_file
+        $DOCKER_COMPOSE logs -t --since "$since_time" --until "$until_time" ssc-server 2>&1 | grep "Error" > $error_log_file
     fi
 
-    echo "📄 Full log file: $error_log_file"
+    if _check_log_file_empty "$error_log_file"; then
+        echo "📄 Full log file: $error_log_file"
+        return 0
+    else
+        return 1
+    fi
+
+    return 0
+}
+
+
+function log_univer_frontend_error {
+    error_log_file="$log_dir/univer-frontend-error.log"
+
+    echo "======================================"
+    echo "🛠️  Start recording Frontend Error logs..."
+    echo "======================================"
+
+    $DOCKER_COMPOSE logs -t --since "$since_time" --until "$until_time" universer 2>&1 | grep "\[Frontend\]" > $error_log_file
+
+    if _check_log_file_empty "$error_log_file"; then
+        echo "📄 Full log file: $error_log_file"
+        return 0
+    else
+        return 1
+    fi
+
+    return 0
+}
+
+
+function log_container {
+    error_log_file="$log_dir/$container.log"
+
+    echo "======================================"
+    echo "🛠️  Start recording $container Error logs..."
+    echo "======================================"
+
+    if [[ -n "$trace_id" ]]; then
+        docker logs -t --since "$since_time" --until "$until_time" $container 2>&1 | grep "$trace_id" > $error_log_file
+    else
+        docker logs -t --since "$since_time" --until "$until_time" $container > $error_log_file 2>&1
+    fi
+
+    if _check_log_file_empty "$error_log_file"; then
+        echo "📄 Full log file: $error_log_file"
+        return 0
+    else
+        return 1
+    fi
 
     return 0
 }
@@ -335,11 +439,20 @@ function main {
 
     echo
 
+    if [[ -n "$container" ]]; then
+        if log_container; then
+            echo "✅ Recorded $container logs"
+        else
+            echo "❗ No logs found for container $container between $since_time and $until_time"
+        fi
+        return
+    fi
+
     if [[ $server == "all" || $server == "collaboration-server" ]]; then
         if log_collaboration_server_loop; then
             echo "✅ Recorded collaboration-server the latest loop error log"
         else
-            echo "✗ No collaboration-server loop error logs found in the last $hours hours"
+            echo "❗ No collaboration-server loop error logs found in the last $hours hours"
         fi
 
         echo
@@ -347,7 +460,7 @@ function main {
         if log_collaboration_server_throw; then
             echo "✅ Recorded collaboration-server the latest throw error log"
         else
-            echo "✗ No collaboration-server throw error logs found in the last $hours hours"
+            echo "❗ No collaboration-server throw error logs found in the last $hours hours"
         fi
 
         echo
@@ -356,7 +469,7 @@ function main {
         if log_collaboration_server_error; then
             echo "✅ Recorded collaboration-server error log"
         else
-            echo "✗ No collaboration-server error logs found in the last $hours hours"
+            echo "❗ No collaboration-server error logs found between $since_time and $until_time"
         fi
     fi
 
@@ -366,7 +479,7 @@ function main {
         if log_universer_error; then
             echo "✅ Recorded universer error log"
         else
-            echo "✗ No universer error logs found in the last $hours hours"
+            echo "❗ No universer error logs found between $since_time and $until_time"
         fi
     fi
 
@@ -376,7 +489,7 @@ function main {
         if log_exchange_error; then
             echo "✅ Recorded exchange error log"
         else
-            echo "✗ No exchange error logs found in the last $hours hours"
+            echo "❗ No exchange error logs found between $since_time and $until_time"
         fi
     fi
 
@@ -386,7 +499,17 @@ function main {
         if log_univer_ssc_error; then
             echo "✅ Recorded univer-ssc error log"
         else
-            echo "✗ No univer-ssc error logs found in the last $hours hours"
+            echo "❗ No univer-ssc error logs found between $since_time and $until_time"
+        fi
+    fi
+
+    echo
+
+    if [[ $server == "all" || $server == "frontend" ]]; then
+        if log_univer_frontend_error; then
+            echo "✅ Recorded univer-frontend error log"
+        else
+            echo "❗ No univer-frontend error logs found between $since_time and $until_time"
         fi
     fi
 }
