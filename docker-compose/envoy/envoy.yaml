@@ -22,6 +22,13 @@ static_resources:
                             hash_policy:
                               - header:
                                   header_name: "x-unit-id"
+                access_log:
+                  - name: envoy.access_loggers.stdout
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.access_loggers.stream.v3.StdoutAccessLog
+                      log_format:
+                        text_format: |
+                          [%START_TIME%] "%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%" %RESPONSE_CODE% %RESPONSE_FLAGS% %BYTES_RECEIVED% %BYTES_SENT% %DURATION% %RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)% "%REQ(X-FORWARDED-FOR)%" "%REQ(USER-AGENT)%" "%REQ(X-REQUEST-ID)%" "%REQ(TRACEPARENT)%" "%REQ(X-UNIT-ID)%" "%REQ(:AUTHORITY)%" "%UPSTREAM_HOST%"
                 http_filters:
                   - name: envoy.filters.http.router
                     typed_config:
@@ -42,6 +49,13 @@ static_resources:
                     socket_address:
                       address: collaboration-server
                       port_value: 5002
+      circuit_breakers:
+        thresholds:
+          - priority: HIGH
+            max_connections: 20000
+            max_pending_requests: 10000
+            max_requests: 30000
+            max_retries: 3
 
 overload_manager:
   resource_monitors:

@@ -52,6 +52,9 @@ services:
       - collaboration-server
     environment:
       - no_proxy=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},collaboration-server
+    deploy:
+      replicas: ${COLLABORATION_ENVOY_REPLICATION_CNT}
+      endpoint_mode: dnsrr
 
   collaboration-server:
     restart: always
