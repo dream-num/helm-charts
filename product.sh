@@ -248,7 +248,7 @@ fi
 
 # mv to work dir
 cd "$work_dir"
-target_dir="$work_dir/universer-${version}"
+target_dir="$work_dir/univer-server-${version}"
 
 if [ -d "$target_dir" ]; then
     echo "the version:${version} already exists."
