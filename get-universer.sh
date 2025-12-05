@@ -2,7 +2,6 @@
 
 _CI_TEST=${_CI_TEST:-false}
 _HOST=${_HOST:-"univer.ai"}
-UNIVER_VERSION=${UNIVER_VERSION:-"latest"}
 UNIVER_RUN_ENGINE=${UNIVER_RUN_ENGINE:-"docker"}
 
 # get os type
@@ -63,9 +62,6 @@ function _check_docker() {
         esac
     fi
 
-    DOCKER="docker"
-    DOCKER_COMPOSE="docker compose"
-
     # check docker version
     _docker_version=$(docker version --format '{{ .Server.Version }}')
     if [ "$(printf '%s\n' "$_docker_version" "23.0" | sort -V | head -n1)" == "$_docker_version" ] && [ "$_docker_version" != "23.0" ]; then
@@ -79,7 +75,6 @@ function _check_docker() {
             echo "Error: docker compose is not installed."
             exit 1
         fi
-        DOCKER_COMPOSE="docker-compose"
     fi
 
     # check docker daemon
@@ -95,9 +90,6 @@ function _check_podman() {
         exit 1
     fi
 
-    DOCKER="podman"
-    DOCKER_COMPOSE="podman compose"
-
     docker-compose version &>/dev/null
     if [ $? -ne 0 ]; then
         echo "Error: podman need docker-compose, but it is not installed." >&2
@@ -111,15 +103,12 @@ function _check_podman() {
     fi
 }
 
-DOCKER=""
-DOCKER_COMPOSE=""
-
-if [ "$UNIVER_RUN_ENGINE" == "docker" ]; then
+if [ "${UNIVER_RUN_ENGINE}" == "docker" ]; then
     _check_docker
-elif [ "$UNIVER_RUN_ENGINE" == "podman" ]; then
+elif [ "${UNIVER_RUN_ENGINE}" == "podman" ]; then
     _check_podman
 else
-    echo "Error: Unknown UNIVER_RUN_ENGINE value: $UNIVER_RUN_ENGINE"
+    echo "Error: Unsupport UNIVER_RUN_ENGINE ${UNIVER_RUN_ENGINE}"
     exit 1
 fi
 
@@ -127,7 +116,7 @@ set -eu
 
 checkPort() {
     if ! [ -x "$(command -v netstat)" ] || ! [ -x "$(command -v awk)" ] ; then
-        $DOCKER run --network=host --rm univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/network-tool:0.0.1 netstat -tuln | awk '{print $4}' | grep -q ":$1"
+        docker run --network=host --rm univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/network-tool:0.0.1 netstat -tuln | awk '{print $4}' | grep -q ":$1"
     else
         netstat -tuln | awk '{print $4}' | grep -q ":$1"
     fi
@@ -137,23 +126,12 @@ checkPort() {
     fi
 }
 
-appPath="${PWD}/univer-server"
+
 tokenPath="${HOME}/.univer/"
 tokenFileName="${tokenPath}/deploy_token"
-confPath="${appPath}/configs"
-tokenVerifyResp="${confPath}/verify.json"
 
 getTokenURL="https://${_HOST}/cli-auth"
 verifyTokenURL="https://${_HOST}/license-manage-api/cli-auth/verify-token"
-getLicenseURL="https://${_HOST}/license-manage-api/license/cli-download?type=1"
-getLicenseKeyURL="https://${_HOST}/license-manage-api/license/cli-download?type=2"
-
-if [ "$UNIVER_VERSION" == "latest" ]; then
-    downloadURL="https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/latest/univer-server-docker-compose-latest.tar.gz"
-else
-    version=${UNIVER_VERSION#v}
-    downloadURL="https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/v${version}/univer-server-docker-compose-v${version}.tar.gz"
-fi
 
 
 openURL() {
@@ -208,48 +186,17 @@ verifyToken() {
 
   if [[ "$http_code" -ne 200 ]] ; then
     ${verbose} && echo "That's not a valid token! (server response code:$http_code)"
-    echo "" > ${tokenVerifyResp}
     return 1
   else
     echo "Welcome! You're authenticated."
-    echo $http_body > ${tokenVerifyResp}
   fi
   return 0
-}
-
-getLicenseOnline(){
-  reqToken=$1
-  if [ "$_CI_TEST" == "true" ]; then
-    return
-  fi
-  response="$(curl -s -w "\n%{http_code}" ${getLicenseURL} -H 'X-Session-Token: '"${reqToken}")";
-  http_body="$(echo "${response}" | head -n 1)";
-  http_code="$(echo "${response}" | tail -n 1)";
-  if [[ "$http_code" -ne 200 ]] ; then
-    echo "Get License fail. (server response code:$http_code)"
-    return 1
-  elif [ -n "${http_body}" ]; then
-    echo -n  "${http_body}" > ${confPath}/license.txt
-  else
-    echo "You don't have any licenses! visit https://univer.ai/pro/license to unlock more features."
-    return
-  fi
-
-  response="$(curl -s -w "\n%{http_code}" ${getLicenseKeyURL} -H 'X-Session-Token: '"${reqToken}")";
-  http_body="$(echo "${response}" | head -n 1)";
-  http_code="$(echo "${response}" | tail -n 1)";
-  if [[ "$http_code" -ne 200 ]] ; then
-    echo "Get LicenseKey fail. (server response code:$http_code)"
-    return 1
-  elif [ -n "${http_body}" ]; then
-    echo -n "${http_body}" > ${confPath}/licenseKey.txt
-  fi
 }
 
 token=""
 
 getToken(){
-  if [[ -s ${tokenFileName} ]] && [[ -s ${tokenVerifyResp} ]]; then
+  if [ -s ${tokenFileName} ]; then
     # check saved token
     token=$(cat "${tokenFileName}")
     if ! verifyToken "${token}" false; then
@@ -259,12 +206,11 @@ getToken(){
   fi
 
   if [ -z "$token" ]; then
-    # echo "Please authenticate the CLI to subscribe to our upgrade notifications"
+    echo "Please authenticate the CLI to subscribe to our upgrade notifications"
     openURL "${getTokenURL}" &&
-          echo -e "Your browser has been opened to retrieve auth token:\n\n\t ${getTokenURL} \n" ||
-          echo -e "Open the following url to retrieve auth token:\n\n\t ${getTokenURL} \n"
+          echo -e "Your browser has been opened to visit:\n\n\t ${getTokenURL} \n" ||
+          echo -e "Open the following in your browser:\n\n\t ${getTokenURL} \n"
 
-    echo "Token is used for CLI authentication"
     while [ "$_CI_TEST" != "true" ] ; do
       read -r -p "> Paste your token here: " token
       if verifyToken "${token}" true; then
@@ -276,70 +222,41 @@ getToken(){
   fi
 }
 
-mkdir -p ${confPath}
-
 getToken
 
-getLicenseOnline "${token}"
+# download specfied version
+work_dir=$PWD
+tmp_dir=$(mktemp -d)
 
-# check docker-compose directory
-tar_overwrite=""
-response=""
-if [ -f ${appPath}/.env ] && [ -f ${appPath}/run.sh ]; then
-    if [ "$_CI_TEST" == "true" ]; then
-        response="N"
-    else
-        read -r -p "${appPath} directory already exists, do you want to overwrite it? [y/N] " response
-    fi
-fi
-if [ "$response" == "y" ] || [ "$response" == "Y" ]; then
-    case "$osType" in
-        "darwin")
-            tar_overwrite="-U"
-            ;;
-        "linux")
-            tar_overwrite="--overwrite"
-            ;;
-    esac
+mkdir -p "$tmp_dir" && cd "$tmp_dir"
+if [ $# == 1 ]; then
+    echo "start download version:$1..."
+    curl -s -o univer.tar.gz https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/v$1/univer-server-docker-compose-v$1.tar.gz
 else
-    case "$osType" in
-        "darwin")
-            tar_overwrite="-k"
-            ;;
-        "linux")
-            tar_overwrite="--skip-old-files"
-            ;;
-        "mingw")
-            tar_overwrite="--skip-old-files"
-            ;;
-    esac
+    echo "start download the latest version..."
+    curl -s -o univer.tar.gz https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/latest/univer-server-docker-compose-latest.tar.gz
+fi
+tar -xzf univer.tar.gz && rm univer.tar.gz
+# get real version
+. .env
+version=$UNIVERSER_VERSION
+if [ $# == 1 ] && [ "$version" != "$1" ]; then
+    echo "the specified version:$1 not exists."
+    rm -r $tmp_dir
+    exit 1
 fi
 
-if [ "$_CI_TEST" == "true" ]; then
-    cd docker-compose
-    echo -e "\nUNIVER_RUN_ENGINE=${UNIVER_RUN_ENGINE}" >> .env.custom
-    bash run.sh
-else
-    mkdir -p ${appPath} \
-        && cd ${appPath} \
-        && curl -f -o univer.tar.gz $downloadURL \
-        && tar -xzf univer.tar.gz $tar_overwrite \
-        && rm univer.tar.gz \
-        && echo -e "\nUNIVER_RUN_ENGINE=${UNIVER_RUN_ENGINE}" >> .env.custom \
-        && bash run.sh
+# mv to work dir
+cd "$work_dir"
+target_dir="$work_dir/univer-server-${version}"
+
+if [ -d "$target_dir" ]; then
+    echo "the version:${version} already exists."
+    rm -r $tmp_dir
+    exit 1
 fi
 
-
-# check service health
-bash run.sh check
-if [ $? -eq 0 ] && [ "$_CI_TEST" != "true" ]; then
-    echo ""
-    echo "Congratulations! Univer Server is running on port 8000"
-    echo ""
-    echo "If you want try Demo ui, please run: 'cd ${appPath} && bash run.sh start-demo-ui'"
-    echo ""
-    echo "More information about Univer Server, please refer to https://univer.ai/guides/sheet/server/docker"
-    echo "More information about Univer SDK, please refer to https://univer.ai/guides/sheet/getting-started/quickstart"
-    echo ""
-fi
+mv "$tmp_dir" "$target_dir"
+echo -e "\nUNIVER_RUN_ENGINE=${UNIVER_RUN_ENGINE}" >> $target_dir/.env.custom 
+echo "download success, target dir is:${target_dir}"
 
