@@ -1,15 +1,46 @@
 #!/bin/bash
 
-DOCKER_COMPOSE="docker compose"
-$DOCKER_COMPOSE version &>/dev/null
-if [ $? -ne 0 ]; then
-    DOCKER_COMPOSE="docker-compose"
-    $DOCKER_COMPOSE version &>/dev/null
+UNIVER_RUN_ENGINE=${UNIVER_RUN_ENGINE:-"docker"}
+
+DOCKER=""
+DOCKER_COMPOSE=""
+
+if [ "$UNIVER_RUN_ENGINE" == "podman" ]; then
+    DOCKER="podman"
+    DOCKER_COMPOSE="podman compose"
+
+    docker-compose version &>/dev/null
     if [ $? -ne 0 ]; then
-        echo "need docker compose."
+        echo "podman need docker-compose."
         exit 1
     fi
+
+    $DOCKER_COMPOSE version &>/dev/null
+    if [ $? -ne 0 ]; then
+        echo "podman compose not installed."
+        exit 1
+    fi
+else
+    DOCKER="docker"
+    DOCKER_COMPOSE="docker compose"
+
+    $DOCKER info &>/dev/null
+    if [ $? -ne 0 ]; then
+        echo "docker not running."
+        exit 1
+    fi
+
+    $DOCKER_COMPOSE version &>/dev/null
+    if [ $? -ne 0 ]; then
+        DOCKER_COMPOSE="docker-compose"
+        $DOCKER_COMPOSE version &>/dev/null
+        if [ $? -ne 0 ]; then
+            echo "docker compose not installed."
+            exit 1
+        fi
+    fi
 fi
+
 
 minutes=1
 time_period="$minutes minutes"
@@ -417,9 +448,9 @@ function log_container {
     echo "======================================"
 
     if [[ -n "$trace_id" ]]; then
-        docker logs -t --since "$since_time" --until "$until_time" $container 2>&1 | grep "$trace_id" > $error_log_file
+        $DOCKER logs -t --since "$since_time" --until "$until_time" $container 2>&1 | grep "$trace_id" > $error_log_file
     else
-        docker logs -t --since "$since_time" --until "$until_time" $container > $error_log_file 2>&1
+        $DOCKER logs -t --since "$since_time" --until "$until_time" $container > $error_log_file 2>&1
     fi
 
     if _check_log_file_empty "$error_log_file"; then
