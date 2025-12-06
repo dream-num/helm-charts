@@ -58,6 +58,8 @@ spec:
               value: {{ tpl .Values.config.univerServer . }}
             - name: URL_OF_SNAPSHOT_SERVICE
               value: {{ tpl .Values.config.snapshotServer . }}
+            - name: URL_OF_HELPER_SERVICE
+              value: {{ tpl .Values.config.helperService . }}
             - name: SAVE_SHEET_SNAPSHOT_INTERVAL
               value: {{ .Values.config.saveSheetSnapshotInterval | quote }}
             - name: SAVE_DOC_SNAPSHOT_INTERVAL

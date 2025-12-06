@@ -44,6 +44,9 @@ service:
   apply:
     addr: "{{ tpl .Values.config.apply.host . }}:{{ .Values.config.apply.port }}"
     timeout: 10s
+  collaborationHelper:
+    addr: {{ .Values.config.collaborationHelper.addr }}
+    timeout: 180s
   nodeRuntime:
     addr: {{ .Values.config.nodeRuntime.addr }}
     timeout: 10s

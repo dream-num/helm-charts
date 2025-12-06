@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RELEASE_TIME="1764410764" # RELEASE_TIME
+RELEASE_TIME="1765006334" # RELEASE_TIME
 
 PLATFORM=$(uname)
 SED="sed -i"
@@ -8,16 +8,62 @@ if [ "$PLATFORM" == "Darwin" ]; then
     SED="sed -i \"\""
 fi
 
-DOCKER_COMPOSE="docker compose"
-$DOCKER_COMPOSE version &>/dev/null
-if [ $? -ne 0 ]; then
-    DOCKER_COMPOSE="docker-compose"
-    $DOCKER_COMPOSE version &>/dev/null
-    if [ $? -ne 0 ]; then
-        echo "need docker compose."
-        exit 1
+mkdir -p logs/universer
+mkdir -p logs/worker-exchange
+
+DOCKER=""
+DOCKER_COMPOSE=""
+
+function _set_docker() {
+    docker version &>/dev/null
+    if [ $? -eq 0 ]; then
+        DOCKER="docker"
+
+        docker compose version &>/dev/null
+        if [ $? -eq 0 ]; then
+            DOCKER_COMPOSE="docker compose"
+            return
+        fi
+
+        docker-compose version &>/dev/null
+        if [ $? -eq 0 ]; then
+            DOCKER_COMPOSE="docker-compose"
+            return
+        fi
+
+        echo "Docker Compose is not installed."
+    else
+        echo "Docker is not running."
     fi
-fi
+
+    return 1
+}
+
+function _set_podman() {
+    podman version &>/dev/null
+    if [ $? -eq 0 ]; then
+        DOCKER="podman"
+
+        docker-compose version &>/dev/null
+        if [ $? -ne 0 ]; then
+            echo "podman compose need docker-compose, but it is not installed."
+            return 1
+        fi
+
+        podman compose version &>/dev/null
+        if [ $? -eq 0 ]; then
+            DOCKER_COMPOSE="podman compose"
+            return
+        fi
+
+        echo "podman compose is not supported in your podman version."
+    else
+        echo "Podman is not installed."
+    fi
+
+    return 1
+}
+
 
 COMPOSE_FILE="docker-compose.yaml"
 INFRA_COMPOSE_FILE="docker-compose-infra.yaml"
@@ -86,7 +132,7 @@ check_abroad_region() {
 }
 
 check_docker_proxy() {
-    proxy=$(docker info -f '{{ .HTTPSProxy }}')
+    proxy=$($DOCKER info -f '{{ .HTTPSProxy }}')
     if [ "$proxy" == "" ]; then
         return 1
     fi
@@ -103,8 +149,7 @@ prepare_image() {
     check_abroad_region
     if [ $? -ne 0 ]; then
         # not in abroad
-        check_docker_proxy
-        if [ $? -ne 0 ]; then
+        if [ $DOCKER == "podman" ] || check_docker_proxy; then
             # not set proxy
             $SED -e 's|image: nginx:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/nginx:|' $COMPOSE_FILE
             $SED -e 's|image: postgres:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/postgres:|' $INFRA_COMPOSE_FILE
@@ -177,10 +222,10 @@ gen_env_param() {
 wait_db_init_success() {
     # wait init db completed if need
     if [ "$DISABLE_UNIVER_RDS" != "true" ]; then
-        exit_code=$(docker wait univer-init-db)
-        if [ "$exit_code" -ne 0 ]; then
-            echo "db init fail with code: $exit_code, please check!"
-            exit $exit_code
+        $DOCKER wait univer-init-db
+        if [ $? -ne 0 ]; then
+            echo "db init fail with code: $?, please check!"
+            exit $?
         fi
     fi
 }
@@ -292,7 +337,7 @@ check_service() {
     # check universer service
     echo "Checking universer service..."
     for i in {1..30}; do
-        docker run --rm --network=univer-prod --env no_proxy=universer univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-check:0.0.1 > /dev/null
+        $DOCKER run --rm --network=univer-prod --env no_proxy=universer univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-check:0.0.1 > /dev/null
         if [ $? -eq 0 ]; then
             echo "check completed."
             return 0
@@ -310,10 +355,8 @@ start_demo_ui() {
 }
 
 start_demo_usip() {
-    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-ui up -d univer-demo-ui
-    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-usip up univer-demo-usip
-    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-ui down univer-demo-ui
-    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-usip rm -sf univer-demo-usip
+    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-ui,demo-usip up univer-demo-ui univer-demo-usip
+    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-ui,demo-usip down univer-demo-ui univer-demo-usip
 }
 
 help() {
@@ -322,6 +365,16 @@ help() {
     echo "  -h, --help                   Show help for the script"
     echo "  --enterprise                 Use enterprise edition"
     echo "  --load /path/image.tar.gz    Use to load enterprise edition image"
+    echo "  --podman                     (Experimental) Use podman to run the service."
+    echo "                               Podman needs docker-compose to support podman compose command."
+    echo "                               In Linux:"
+    echo "                               Before using podman, using the command 'sudo usermod --add-subuids 100000-165536 \$USER', "
+    echo "                                 'sudo usermod --add-subgids 100000-165536 \$USER' to add subuid and subgid range for current user"
+    echo "                                  may help avoid some permission issues."
+    echo "                               After that, using the command 'systemctl --user start podman.socket' to start podman socket service."
+    echo "                               In Windows:"
+    echo "                               After install podman, run 'podman machine init' and 'podman machine start'"
+    echo "                                 See https://github.com/containers/podman/blob/main/docs/tutorials/podman-for-windows.md"
     echo "Commands:"
     echo "  start             Start the service"
     echo "  stop              Stop the service"
@@ -339,12 +392,8 @@ command="$1"
 options=("$@")
 start_index=2
 
-case "$command" in
-  "-h" | "--help")
-    help
-    ;;
-  "start")
-    for ((i = $start_index; i <= $#; i++)); do
+function _optional_arg() {
+    for ((i = $start_index; i <= ${#options[@]}; i++)); do
         case "${options[$i - 1]}" in
         "--enterprise")
             enterprise
@@ -353,13 +402,46 @@ case "$command" in
             load_image ${options[$i]}
             i=$((i + 1))
             ;;
+        "--podman")
+            if _set_podman; then
+                DOCKER=$DOCKER
+                DOCKER_COMPOSE=$DOCKER_COMPOSE
+                echo "Using Podman command: $DOCKER"
+                echo "Using Podman Compose command: $DOCKER_COMPOSE"
+            else
+                echo "Podman with Compose support is not installed. Please install it to proceed."
+                exit 1
+            fi
+            ;;
         esac
     done
-    if [ -f .env.enterprise ] && [ "${univer_version}" != "" ] ; then
-        $SED -e 's|UNIVERSER_VERSION=.*|UNIVERSER_VERSION='"${univer_version}"'|' .env.enterprise
+
+    if [ "$DOCKER" == "" ] && [ "$UNIVER_RUN_ENGINE" == "podman" ] ; then
+        if _set_podman; then
+            DOCKER=$DOCKER
+            DOCKER_COMPOSE=$DOCKER_COMPOSE
+            echo "Using Podman command: $DOCKER"
+            echo "Using Podman Compose command: $DOCKER_COMPOSE"
+        else
+            echo "Podman with Compose support is not installed. Please install it to proceed."
+            exit 1
+        fi
     fi
-    echo "Staring the service..."
+
+    if [ "$DOCKER" == "" ] && ! _set_docker; then
+        echo "Docker with Compose support is required to run the service. Please install or start it to proceed."
+        exit 1
+    fi
+}
+
+case "$command" in
+  "-h" | "--help")
+    help
+    ;;
+  "start")
     _env
+    _optional_arg
+    echo "Staring the service..."
     checkLicense
     choose_compose_file
     init_config
@@ -367,48 +449,26 @@ case "$command" in
     start
     ;;
   "stop")
-    echo "Stopping the service..."
-    for ((i = $start_index; i <= $#; i++)); do
-        case "${options[$i - 1]}" in
-        "--enterprise")
-            ENV_FILE=".env.enterprise"
-            ;;
-        esac
-    done
     _env
+    _optional_arg
+
+    echo "Stopping the service..."
     choose_compose_file
     stop
     ;;
   "uninstall")
-    echo "uninstall the service..."
-    for ((i = $start_index; i <= $#; i++)); do
-        case "${options[$i - 1]}" in
-        "--enterprise")
-            ENV_FILE=".env.enterprise"
-            ;;
-        esac
-    done
     _env
+    _optional_arg
+
+    echo "uninstall the service..."
     choose_compose_file
     uninstall
     ;;
   "" | "restart")
-    echo "Restarting the service..."
-    for ((i = $start_index; i <= $#; i++)); do
-        case "${options[$i - 1]}" in
-        "--enterprise")
-            ENV_FILE=".env.enterprise"
-            ;;
-        "--load")
-            load_image ${options[$i]}
-            i=$((i + 1))
-            ;;
-        esac
-    done
-    if [ -f .env.enterprise ] && [ "${univer_version}" != "" ] ; then
-        $SED -e 's|UNIVERSER_VERSION=.*|UNIVERSER_VERSION='"${univer_version}"'|' .env.enterprise
-    fi
     _env
+    _optional_arg
+
+    echo "Restarting the service..."
     checkLicense
     choose_compose_file
     init_config
@@ -417,21 +477,24 @@ case "$command" in
     start
     ;;
   "check")
+    _optional_arg
     check_service
     ;;
   "start-demo-ui")
     _env
+    _optional_arg
     start_demo_ui
     ;;
   "start-demo-usip")
     _env
+    _optional_arg
     start_demo_usip
     ;;
   "log")
     ./log.sh
     ;;
   *)
-    echo "Unknown option: $option"
+    echo "Unknown command: $command"
     help
     exit 1
     ;;
