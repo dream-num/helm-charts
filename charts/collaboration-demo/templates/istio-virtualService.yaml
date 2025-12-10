@@ -12,7 +12,9 @@ spec:
   - {{ . | quote }}
   {{- end }}
   gateways:
-  - univer
+  {{- range .Values.istio.gateway.gateways }}
+  - {{ . | quote }}
+  {{- end }}
   http:
   - match:
       - uri:
@@ -37,7 +39,9 @@ spec:
   - {{ . | quote }}
   {{- end }}
   gateways:
-  - univer-feature
+  {{- range .Values.istio.featureGateway.gateways }}
+  - {{ . | quote }}
+  {{- end }}
   http:
   - match:
       - uri:

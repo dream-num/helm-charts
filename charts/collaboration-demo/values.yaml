@@ -75,6 +75,8 @@ istio:
     enabled: false
     hosts:
     - univer.private
+    gateways:
+    - univer
 
     # select istio ingress gateway. for example
     # ingressSelector:
@@ -89,6 +91,8 @@ istio:
     enabled: false
     hosts:
     - univer.feature
+    gateways:
+    - univer-feature
 
     # select istio ingress gateway. for example
     # ingressSelector:
