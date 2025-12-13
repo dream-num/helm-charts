@@ -1,0 +1,18 @@
+{{- if .Values.istio.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: {{ include "collaboration-helper-server.fullname" . }}
+  labels:
+    {{- include "collaboration-helper-server.labels" . | nindent 4 }}
+spec:
+  host: {{ include "collaboration-helper-server.fullname" . }}
+  trafficPolicy:
+    loadBalancer:
+      consistentHash:
+        httpHeaderName: x-session-id
+  subsets:
+  - name: default
+    labels:
+      version: default
+{{- end -}}

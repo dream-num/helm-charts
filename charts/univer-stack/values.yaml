@@ -77,9 +77,19 @@ collaboration-server:
   config:
     univerServer: universer:8000
     snapshotServer: universer:9000
+    helperService: collaboration-helper-server:5006
     saveSnapshotInterval: 3
   istio:
-    enabled: true 
+    enabled: true
+
+collaboration-helper-server:
+  fullnameOverride: collaboration-helper-server
+  replicaCount: 2
+  enabled: true
+  config:
+    univerServer: universer:8000
+    snapshotServer: universer:9000
+    unitInactivateTimeout: 180000 
 
 collaboration-demo:
   enabled: true
@@ -96,7 +106,7 @@ worker:
   fullnameOverride: worker-exchange
   image:
     repository: release/worker-exchange
-    tag: 0.12.4 # VERSION
+    tag: 0.13.0 # VERSION
   temporalServer:
     host: temporal-frontend:7233
     namespace: univer

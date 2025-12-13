@@ -1,4 +1,4 @@
-# Default values for univer-ssc.
+# Default values for collaboration-helper-server.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -32,11 +32,12 @@ enabled: true
 
 service:
   type: ClusterIP
-  apply: 5005
+  apply: 5006
 
 config:
   univerServer: universer:8000
   snapshotServer: universer:9000
+  unitInactivateTimeout: 180000
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -45,7 +46,7 @@ resources:
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   limits:
     cpu: 2000m
-    memory: 4Gi
+    memory: 8Gi
   requests:
     cpu: 10m
     memory: 64Mi

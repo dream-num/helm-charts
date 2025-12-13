@@ -13,7 +13,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.12.4 # VERSION
+  tag: 0.13.0 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -128,7 +128,7 @@ config:
     host: univer-ssc
     port: 5005
   collaborationHelper:
-    addr: univer-collaboration-helper-server:5006
+    addr: collaboration-helper-server:5006
   nodeRuntime:
     addr: http://localhost:14400
   pythonRuntime:
@@ -357,7 +357,7 @@ job:
     registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
     repository: release/universer-sql
     pullPolicy: IfNotPresent
-    tag: "0.0.18"
+    tag: "0.0.19"
 
 istio:
   enabled: false

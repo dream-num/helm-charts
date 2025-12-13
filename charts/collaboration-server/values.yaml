@@ -12,7 +12,7 @@ image:
   repository: release/univer-collaboration
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.12.4 # VERSION
+  tag: 0.13.0 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -46,7 +46,7 @@ service:
 config:
   univerServer: universer:8000
   snapshotServer: universer:9000
-  helperService: univer-collaboration-helper-server:5006
+  helperService: collaboration-helper-server:5006
   saveSheetSnapshotInterval: 50
   saveDocSnapshotInterval: 50
   enableMutationApplyInterceptor: false
