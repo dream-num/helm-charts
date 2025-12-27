@@ -13,7 +13,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.14.0 # VERSION
+  tag: 0.15.0 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -357,7 +357,7 @@ job:
     registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
     repository: release/universer-sql
     pullPolicy: IfNotPresent
-    tag: "0.0.19"
+    tag: "0.0.20"
 
 istio:
   enabled: false
