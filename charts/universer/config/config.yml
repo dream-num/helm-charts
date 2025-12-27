@@ -65,6 +65,25 @@ service:
   univerOps:
     addr: "{{ tpl .Values.config.univerOps.host . }}:{{ .Values.config.univerOps.port }}"
     timeout: 10s
+unitRoutingConf:
+  tiers:
+    - tierName: normal
+      enable: true
+      upgradeCellsThreshold: 0
+      downgradeCellsThreshold: 0
+      upgradeImportTimeThreshold: 0
+      applyServerAddr: "{{ tpl .Values.config.apply.host . }}:{{ .Values.config.apply.port }}"
+      applyServerTimeout: 10s
+    - tierName: large
+      enable: true
+      upgradeCellsThreshold:  1000000 # 1M cells
+      downgradeCellsThreshold: 900000 # 0.9M cells
+      upgradeImportTimeThreshold: 10
+      applyServerAddr: "{{ tpl .Values.config.apply.host . }}:{{ .Values.config.apply.port }}"
+      applyServerTimeout: 10s
+  cacheSeconds: 900
+  refreshSeconds: 60
+  tierSwitchDelaySeconds: 60
 apiLimit:
   {{- with .Values.config.apiLimit }}
   {{- toYaml . | nindent 2 }}

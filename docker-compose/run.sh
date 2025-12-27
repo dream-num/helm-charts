@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RELEASE_TIME="1766220206" # RELEASE_TIME
+RELEASE_TIME="1766821249" # RELEASE_TIME
 
 PLATFORM=$(uname)
 SED="sed -i"
@@ -208,6 +208,9 @@ gen_profiles() {
     if [ "$SSC_SERVER_ENABLED" == "true" ]; then
         profiles="${profiles} --profile ssc "
     fi
+    if [ "$ENABLE_LARGE_TIER_COLLABORATION_SERVER" == "true" ]; then
+        profiles="${profiles} --profile large-tier "
+    fi
     echo ${profiles}
 }
 
@@ -237,12 +240,7 @@ start() {
     $DOCKER_COMPOSE -f $INFRA_COMPOSE_FILE $env_param $profiles up -d
     
     wait_db_init_success
-    $DOCKER_COMPOSE -f $COMPOSE_FILE $env_param up -d
-
-    if [ "$SSC_SERVER_ENABLED" == "true" ]; then
-        sleep 1
-        $DOCKER_COMPOSE -f $COMPOSE_FILE $env_param $profiles up -d
-    fi
+    $DOCKER_COMPOSE -f $COMPOSE_FILE $env_param $profiles up -d
 
     if [ "$ENABLE_UNIVER_OBSERVABILITY" == "true" ]; then
         sleep 1
@@ -254,15 +252,11 @@ stop() {
     profiles=$(gen_profiles)
     env_param=$(gen_env_param)
 
-    if [ "$SSC_SERVER_ENABLED" == "true" ]; then
-        $DOCKER_COMPOSE -f $COMPOSE_FILE $env_param $profiles down
-    fi
-
     if [ "$ENABLE_UNIVER_OBSERVABILITY" == "true" ]; then
         $DOCKER_COMPOSE -f $OBSERVE_COMPOSE_FILE $env_param $profiles down
     fi
 
-    $DOCKER_COMPOSE -f $COMPOSE_FILE $env_param down
+    $DOCKER_COMPOSE -f $COMPOSE_FILE $env_param $profiles down
 
     $DOCKER_COMPOSE -f $INFRA_COMPOSE_FILE $env_param $profiles down
 }
@@ -271,15 +265,11 @@ uninstall() {
     profiles=$(gen_profiles)
     env_param=$(gen_env_param)
 
-    if [ "$SSC_SERVER_ENABLED" == "true" ]; then
-        $DOCKER_COMPOSE -f $COMPOSE_FILE $env_param $profiles down --volumes
-    fi
-
     if [ "$ENABLE_UNIVER_OBSERVABILITY" == "true" ]; then
         $DOCKER_COMPOSE -f $OBSERVE_COMPOSE_FILE $env_param $profiles down --volumes
     fi
 
-    $DOCKER_COMPOSE -f $COMPOSE_FILE $env_param down --volumes
+    $DOCKER_COMPOSE -f $COMPOSE_FILE $env_param $profiles down --volumes
 
     $DOCKER_COMPOSE -f $INFRA_COMPOSE_FILE $env_param $profiles down --volumes
 }

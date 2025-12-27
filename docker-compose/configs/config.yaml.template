@@ -57,6 +57,25 @@ service:
   collaborationHelper:
     addr: collaboration-helper-server:5006
     timeout: 180s
+unitRoutingConf:
+  tiers:
+    - tierName: normal
+      enable: true
+      upgradeCellsThreshold: 0
+      downgradeCellsThreshold: 0
+      upgradeImportTimeThreshold: 0
+      applyServerAddr: collaboration-envoy:10000
+      applyServerTimeout: 10s
+    - tierName: large
+      enable: ${ENABLE_LARGE_TIER_COLLABORATION_SERVER}
+      upgradeCellsThreshold: ${LARGE_TIER_MIN_CELLS_COUNT}
+      downgradeCellsThreshold: ${LARGE_TIER_DOWNGRADE_CELLS_COUNT}
+      upgradeImportTimeThreshold: ${LARGE_TIER_MIN_IMPORT_SECONDS}
+      applyServerAddr: large-collaboration-envoy:10000
+      applyServerTimeout: 10s
+  cacheSeconds: 1800 # 30min
+  refreshSeconds: 60
+  tierSwitchDelaySeconds: 60
 admin: []
 extra:
   celldataMaxSize: 10485760 # 10M bytes

@@ -20,7 +20,7 @@ services:
       - 8000
       - 9000
     environment:
-      - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},univer-temporal,collaboration-envoy,univer-minio,univer-demo-usip,ssc-server,collaboration-helper-server
+      - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},univer-temporal,collaboration-envoy,univer-minio,univer-demo-usip,ssc-server,collaboration-helper-server,large-collaboration-envoy
       - SERVICE_NAME=Universer
       - SERVICE_VERSION=${UNIVERSER_VERSION}
     volumes:
@@ -84,6 +84,56 @@ services:
       resources:
         limits:
           memory: ${COLLABORATION_SERVER_MEMORY_LIMIT}M
+
+  large-collaboration-envoy:
+    profiles:
+      - large-tier
+    restart: always
+    image: envoyproxy/envoy:v1.31.3
+    volumes:
+      - ./envoy/large_tier_envoy.yaml:/etc/envoy/envoy.yaml
+    expose:
+      - 10000
+    networks:
+      - univer
+    depends_on:
+      - large-collaboration-server
+    environment:
+      - no_proxy=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},large-collaboration-server
+    deploy:
+      replicas: 1
+      endpoint_mode: dnsrr
+
+  large-collaboration-server:
+    profiles:
+      - large-tier
+    restart: always
+    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration:${COLLABORATION_SERVER_VERSION}
+    environment:
+      - URL_OF_APPLY_SERVICE=0.0.0.0:5002
+      - URL_OF_UNIVERSER_SERVICE=universer:8000
+      - URL_OF_SNAPSHOT_SERVICE=universer:9000
+      - URL_OF_HELPER_SERVICE=collaboration-helper-server:5006
+      - SAVE_SHEET_SNAPSHOT_INTERVAL=${SAVE_SHEET_SNAPSHOT_INTERVAL}
+      - SAVE_DOC_SNAPSHOT_INTERVAL=50
+      - UNIT_INACTIVATE_TIMEOUT=${UNIT_INACTIVATE_TIMEOUT}
+      - ENABLE_MUTATION_APPLY_INTERCEPTOR=true
+      - no_proxy=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},universer,collaboration-helper-server
+      - NODE_OPTIONS=--max-old-space-size=${LARGE_TIER_COLLABORATION_SERVER_MEMORY_LIMIT}
+      - LRU_CACHE_CAPACITY=10000
+    expose:
+      - 5002
+      - 9090
+    networks:
+      - univer
+    labels:
+      - com.univer.app=large-collaboration-server
+    deploy:
+      replicas: ${LARGE_TIER_COLLABORATION_SERVER_REPLICATION_CNT}
+      endpoint_mode: dnsrr
+      resources:
+        limits:
+          memory: ${LARGE_TIER_COLLABORATION_SERVER_MEMORY_LIMIT}M
 
   collaboration-helper-server:
     restart: always
