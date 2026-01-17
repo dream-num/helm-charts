@@ -6,6 +6,10 @@ server:
     {{- range .Values.config.server.http.corsAllowOrigins }}
     - {{ . | quote}}
     {{- end }}
+    corsAllowHeaders:
+    {{- range .Values.config.server.http.corsAllowHeaders }}
+    - {{ . | quote }}
+    {{- end }}
   grpc:
     addr: 0.0.0.0:{{ .Values.service.grpc }}
     timeout: 60s # max timeout, not real timeout
@@ -241,6 +245,15 @@ permissionBasedExport:
 wechat:
   appID: {{ .Values.config.wechat.appID }}
   appSecret: {{ .Values.config.wechat.appSecret }}
+  web:
+    appID: {{ .Values.config.wechat.web.appID }}
+    appSecret: {{ .Values.config.wechat.web.appSecret }}
+  miniProgram:
+    appID: {{ .Values.config.wechat.miniProgram.appID }}
+    appSecret: {{ .Values.config.wechat.miniProgram.appSecret }}
+  jsapi:
+    appID: {{ .Values.config.wechat.jsapi.appID }}
+    appSecret: {{ .Values.config.wechat.jsapi.appSecret }}
 {{- if .Values.innerConfig }}
 {{ toYaml .Values.innerConfig }}
 {{- end }}

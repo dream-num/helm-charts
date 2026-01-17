@@ -13,7 +13,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.15.1 # VERSION
+  tag: 0.15.2 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -78,6 +78,7 @@ config:
   server:
     http: 
       corsAllowOrigins: []
+      corsAllowHeaders: ["content-type", "authorization"]
     shutdownTimeout: 300s
   database:
     maxOpenConns: 100
@@ -310,8 +311,17 @@ config:
   invitationCode:
     enabled: false
   wechat:
-    appID: ""
-    appSecret: ""
+    appID: "" # deprecated
+    appSecret: "" # deprecated
+    web:
+      appID: ""
+      appSecret: ""
+    miniProgram:
+      appID: ""
+      appSecret: ""
+    jsapi:
+      appID: ""
+      appSecret: ""
   permissionBasedExport:
     enabled: false
   notifyConf:

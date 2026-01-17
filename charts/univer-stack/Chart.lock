@@ -1,13 +1,13 @@
 dependencies:
 - name: universer
   repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
-  version: 0.9.2
+  version: 0.15.1
 - name: collaboration-server
   repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
-  version: 0.9.2
+  version: 0.15.1
 - name: collaboration-demo
   repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
-  version: 0.9.2
+  version: 0.15.1
 - name: postgresql
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 13.4.3
@@ -28,7 +28,7 @@ dependencies:
   version: 0.33.0
 - name: worker
   repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
-  version: 0.9.2
+  version: 0.15.1
 - name: base
   repository: https://istio-release.storage.googleapis.com/charts
   version: 1.20.1
@@ -46,6 +46,9 @@ dependencies:
   version: 0.1.0
 - name: univer-ssc
   repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
-  version: 0.9.2
-digest: sha256:c48503e2e89d7a78fb07d5d400a40993111be83bc5f944b9c8c47adb55870aec
-generated: "2025-07-11T19:32:31.721032488+08:00"
+  version: 0.15.1
+- name: collaboration-helper-server
+  repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
+  version: 0.15.2-alpha
+digest: sha256:0a5e6e0831f3bc582f9fbb5b58cbba9887e531ffe104071bcb0d4088d825d4c3
+generated: "2026-01-12T16:48:36.318906004+08:00"

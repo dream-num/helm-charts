@@ -2,6 +2,10 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+global:
+  istioDefaultRevision: default
+
+
 replicaCount: 1
 
 image:
@@ -9,7 +13,7 @@ image:
   repository: release/univer-collaboration
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.15.1 # VERSION
+  tag: 0.15.2 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""

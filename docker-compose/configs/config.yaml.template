@@ -3,6 +3,7 @@ server:
     addr: 0.0.0.0:8000
     timeout: 10s
     corsAllowOrigins: ${CORS_ALLOW_ORIGINS}
+    corsAllowHeaders: ${CORS_ALLOW_HEADERS}
   grpc:
     addr: 0.0.0.0:9000
     timeout: 10s
