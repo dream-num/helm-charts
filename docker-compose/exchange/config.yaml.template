@@ -19,3 +19,9 @@ redis:
   password: "${REDIS_PASSWORD}"
   read_timeout: 1s
   write_timeout: 1s
+  tlsConfig:
+    enabled: ${REDIS_TLS_ENABLED}
+    insecure: ${REDIS_TLS_INSECURE}
+    ca: "${REDIS_TLS_CA}"
+    cert: "${REDIS_TLS_CERT}"
+    key: "${REDIS_TLS_KEY}"

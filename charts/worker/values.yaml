@@ -84,6 +84,12 @@ redis:
     sentinelAddr: ""
     username: ""
     password: ""
+  tlsConfig:
+    enabled: false
+    insecure: false
+    ca: ""
+    cert: ""
+    key: ""
 
 jaeger:
   enabled: false
