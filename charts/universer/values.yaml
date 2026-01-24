@@ -13,7 +13,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.15.2 # VERSION
+  tag: 0.15.3 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -122,6 +122,12 @@ config:
       sentinelAddr: ""
       username: ""
       password: ""
+    tlsConfig:
+      enabled: false
+      insecure: false
+      ca: ""
+      cert: ""
+      key: ""
   apply:
     host: collaboration-server
     port: 5002
@@ -341,6 +347,7 @@ config:
     enabled: false
   proxyConf:
     proxyUrl: ""
+  xunfei: {}
 
 innerConfig: {}
 

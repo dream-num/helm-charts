@@ -272,3 +272,7 @@ proxyConf:
 {{- with .Values.config.proxyConf }}
   {{- toYaml . | nindent 2 }}
 {{- end }}
+xunfei:
+{{- with .Values.config.xunfei }}
+  {{- toYaml . | nindent 2 }}
+{{- end }}
