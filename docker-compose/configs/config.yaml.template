@@ -112,6 +112,7 @@ dataProtectionConf:
 sesConfig: {}
 usip:
   enabled: ${USIP_ENABLED}
+  apikey: "${USIP_APIKEY}"
   uri:
     credential: ${USIP_URI_CREDENTIAL}
     userinfo: ${USIP_URI_USERINFO}
