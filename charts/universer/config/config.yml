@@ -139,6 +139,7 @@ auth:
     liteServer: {{ .Values.config.auth.admin.liteServer }}
 usip:
   enabled: {{ .Values.config.usip.enabled }}
+  apikey: {{ .Values.config.usip.apikey | quote }}
   {{- with .Values.config.usip.uri }}
   uri:
     {{- toYaml . | nindent 4 }}
