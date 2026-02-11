@@ -80,7 +80,9 @@ spec:
               value: --max-old-space-size={{ .Values.maxMemoryLimit }}
             - name: LRU_CACHE_CAPACITY
               value: "10000"
-              
+            - name: API_TIMEOUT
+              value: {{ .Values.config.apiTimeout | quote }}
+
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

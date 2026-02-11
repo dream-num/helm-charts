@@ -64,6 +64,8 @@ spec:
               value: {{ .Values.istio.version | quote }}
             - name: CLIENT_LICENSE_TEXT
               value: {{ .Values.license | quote }}
+            - name: API_TIMEOUT
+              value: {{ .Values.config.apiTimeout | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

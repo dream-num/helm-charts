@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RELEASE_TIME="1769846419" # RELEASE_TIME
+RELEASE_TIME="1770798678" # RELEASE_TIME
 
 PLATFORM=$(uname)
 SED="sed -i"
@@ -117,7 +117,13 @@ checkLicense() {
     if [ "$(expr "$fourth_part" \< "$RELEASE_TIME")" == "1" ]; then
       mv -f configs/license.txt configs/license.txt.bak 2>/dev/null || true
       mv -f configs/licenseKey.txt configs/licenseKey.txt.bak 2>/dev/null || true
-      formatted_date=$(date -d @"$fourth_part" +"%Y-%m-%d")
+      if date -d @0 >/dev/null 2>&1; then
+        # GNU date (Linux)
+        formatted_date=$(date -d @"$fourth_part" +"%Y-%m-%d")
+      else
+        # BSD date (macOS)
+        formatted_date=$(date -r "$fourth_part" +"%Y-%m-%d")
+      fi
       echo "Your commercial license expired on ${formatted_date}. Visit https://univer.ai/license or contact sales@univer.ai for renewal."
     fi
   else
