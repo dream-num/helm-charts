@@ -12,7 +12,7 @@ image:
   repository: release/univer-collaboration
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.15.4 # VERSION
+  tag: 0.15.5 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -50,6 +50,7 @@ config:
   saveSheetSnapshotInterval: 50
   saveDocSnapshotInterval: 50
   enableMutationApplyInterceptor: false
+  apiTimeout: 60000 # 60000ms
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious

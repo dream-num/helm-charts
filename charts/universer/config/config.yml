@@ -61,7 +61,7 @@ service:
     addr: {{ .Values.config.yuumi.addr }}
   {{- if .Values.config.fileExchange.enabled }}
   fileExchange:
-    addr: {{ .Values.config.fileExchange.addr }}
+    {{- toYaml .Values.config.fileExchange | nindent 4 }}
   {{- end }}
   ssc:
     addr: "{{ tpl .Values.config.ssc.host . }}:{{ .Values.config.ssc.port }}"
