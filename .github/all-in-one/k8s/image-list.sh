@@ -2,7 +2,6 @@
 
 images=(
     "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration:${UNIVER_COLLABORATION_VERSION}"
-    "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:${UNIVER_COLLABORATION_LITE_VERSION}"
     "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer:${UNIVERSER_VERSION}"
     "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/worker-exchange:${UNIVER_WORKER_EXCHANGE_VERSION}"
     "univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-sql:${UNIVERSER_SQL_VERSION}"

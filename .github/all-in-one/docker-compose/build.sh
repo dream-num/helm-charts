@@ -27,7 +27,7 @@ pull_image univerai/redis:${REDIS_VERSION}
 pull_image temporalio/auto-setup:${TEMPORAL_VERSION}
 pull_image univerai/minio:${MINIO_VERSION}
 pull_image univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/worker-exchange:${UNIVER_WORKER_EXCHANGE_VERSION}
-pull_image univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:${UNIVER_DEMO_UI_VERSION}
+# pull_image univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:${UNIVER_DEMO_UI_VERSION}
 pull_image univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-check:0.0.1
 pull_image envoyproxy/envoy:v1.31.3
 pull_image univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/usip-server:latest
@@ -42,7 +42,6 @@ docker save \
     temporalio/auto-setup:${TEMPORAL_VERSION} \
     univerai/minio:${MINIO_VERSION} \
     univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/worker-exchange:${UNIVER_WORKER_EXCHANGE_VERSION} \
-    univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration-lite:${UNIVER_DEMO_UI_VERSION} \
     univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/universer-check:0.0.1 \
     envoyproxy/envoy:v1.31.3 \
     univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/usip-server:latest \
