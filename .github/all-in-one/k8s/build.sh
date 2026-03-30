@@ -7,11 +7,11 @@ ls $chartsFolder
 # YQ=mikefarah/yq:4
 YQ=univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/yq:4
 
-UNIVERSER_VERSION=$(docker run --rm -v $chartsFolder/universer/:/tmp/ $YQ e '.image.tag' /tmp/values.yaml)
-UNIVERSER_SQL_VERSION=$(docker run --rm -v $chartsFolder/universer/:/tmp/ $YQ e '.job.image.tag' /tmp/values.yaml)
-UNIVER_COLLABORATION_VERSION=$(docker run --rm -v $chartsFolder/collaboration-server/:/tmp/ $YQ e '.image.tag' /tmp/values.yaml)
-UNIVER_COLLABORATION_LITE_VERSION=$(docker run --rm -v $chartsFolder/collaboration-demo/:/tmp/ $YQ e '.image.tag' /tmp/values.yaml)
-UNIVER_WORKER_EXCHANGE_VERSION=$(docker run --rm -v $chartsFolder/univer-stack/:/tmp/ $YQ e '.worker.image.tag' /tmp/values.yaml)
+UNIVERSER_VERSION=$(cat $chartsFolder/universer/values.yaml | docker run --rm -i $YQ e '.image.tag' -)
+UNIVERSER_SQL_VERSION=$(cat $chartsFolder/universer/values.yaml | docker run --rm -i $YQ e '.job.image.tag' -)
+UNIVER_COLLABORATION_VERSION=$(cat $chartsFolder/collaboration-server/values.yaml | docker run --rm -i $YQ e '.image.tag' -)
+UNIVER_COLLABORATION_LITE_VERSION=$(cat $chartsFolder/collaboration-demo/values.yaml | docker run --rm -i $YQ e '.image.tag' -)
+UNIVER_WORKER_EXCHANGE_VERSION=$(cat $chartsFolder/univer-stack/values.yaml | docker run --rm -i $YQ e '.worker.image.tag' -)
 
 echo "UNIVERSER_VERSION: $UNIVERSER_VERSION"
 
