@@ -25,11 +25,19 @@ cat image-list.sh
 # pull univer service images
 for image in "${images[@]}"; do
     docker pull $image
+    if [[ $? -ne 0 ]]; then
+        echo "Failed to pull image: $image"
+        exit 1
+    fi
 done
 
 # pull observability images
 for image in "${observability_images[@]}"; do
     docker pull $image
+    if [[ $? -ne 0 ]]; then
+        echo "Failed to pull image: $image"
+        exit 1
+    fi
 done
 
 docker save "${images[@]}" | gzip > univer-image.tar.gz
