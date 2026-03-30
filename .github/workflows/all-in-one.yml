@@ -58,7 +58,7 @@ jobs:
 
   build-k8s:
     name: build-k8s
-    runs-on: shenzhen
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
 

@@ -4,8 +4,8 @@ chartsFolder=${1:-./../../../charts}
 
 ls $chartsFolder
 
-# YQ=mikefarah/yq:4
-YQ=univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/yq:4
+YQ=mikefarah/yq:4
+# YQ=univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/yq:4
 
 UNIVERSER_VERSION=$(cat $chartsFolder/universer/values.yaml | docker run --rm -i $YQ e '.image.tag' -)
 UNIVERSER_SQL_VERSION=$(cat $chartsFolder/universer/values.yaml | docker run --rm -i $YQ e '.job.image.tag' -)
