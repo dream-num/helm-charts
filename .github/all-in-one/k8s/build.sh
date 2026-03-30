@@ -25,22 +25,36 @@ cat image-list.sh
 
 . ./image-list.sh
 
+pull_with_retry() {
+    local image=$1
+    local max_retries=5
+    local retry_delay=10
+    local attempt=1
+
+    while [[ $attempt -le $max_retries ]]; do
+        echo "Pulling $image (attempt $attempt/$max_retries)..."
+        docker pull "$image" && return 0
+
+        if [[ $attempt -lt $max_retries ]]; then
+            echo "Failed to pull $image, retrying in ${retry_delay}s..."
+            sleep $retry_delay
+        fi
+
+        ((attempt++))
+    done
+
+    echo "Failed to pull image after $max_retries attempts: $image"
+    return 1
+}
+
 # pull univer service images
 for image in "${images[@]}"; do
-    docker pull $image
-    if [[ $? -ne 0 ]]; then
-        echo "Failed to pull image: $image"
-        exit 1
-    fi
+    pull_with_retry "$image" || exit 1
 done
 
 # pull observability images
 for image in "${observability_images[@]}"; do
-    docker pull $image
-    if [[ $? -ne 0 ]]; then
-        echo "Failed to pull image: $image"
-        exit 1
-    fi
+    pull_with_retry "$image" || exit 1
 done
 
 docker save "${images[@]}" | gzip > univer-image.tar.gz
