@@ -13,7 +13,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.20.1 # VERSION
+  tag: 0.21.0 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -206,6 +206,7 @@ config:
       defaultShareRole: ""
       enableObjInherit: false
       customerStrategies: ""
+      provider: 1
     admin:
       userIDs: []
       liteServer: false
@@ -222,11 +223,9 @@ config:
     enabled: false
     apikey: ""
     uri:
-      userinfo: "http://usip:8080/userinfo"
-      collaborators: "http://usip:8080/collaborators"
-      role: "http://usip:8080/role"
-      credential: "http://usip:8080/credential"
-      unitEditTime: "http://usip:8080/unitEditTime"
+      userinfo: "http://univer-cloud:8000/usip-api/users"
+      credential: "http://univer-cloud:8000/usip-api/credential"
+      unitEditTime: "http://univer-cloud:8000/usip-api/unit/edit-time"
   dataProtectionConf:
     enableProtection: false
     kmsServiceName: "none"
