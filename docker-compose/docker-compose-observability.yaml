@@ -118,7 +118,7 @@ services:
     networks:
       - univer
     environment:
-      DATA_SOURCE_NAME: "postgresql://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/postgres?sslmode=disable"
+      DATA_SOURCE_NAME: "postgresql://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/postgres?sslmode=${DATABASE_SSL_MODE:-disable}"
     profiles:
       - rds
 

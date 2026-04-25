@@ -43,6 +43,7 @@ universer:
       dbname: univer
       username: root
       password: mysql
+      sslMode: disable
     rabbitmq:
       host: rabbitmq
       port: 5672
