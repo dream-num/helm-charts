@@ -13,7 +13,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.21.0 # VERSION
+  tag: 0.21.1 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -91,6 +91,7 @@ config:
     dbname: univer
     username: postgres
     password: postgres
+    sslMode: disable
     replicaHost: ""
   rabbitmq:
     enabled: true

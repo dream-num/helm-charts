@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RELEASE_TIME="1776506532" # RELEASE_TIME
+RELEASE_TIME="1777103566" # RELEASE_TIME
 
 PLATFORM=$(uname)
 SED="sed -i"
@@ -70,14 +70,29 @@ INFRA_COMPOSE_FILE="docker-compose-infra.yaml"
 OBSERVE_COMPOSE_FILE="docker-compose-observability.yaml"
 ENV_FILE=".env"
 ENV_CUSTOM_FILE=".env.custom"
-DATABASE_DSN='host=${DATABASE_HOST} port=${DATABASE_PORT} dbname=${DATABASE_DBNAME} user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} sslmode=disable TimeZone=Asia/Shanghai'
+DATABASE_DSN=""
 DATABASE_REPLICA_DSN=""
 NOT_CHECK_REGION=${NOT_CHECK_REGION:-false}
 
 choose_compose_file() {
+    local database_ssl_mode=${DATABASE_SSL_MODE:-disable}
+    local mysql_tls_mode=${DATABASE_SSL_MODE:-disable}
+    local mysql_tls_query=""
+    case "$mysql_tls_mode" in
+    ""|"disable"|"false")
+    ;;
+    "require"|"verify-ca"|"verify-full")
+        mysql_tls_query="\\&tls=true"
+    ;;
+    *)
+        mysql_tls_query="\\&tls=${mysql_tls_mode}"
+    ;;
+    esac
+    DATABASE_DSN="host=\${DATABASE_HOST} port=\${DATABASE_PORT} dbname=\${DATABASE_DBNAME} user=\${DATABASE_USERNAME} password=\${DATABASE_PASSWORD} sslmode=${database_ssl_mode} TimeZone=Asia/Shanghai"
+
     case "$DATABASE_DRIVER" in
     "mysql")
-        DATABASE_DSN='${DATABASE_USERNAME}:${DATABASE_PASSWORD}@tcp(${DATABASE_HOST}:${DATABASE_PORT})/${DATABASE_DBNAME}?charset=utf8mb4\&parseTime=True\&loc=Local'
+        DATABASE_DSN="\${DATABASE_USERNAME}:\${DATABASE_PASSWORD}@tcp(\${DATABASE_HOST}:\${DATABASE_PORT})/\${DATABASE_DBNAME}?charset=utf8mb4\\&parseTime=True\\&loc=Local${mysql_tls_query}"
         COMPOSE_FILE="docker-compose.mysql.yaml"
     ;;
     "dameng")
@@ -85,7 +100,7 @@ choose_compose_file() {
         COMPOSE_FILE="docker-compose.db.yaml"
     ;;
     "gaussdb")
-        DATABASE_DSN='host=${DATABASE_HOST} port=${DATABASE_PORT} dbname=${DATABASE_DBNAME} user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} sslmode=disable TimeZone=Asia/Shanghai'
+        DATABASE_DSN="host=\${DATABASE_HOST} port=\${DATABASE_PORT} dbname=\${DATABASE_DBNAME} user=\${DATABASE_USERNAME} password=\${DATABASE_PASSWORD} sslmode=${database_ssl_mode} TimeZone=Asia/Shanghai"
         COMPOSE_FILE="docker-compose.db.yaml"
     ;;
     esac
@@ -93,16 +108,16 @@ choose_compose_file() {
     if [ "${DATABASE_READ_HOST}" != "" ]; then
         case "$DATABASE_DRIVER" in
         "postgresql")
-            DATABASE_REPLICA_DSN='host=${DATABASE_READ_HOST} port=${DATABASE_PORT} dbname=${DATABASE_DBNAME} user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} sslmode=disable TimeZone=Asia/Shanghai'
+            DATABASE_REPLICA_DSN="host=\${DATABASE_READ_HOST} port=\${DATABASE_PORT} dbname=\${DATABASE_DBNAME} user=\${DATABASE_USERNAME} password=\${DATABASE_PASSWORD} sslmode=${database_ssl_mode} TimeZone=Asia/Shanghai"
         ;;
         "mysql")
-            DATABASE_REPLICA_DSN='${DATABASE_USERNAME}:${DATABASE_PASSWORD}@tcp(${DATABASE_READ_HOST}:${DATABASE_PORT})/${DATABASE_DBNAME}?charset=utf8mb4\&parseTime=True\&loc=Local'
+            DATABASE_REPLICA_DSN="\${DATABASE_USERNAME}:\${DATABASE_PASSWORD}@tcp(\${DATABASE_READ_HOST}:\${DATABASE_PORT})/\${DATABASE_DBNAME}?charset=utf8mb4\\&parseTime=True\\&loc=Local${mysql_tls_query}"
         ;;
         "dameng")
             DATABASE_REPLICA_DSN='dm://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_READ_HOST}:${DATABASE_PORT}?autoCommit=true'
         ;;
         "gaussdb")
-            DATABASE_REPLICA_DSN='host=${DATABASE_READ_HOST} port=${DATABASE_PORT} dbname=${DATABASE_DBNAME} user=${DATABASE_USERNAME} password=${DATABASE_PASSWORD} sslmode=disable TimeZone=Asia/Shanghai'
+            DATABASE_REPLICA_DSN="host=\${DATABASE_READ_HOST} port=\${DATABASE_PORT} dbname=\${DATABASE_DBNAME} user=\${DATABASE_USERNAME} password=\${DATABASE_PASSWORD} sslmode=${database_ssl_mode} TimeZone=Asia/Shanghai"
         ;;
         esac
     fi

@@ -57,10 +57,23 @@ version: default
 {{- end }}
 
 {{- define "universer.database.dsn" -}}
+{{- $sslMode := default "disable" .sslMode -}}
+{{- $mysqlTLS := "" -}}
+{{- if eq $sslMode "disable" -}}
+{{- $mysqlTLS = "" -}}
+{{- else if or (eq $sslMode "require") (eq $sslMode "verify-ca") (eq $sslMode "verify-full") -}}
+{{- $mysqlTLS = "true" -}}
+{{- else -}}
+{{- $mysqlTLS = $sslMode -}}
+{{- end -}}
 {{- if eq .driver "postgresql" -}}
-{{- printf "host=%s port=%v user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai" .host .port .username .password .dbname -}}
+{{- printf "host=%s port=%v user=%s password=%s dbname=%s sslmode=%s TimeZone=Asia/Shanghai" .host .port .username .password .dbname $sslMode -}}
 {{- else if eq .driver "mysql" -}}
+{{- if $mysqlTLS -}}
+{{- printf "%s:%s@tcp(%s:%v)/%s?charset=utf8mb4&parseTime=True&loc=Local&tls=%s" .username .password .host .port .dbname $mysqlTLS -}}
+{{- else -}}
 {{- printf "%s:%s@tcp(%s:%v)/%s?charset=utf8mb4&parseTime=True&loc=Local" .username .password .host .port .dbname -}}
+{{- end -}}
 {{- else -}}
 {{ fail "unknow database driver, should use postgresql or mysql." }}
 {{- end }}
@@ -68,10 +81,23 @@ version: default
 
 {{- define "universer.database.replicaDSN" -}}
 {{- if .replicaHost -}}
+{{- $sslMode := default "disable" .sslMode -}}
+{{- $mysqlTLS := "" -}}
+{{- if eq $sslMode "disable" -}}
+{{- $mysqlTLS = "" -}}
+{{- else if or (eq $sslMode "require") (eq $sslMode "verify-ca") (eq $sslMode "verify-full") -}}
+{{- $mysqlTLS = "true" -}}
+{{- else -}}
+{{- $mysqlTLS = $sslMode -}}
+{{- end -}}
 {{- if eq .driver "postgresql" -}}
-{{- printf "host=%s port=%v user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai" .replicaHost .port .username .password .dbname -}}
+{{- printf "host=%s port=%v user=%s password=%s dbname=%s sslmode=%s TimeZone=Asia/Shanghai" .replicaHost .port .username .password .dbname $sslMode -}}
 {{- else if eq .driver "mysql" -}}
+{{- if $mysqlTLS -}}
+{{- printf "%s:%s@tcp(%s:%v)/%s?charset=utf8mb4&parseTime=True&loc=Local&tls=%s" .username .password .replicaHost .port .dbname $mysqlTLS -}}
+{{- else -}}
 {{- printf "%s:%s@tcp(%s:%v)/%s?charset=utf8mb4&parseTime=True&loc=Local" .username .password .replicaHost .port .dbname -}}
+{{- end -}}
 {{- else -}}
 {{ fail "unknow database driver, should use postgresql or mysql." }}
 {{- end }}

@@ -62,3 +62,11 @@ HOST_GRAFANA_PORT=13000
 ```
 
 3. If you need the server sql schema, you can get from [this](https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/latest/univer-server-sql-latest.tar.gz)
+
+4. How to enable database SSL mode?
+```
+set in the .env.custom file:
+DATABASE_SSL_MODE=require
+TEMPORAL_SQL_TLS_ENABLED=true
+TEMPORAL_SQL_TLS_DISABLE_HOST_VERIFICATION=true
+```

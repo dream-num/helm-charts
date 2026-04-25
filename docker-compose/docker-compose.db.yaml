@@ -204,6 +204,8 @@ services:
       - POSTGRES_USER=temporal
       - POSTGRES_PWD=temporal
       - TEMPORAL_CLI_SHOW_STACKS=1
+      - SQL_TLS_ENABLED=${TEMPORAL_SQL_TLS_ENABLED:-false}
+      - SQL_TLS_DISABLE_HOST_VERIFICATION=${TEMPORAL_SQL_TLS_DISABLE_HOST_VERIFICATION:-false}
       - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET}
     volumes:
       - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig

@@ -62,3 +62,11 @@ HOST_GRAFANA_PORT=13000
 ```
 
 3. 如果你需要服务的 sql 定义，可以从[这里获取](https://release-univer.oss-cn-shenzhen.aliyuncs.com/releases/latest/univer-server-sql-latest.tar.gz)
+
+4. 如何开启数据库 SSL 模式？
+```
+在 .env.custom 文件中设置：
+DATABASE_SSL_MODE=require
+TEMPORAL_SQL_TLS_ENABLED=true
+TEMPORAL_SQL_TLS_DISABLE_HOST_VERIFICATION=true
+```
