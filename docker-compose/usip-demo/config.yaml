@@ -1,10 +1,14 @@
 host: http://localhost:8080
 
+server:
+  port: 8080
+
 database:
   driver: sqlite
   dsn: demo.db
 
 redis:
+  enabled: true
   addr: univer-redis:6379
 
 universer:
