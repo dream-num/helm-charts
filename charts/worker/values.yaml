@@ -6,10 +6,10 @@ replicaCount: 1
 
 image:
   registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
-  repository: release/worker-demo
+  repository: release/worker-exchange
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  tag: 0.23.0 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
@@ -48,7 +48,7 @@ affinity: {}
 
 temporalServer:
   host: temporal-frontend.temporal:7233
-  namespace: default
+  namespace: univer
 temporalWorker:
   importConcurrent: 1
   exportConcurrent: 1

@@ -33,11 +33,6 @@ cd helm-charts/docker-compose
 bash run.sh
 ```
 
-5. 可以利用我们提供的demo打开对应的表格. 
-```bash
-bash run.sh start-demo-ui
-```
-
 ## Use port
 
 | service   | port  | description              |

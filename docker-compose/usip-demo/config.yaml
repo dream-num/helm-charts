@@ -15,7 +15,6 @@ universer:
   host: http://lb:8000
 
 univer:
-  docHost: ":3010/pro-demo/docs"
-  sheetHost: ":3010/pro-demo/sheet"
+  sheetHost: "/sheet"
 
 font: web/public/font/SourceHanSansCN-VF.ttf

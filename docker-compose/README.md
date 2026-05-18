@@ -33,11 +33,6 @@ cd helm-charts/docker-compose
 bash run.sh
 ```
 
-5. You can use our demo to try. 
-```bash
-bash run.sh start-demo-ui
-```
-
 ## Use port
 
 | service   | port  | description              |
