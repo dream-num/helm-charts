@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RELEASE_TIME="1778659750" # RELEASE_TIME
+RELEASE_TIME="1779094215" # RELEASE_TIME
 
 PLATFORM=$(uname)
 SED="sed -i"
@@ -360,14 +360,9 @@ check_service() {
     return 1
 }
 
-start_demo_ui() {
-    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-ui up univer-demo-ui
-    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-ui rm -sf univer-demo-ui
-}
-
 start_demo_usip() {
-    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-ui,demo-usip up univer-demo-ui univer-demo-usip
-    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-ui,demo-usip down univer-demo-ui univer-demo-usip
+    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-usip up univer-demo-usip
+    $DOCKER_COMPOSE -f $COMPOSE_FILE --profile demo-usip down univer-demo-usip
 }
 
 help() {
@@ -392,7 +387,6 @@ help() {
     echo "  uninstall         uninstall"
     echo "  restart           Restart the service"
     echo "  check             Check the service health"
-    echo "  start-demo-ui     Start the sdk demo ui"
     echo "  start-demo-usip   Start the usip demo"
     echo "  log               Cat error logs for troubleshooting"
     echo "Default command:"
@@ -490,11 +484,6 @@ case "$command" in
   "check")
     _optional_arg
     check_service
-    ;;
-  "start-demo-ui")
-    _env
-    _optional_arg
-    start_demo_ui
     ;;
   "start-demo-usip")
     _env
