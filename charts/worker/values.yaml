@@ -9,7 +9,7 @@ image:
   repository: release/worker-exchange
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.24.0 # VERSION
+  tag: 0.25.0 # VERSION
 
 imagePullSecrets: []
 nameOverride: ""
