@@ -5,6 +5,18 @@ _HOST=${_HOST:-"univer.ai"}
 UNIVER_VERSION=${UNIVER_VERSION:-"latest"}
 UNIVER_RUN_ENGINE=${UNIVER_RUN_ENGINE:-"docker"}
 
+# Terminal color support
+_COLOR_BOLD=""
+_COLOR_CYAN=""
+_COLOR_UNDERLINE=""
+_COLOR_RESET=""
+if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+    _COLOR_BOLD='\033[1m'
+    _COLOR_CYAN='\033[36m'
+    _COLOR_UNDERLINE='\033[4m'
+    _COLOR_RESET='\033[0m'
+fi
+
 # get os type
 osType=$(uname)
 if [ "${osType}" == "Darwin" ]; then
@@ -14,7 +26,7 @@ elif [ "${osType}" == "Linux" ]; then
 elif [[ "${osType}" == MINGW64* ]]; then
     osType="mingw"
 else
-    echo "Warning: Unknow OS type ${osType}"
+    echo "Warning: Unknown OS type ${osType}"
 fi
 
 # get arch type
@@ -24,7 +36,7 @@ if [ "${archType}" == "x86_64" ]; then
 elif [ "${archType}" == "aarch64" ] || [ "$archType" == "arm64" ]; then
     archType="arm64"
 else
-    echo "Error: Unsupport arch type ${archType}"
+    echo "Error: Unsupported arch type ${archType}"
     exit 1
 fi
 
@@ -259,14 +271,28 @@ getToken(){
   fi
 
   if [ -z "$token" ]; then
-    # echo "Please authenticate the CLI to subscribe to our upgrade notifications"
-    openURL "${getTokenURL}" &&
-          echo -e "Your browser has been opened to retrieve auth token:\n\n\t ${getTokenURL} \n" ||
-          echo -e "Open the following url to retrieve auth token:\n\n\t ${getTokenURL} \n"
+    # Show Univer logo
+    echo ""
+    echo "╔══════════════════════════════════════════════════╗"
+    echo "║                                                  ║"
+    echo "║  ██╗░░░██╗███╗░░██╗██╗██╗░░░██╗███████╗██████╗░  ║"
+    echo "║  ██║░░░██║████╗░██║██║██║░░░██║██╔════╝██╔══██╗  ║"
+    echo "║  ██║░░░██║██╔██╗██║██║╚██╗░██╔╝█████╗░░██████╔╝  ║"
+    echo "║  ██║░░░██║██║╚████║██║░╚████╔╝░██╔══╝░░██╔══██╗  ║"
+    echo "║  ╚██████╔╝██║░╚███║██║░░╚██╔╝░░███████╗██║░░██║  ║"
+    echo "║  ░╚═════╝░╚═╝░░╚══╝╚═╝░░░╚═╝░░░╚══════╝╚═╝░░╚═╝  ║"
+    echo "║                                                  ║"
+    echo "╚══════════════════════════════════════════════════╝"
+    echo ""
 
-    echo "Token is used for CLI authentication"
+    openURL "${getTokenURL}" &&
+          echo -e "  ◇  Authentication\n\n  │  Your browser should open automatically.\n  │  If it doesn't, copy and open the link below:\n  │\n  │  ${_COLOR_BOLD}${_COLOR_UNDERLINE}${_COLOR_CYAN}${getTokenURL}${_COLOR_RESET}\n  │\n  │  Complete authentication in your browser,\n  │  then paste the token below to continue.\n" ||
+          echo -e "  ◇  Authentication\n\n  │  Please copy and open the link below:\n  │\n  │  ${_COLOR_BOLD}${_COLOR_UNDERLINE}${_COLOR_CYAN}${getTokenURL}${_COLOR_RESET}\n  │\n  │  Complete authentication in your browser,\n  │  then paste the token below to continue.\n"
+
+    echo ""
+    echo "  Paste your authentication token:"
     while [ "$_CI_TEST" != "true" ] ; do
-      read -r -p "> Paste your token here: " token
+      read -r -p "  ›  " token
       if verifyToken "${token}" true; then
         mkdir -p "${tokenPath}"
         echo -n "${token}" > "${tokenFileName}"
@@ -342,4 +368,3 @@ if [ $? -eq 0 ] && [ "$_CI_TEST" != "true" ]; then
     echo "More information about Univer SDK, please refer to https://univer.ai/guides/sheet/getting-started/quickstart"
     echo ""
 fi
-
