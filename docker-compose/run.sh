@@ -170,7 +170,8 @@ prepare_image() {
     check_abroad_region
     if [ $? -ne 0 ]; then
         # not in abroad
-        if [ $DOCKER == "podman" ] || check_docker_proxy; then
+        check_docker_proxy
+        if [ $? -ne 0 ] || [ "$DOCKER" == "podman" ]; then
             # not set proxy
             $SED -e 's|image: nginx:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/nginx:|' $COMPOSE_FILE
             $SED -e 's|image: postgres:|image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/postgres:|' $INFRA_COMPOSE_FILE
