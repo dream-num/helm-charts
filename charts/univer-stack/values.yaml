@@ -107,7 +107,7 @@ worker:
   fullnameOverride: worker-exchange
   image:
     repository: release/worker-exchange
-    tag: 1.0.0-alpha.0 # VERSION
+    tag: 0.25.1 # VERSION
   temporalServer:
     host: temporal-frontend:7233
     namespace: univer
