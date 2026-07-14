@@ -92,7 +92,7 @@ function _stdin {
     if [[ -z "$container" ]]; then
         echo
         echo -e "${BLUE}Select server to cat logs:${NC}"
-        server_options=("all" "collaboration-server" "universer" "exchange" "univer-ssc" "frontend")
+        server_options=("all" "collaboration-server" "universer" "exchange" "frontend")
         PS3="$(echo -e "${GREEN}Choose server (number): ${NC}")"
         select opt in "${server_options[@]}"; do
             if [[ -z "$opt" ]]; then
@@ -396,29 +396,6 @@ function log_exchange_error {
 }
 
 
-function log_univer_ssc_error {
-    error_log_file="$log_dir/univer-ssc-error.log"
-
-    echo "======================================"
-    echo "🛠️  Start recording Universer SSC Error logs..."
-    echo "======================================"
-
-    if [[ -n "$trace_id" ]]; then
-        $DOCKER_COMPOSE logs -t --since "$since_time" --until "$until_time" ssc-server 2>&1 | grep "$trace_id" > $error_log_file
-    else
-        $DOCKER_COMPOSE logs -t --since "$since_time" --until "$until_time" ssc-server 2>&1 | grep "Error" > $error_log_file
-    fi
-
-    if _check_log_file_empty "$error_log_file"; then
-        echo "📄 Full log file: $error_log_file"
-        return 0
-    else
-        return 1
-    fi
-
-    return 0
-}
-
 
 function log_univer_frontend_error {
     error_log_file="$log_dir/univer-frontend-error.log"
@@ -521,16 +498,6 @@ function main {
             echo "✅ Recorded exchange error log"
         else
             echo "❗ No exchange error logs found between $since_time and $until_time"
-        fi
-    fi
-
-    echo
-
-    if [[ $server == "all" || $server == "univer-ssc" ]]; then
-        if log_univer_ssc_error; then
-            echo "✅ Recorded univer-ssc error log"
-        else
-            echo "❗ No univer-ssc error logs found between $since_time and $until_time"
         fi
     fi
 

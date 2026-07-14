@@ -44,11 +44,8 @@ dependencies:
 - name: virtualservicemerge
   repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
   version: 0.1.0
-- name: univer-ssc
-  repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
-  version: 0.15.1
 - name: collaboration-helper-server
   repository: oci://univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/helm-charts
   version: 0.15.2-alpha
-digest: sha256:0a5e6e0831f3bc582f9fbb5b58cbba9887e531ffe104071bcb0d4088d825d4c3
+digest: sha256:f243bdb72f8cf4ec89fc56625ac4b684b09da21baafa8c392ec2e8766506e1c9
 generated: "2026-01-12T16:48:36.318906004+08:00"

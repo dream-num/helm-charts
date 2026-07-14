@@ -3,7 +3,7 @@ NS = helm-charts
 BUILD_DIR = build
 
 .PHONY: all
-all: prepare universer collaboration-server collaboration-helper-server collaboration-demo worker univer-ssc univer-stack
+all: prepare universer collaboration-server collaboration-helper-server collaboration-demo worker univer-stack
 
 .PHONY: prepare
 prepare:
@@ -39,12 +39,6 @@ worker: prepare
 	# Build and push worker chart
 	@helm package charts/worker -d $(BUILD_DIR)
 	@helm push $(BUILD_DIR)/worker-*.tgz oci://$(REGISTRY)/$(NS)
-
-.PHONY: univer-ssc
-univer-ssc: prepare
-	# Build and push univer-ssc chart
-	@helm package charts/univer-ssc -d $(BUILD_DIR)
-	@helm push $(BUILD_DIR)/univer-ssc-*.tgz oci://$(REGISTRY)/$(NS)
 
 .PHONY: univer-stack
 univer-stack: prepare
