@@ -20,7 +20,7 @@ services:
       - 8000
       - 9000
     environment:
-      - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},univer-temporal,collaboration-envoy,univer-minio,univer-demo-usip,ssc-server,collaboration-helper-server,large-collaboration-envoy
+      - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},univer-temporal,collaboration-envoy,univer-minio,univer-demo-usip,collaboration-helper-server,large-collaboration-envoy
       - SERVICE_NAME=Universer
       - SERVICE_VERSION=${UNIVERSER_VERSION}
     volumes:
@@ -160,24 +160,6 @@ services:
           memory: ${COLLABORATION_HELPER_MEMORY_LIMIT}M
     command: ["pnpm", "start:helper"]
 
-  ssc-server:
-    restart: always
-    image: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com/release/univer-collaboration:${COLLABORATION_SERVER_VERSION}
-    environment:
-      - URL_OF_APPLY_SERVICE=0.0.0.0:5005
-      - URL_OF_UNIVERSER_SERVICE=universer:8000
-      - URL_OF_SNAPSHOT_SERVICE=universer:9000
-      - no_proxy=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},universer
-    expose:
-      - 5005
-    networks:
-      - univer
-    labels:
-      - com.univer.app=ssc-server
-    profiles:
-      - ssc
-    command: ["pnpm", "start:ssc"]
-
   univer-temporal:
     privileged: true
     user: "0"
@@ -214,6 +196,7 @@ services:
       - NO_PROXY=127.0.0.1,localhost,${DOCKER_NETWORK_SUBNET},univer-temporal,univer-minio,universer
       - SERVICE_NAME=exchange-worker
       - SERVICE_VERSION=${UNIVER_WORKER_EXCHANGE_VERSION}
+      - UNIVER_EXCHANGE_RUST_ENABLED=${UNIVER_EXCHANGE_RUST_ENABLED}
     volumes:
       - ./logs/worker-exchange:/app/logs
       - ./exchange:/data/configs

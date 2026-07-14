@@ -49,12 +49,10 @@ spec:
               value: "exchange-worker"
             - name: SERVICE_VERSION
               value: {{ .Values.image.tag | quote }}
-            - name: EXCHANGE_LLM_NAME
-              value: {{ .Values.config.LlmName | quote }}
-            - name: EXCHANGE_LLM_KEY
-              value: {{ .Values.config.LlmKey | quote }}
-            - name: EXCHANGE_LLM_URL
-              value: {{ .Values.config.LlmUrl | quote }}
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
           ports:
             - name: grpc
               containerPort: {{ .Values.service.grpc }}

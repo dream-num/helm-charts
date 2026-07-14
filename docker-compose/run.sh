@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RELEASE_TIME="1783156674" # RELEASE_TIME
+RELEASE_TIME="1784031206" # RELEASE_TIME
 
 PLATFORM=$(uname)
 SED="sed -i"
@@ -226,9 +226,6 @@ gen_profiles() {
     fi
     if [ "$DISABLE_UNIVER_S3" != "true" ]; then
         profiles="${profiles} --profile s3 "
-    fi
-    if [ "$SSC_SERVER_ENABLED" == "true" ]; then
-        profiles="${profiles} --profile ssc "
     fi
     if [ "$ENABLE_LARGE_TIER_COLLABORATION_SERVER" == "true" ]; then
         profiles="${profiles} --profile large-tier "
