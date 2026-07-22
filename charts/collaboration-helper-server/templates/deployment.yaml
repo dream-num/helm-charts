@@ -62,6 +62,10 @@ spec:
               value: {{ .Values.config.unitInactivateTimeout | quote }}
             - name: X_FEATURE_ID
               value: {{ .Values.istio.version | quote }}
+            {{- with .Values.maxMemoryLimit }}
+            - name: NODE_OPTIONS
+              value: --max-old-space-size={{ . }}
+            {{- end }}
             - name: CLIENT_LICENSE_TEXT
               value: {{ .Values.license | quote }}
             - name: API_TIMEOUT

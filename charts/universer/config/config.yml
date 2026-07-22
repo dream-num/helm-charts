@@ -277,3 +277,7 @@ xunfei:
 {{- with .Values.config.xunfei }}
   {{- toYaml . | nindent 2 }}
 {{- end }}
+unitPreLoadConf:
+{{- with .Values.config.unitPreLoadConf }}
+  {{- toYaml . | nindent 2 }}
+{{- end }}
