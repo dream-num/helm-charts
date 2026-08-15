@@ -40,7 +40,7 @@ services:
     labels:
       - com.univer.app=init-db
     profiles:
-      - rds
+      - init-db
 
   univer-rabbitmq:
     restart: always

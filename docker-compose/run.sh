@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RELEASE_TIME="1785927471" # RELEASE_TIME
+RELEASE_TIME="1786798692" # RELEASE_TIME
 
 PLATFORM=$(uname)
 SED="sed -i"
@@ -103,6 +103,10 @@ choose_compose_file() {
         DATABASE_DSN="host=\${DATABASE_HOST} port=\${DATABASE_PORT} dbname=\${DATABASE_DBNAME} user=\${DATABASE_USERNAME} password=\${DATABASE_PASSWORD} sslmode=${database_ssl_mode} TimeZone=Asia/Shanghai"
         COMPOSE_FILE="docker-compose.db.yaml"
     ;;
+    "shentong")
+        DATABASE_DSN="\${DATABASE_USERNAME}/\${DATABASE_PASSWORD}@\${DATABASE_HOST}:\${DATABASE_PORT}/\${DATABASE_DBNAME}"
+        COMPOSE_FILE="docker-compose.db.yaml"
+    ;;
     esac
 
     if [ "${DATABASE_READ_HOST}" != "" ]; then
@@ -118,6 +122,9 @@ choose_compose_file() {
         ;;
         "gaussdb")
             DATABASE_REPLICA_DSN="host=\${DATABASE_READ_HOST} port=\${DATABASE_PORT} dbname=\${DATABASE_DBNAME} user=\${DATABASE_USERNAME} password=\${DATABASE_PASSWORD} sslmode=${database_ssl_mode} TimeZone=Asia/Shanghai"
+        ;;
+        "shentong")
+            DATABASE_REPLICA_DSN="\${DATABASE_USERNAME}/\${DATABASE_PASSWORD}@\${DATABASE_READ_HOST}:\${DATABASE_PORT}/\${DATABASE_DBNAME}"
         ;;
         esac
     fi
@@ -213,10 +220,28 @@ init_config() {
     done < .env
 }
 
+should_init_db() {
+    if [ "$DISABLE_UNIVER_RDS" == "true" ]; then
+        return 1
+    fi
+
+    case "$DATABASE_DRIVER" in
+    "postgresql"|"mysql")
+        return 0
+    ;;
+    *)
+        return 1
+    ;;
+    esac
+}
+
 gen_profiles() {
     profiles=""
     if [ "$DISABLE_UNIVER_RDS" != "true" ]; then
         profiles="${profiles} --profile rds "
+    fi
+    if should_init_db; then
+        profiles="${profiles} --profile init-db "
     fi
     if [ "$DISABLE_UNIVER_MQ" != "true" ]; then
         profiles="${profiles} --profile mq "
@@ -243,7 +268,7 @@ gen_env_param() {
 
 wait_db_init_success() {
     # wait init db completed if need
-    if [ "$DISABLE_UNIVER_RDS" != "true" ]; then
+    if should_init_db; then
         $DOCKER wait univer-init-db
         if [ $? -ne 0 ]; then
             echo "db init fail with code: $?, please check!"
