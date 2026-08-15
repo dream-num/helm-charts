@@ -74,8 +74,10 @@ version: default
 {{- else -}}
 {{- printf "%s:%s@tcp(%s:%v)/%s?charset=utf8mb4&parseTime=True&loc=Local" .username .password .host .port .dbname -}}
 {{- end -}}
+{{- else if eq .driver "shentong" -}}
+{{- printf "%s/%s@%s:%v/%s" .username .password .host .port .dbname -}}
 {{- else -}}
-{{ fail "unknow database driver, should use postgresql or mysql." }}
+{{ fail "unknown database driver, should use postgresql, mysql or shentong." }}
 {{- end }}
 {{- end }}
 
@@ -98,8 +100,10 @@ version: default
 {{- else -}}
 {{- printf "%s:%s@tcp(%s:%v)/%s?charset=utf8mb4&parseTime=True&loc=Local" .username .password .replicaHost .port .dbname -}}
 {{- end -}}
+{{- else if eq .driver "shentong" -}}
+{{- printf "%s/%s@%s:%v/%s" .username .password .replicaHost .port .dbname -}}
 {{- else -}}
-{{ fail "unknow database driver, should use postgresql or mysql." }}
+{{ fail "unknown database driver, should use postgresql, mysql or shentong." }}
 {{- end }}
 {{- else -}}
 {{- printf "" -}}
