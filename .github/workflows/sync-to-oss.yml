@@ -210,6 +210,7 @@ jobs:
         cp container-images/universer-sql/mysql/sql/univer.sql /tmp/sql/mysql.sql
         cp container-images/universer-sql/gaussdb/sql/universer_schema.sql /tmp/sql/gaussdb.sql
         cp container-images/universer-sql/dameng/sql/universer_schema.sql /tmp/sql/dameng.sql
+        cp container-images/universer-sql/shentong/sql/universer_schema.sql /tmp/sql/shentong.sql
         cp -r temporal-sql /tmp/sql
 
         cd /tmp/sql
