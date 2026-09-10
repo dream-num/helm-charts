@@ -21,6 +21,9 @@ spec:
         {{- include "universer.selectorLabels" . | nindent 8 }}
         {{- include "universer.istio.labels" . | nindent 8 }}
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum | trunc 63 }}
+        {{- if not .Values.envSecretName }}
+        checksum/env-secret: {{ include (print $.Template.BasePath "/env-secret.yaml") . | sha256sum | trunc 63 }}
+        {{- end }}
         sidecar.istio.io/inject: "{{ .Values.istio.enabled }}"
         {{- if .Values.istio.enabled }}
         istio.io/rev: "{{ .Values.global.istioDefaultRevision }}"
@@ -32,6 +35,9 @@ spec:
       {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- with .Values.serviceAccount.name }}
+      serviceAccountName: {{ . | quote }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -60,6 +66,9 @@ spec:
                       command: ["sh", "-c", "sleep 10"]
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          envFrom:
+            - secretRef:
+                name: {{ include "universer.envSecretName" . }}
           volumeMounts:
             - name: conf
               mountPath: /data/configs/config.yaml
@@ -68,23 +77,8 @@ spec:
               mountPath: /data/configs/license.txt
               subPath: license.txt
             - name: secret
-              mountPath: /data/configs/casdoor.pem
-              subPath: casdoor.pem
-            - name: secret
               mountPath: /data/configs/licenseKey.txt
               subPath: licenseKey.txt
-            - name: secret
-              mountPath: /data/configs/apiclient_key.pem
-              subPath: apiclient_key.pem
-            - name: secret
-              mountPath: /data/configs/alipayAppPublicCert.crt
-              subPath: alipayAppPublicCert.crt
-            - name: secret
-              mountPath: /data/configs/alipayRootCert.crt
-              subPath: alipayRootCert.crt
-            - name: secret
-              mountPath: /data/configs/alipayPublicCert.crt
-              subPath: alipayPublicCert.crt
           env:
             - name: SERVICE_NAME
               value: "Universer"
@@ -96,6 +90,12 @@ spec:
               value: {{ .Values.service.appName | quote }}
             - name: DEPLOY_ENV
               value: {{ .Values.global.deployEnv | quote }}
+            {{- with .Values.env }}
+            {{- range $key, $value := . }}
+            - name: {{ $key | upper }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -111,7 +111,7 @@ spec:
       terminationGracePeriodSeconds: 320
       volumes:
         - name: conf
-          configMap: 
+          configMap:
             name: {{ include "universer.fullname" . }}-config
         - name: secret
           secret:

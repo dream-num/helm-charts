@@ -17,6 +17,10 @@ spec:
       {{- end }}
       labels:
         {{- include "worker.selectorLabels" . | nindent 8 }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum | trunc 63 }}
+        {{- if not .Values.envSecretName }}
+        checksum/env-secret: {{ include (print $.Template.BasePath "/env-secret.yaml") . | sha256sum | trunc 63 }}
+        {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -36,15 +40,10 @@ spec:
             - "/data/configs/config.yaml"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          envFrom:
+            - secretRef:
+                name: {{ include "worker.envSecretName" . }}
           env:
-            - name: SINGLE_IMPORT_TIMEOUT
-              value: {{ .Values.temporalWorker.singleImportTimeout | quote }}
-            - name: TOTAL_IMPORT_TIMEOUT
-              value: {{ .Values.temporalWorker.totalImportTimeout | quote }}
-            - name: SINGLE_EXPORT_TIMEOUT
-              value: {{ .Values.temporalWorker.singleExportTimeout | quote }}
-            - name: TOTAL_EXPORT_TIMEOUT
-              value: {{ .Values.temporalWorker.totalExportTimeout | quote }}
             - name: SERVICE_NAME
               value: "exchange-worker"
             - name: SERVICE_VERSION

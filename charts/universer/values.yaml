@@ -13,11 +13,17 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 1.0.0-beta.2 # VERSION
+  tag: 1.0.0-rc.0 # VERSION
 
 imagePullSecrets: []
+# Use an existing Secret for container environment variables instead of creating one.
+envSecretName: ""
 nameOverride: ""
 fullnameOverride: ""
+
+# Optional existing ServiceAccount to use for the pod. The chart does not create it.
+serviceAccount:
+  name: ""
 
 podAnnotations: {}
 
@@ -61,7 +67,7 @@ resources:
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   limits:
     cpu: 2000m
-    memory: 2Gi
+    memory: 4Gi
   requests:
     cpu: 50m
     memory: 50Mi
@@ -138,21 +144,11 @@ config:
     port: 5005
   collaborationHelper:
     addr: collaboration-helper-server:5006
-  nodeRuntime:
-    addr: http://localhost:14400
-  pythonRuntime:
-    addr: localhost:50052
-  yuumi:
-    addr: yuumi:5000
   fileExchange:
     enabled: false
     addr: worker-exchange:9004
     timeout: 60s
     tlsConfig: {}
-  univerOps:
-    host: univer-ops
-    port: 9500
-  admin: []
   s3:
     accessKeyID: ""
     accessKeySecret: ""
@@ -168,38 +164,6 @@ config:
     namespace: default
   auth:
     enabled: false
-    univerEnabled: false
-    cookieDomain: "abc.example.com"
-    loginErrorURL: ""
-    mobileBindURL: ""
-    homepageURL: ""
-    loginURL: ""
-    ssoAuthOrigin: ""
-    casdoorSDK:
-      organizationName: ""
-      applicationName: ""
-      domain: ""
-    oidc:
-      enabled: false
-      issuer: https://accounts.google.com
-      clientID: "xxxx"
-      clientSecret: "xxxxxxxxxx"
-      redirectURL: "http://example.com/oidc/callback"
-      cookieDomain: "abc.example.com" # deprecated
-    oauth2:
-      enabled: false
-      clientID: "xxxx"
-      clientSecret: "xxxxxxxxxx"
-      redirectURL: "http://example.com/oauth2/callback"
-      cookieDomain: "abc.example.com" # deprecated
-      authURL: "http://localhost:8081/oauth/authorize"
-      tokenURL: "http://localhost:8081/oauth/token"
-      apiURL: "http://localhost:8081/oauth/userinfo"
-      scopes: "all"
-      openidPath: "id"
-      emailPath: "email"
-      namePath: "name"
-      avatarPath: "avatar"
     anonymous:
       enabled: false
     permission:
@@ -209,10 +173,6 @@ config:
       enableObjInherit: false
       customerStrategies: ""
       provider: 1
-    admin:
-      userIDs: []
-      liteServer: false
-
   apiLimit:
     method: {}
     ip: {}
@@ -234,81 +194,13 @@ config:
     dataKeyRotate: 5s
     dataKeyCacheExpiration: 30s
     localKMS:
-      cmkAlias: alias/name
-      cmkBase64: "key base64"
+      cmkAlias: "" # alias/name
+      cmkBase64: "" # key base64
     awskms:
       accessKeyID: ""
       accessKeySecret: ""
       region: ""
-      kmsKeyID: "cmkid or alias"
-  sesConfig:
-    accessKey: ""
-    accessSecret: ""
-    region: ""
-    templateName: ""
-    redirectURL: "http://example.com/oidc/email-callback"
-    template:
-      login: ""
-      clipsheetWorkflow: ""
-      emailAuthCode: ""
-      inviteCode: ""
-    senderAddr: ""
-  smsConf:
-    accessKey: ""
-    accessSecret: ""
-    endpoint: ""
-    signName: ""
-    templateCodeForLogin: ""
-    loginCaptcha: {}
-  postHogConf:
-    enabled: false
-    endpoint: ""
-    projectKey: ""
-  entitlementConf:
-    enable: false
-    defaultEntiConf:
-      anonymousDefaultEntiId: 1001
-      registeredDefaultEntiId: 1001
-    registerAwardConf:
-      entiId: 1004
-      entiInterval: 1
-      entiIntervalCnt: 7
-      quotaConfs:
-        CreditGeneral:
-          quotaKey: "CreditGeneral"
-          quotaTotal: 20000
-      quotaInterval: 4
-      quotaIntervalCnt: 1
-    cronConf:
-      reportRetryCron: "@every 10s"
-      minRetryInterval: 10
-      retryRate: 5
-      pendingSubCleanCron: "@every 60s"
-      detectInterval: 300
-      cleanRate: 2
-      maxActionBlockInterval: 900 # 15min
-    stripeConf:
-      apiPK: ""
-      apiSK: ""
-      whSK: ""
-      timeout: 10
-    wechatPayConf:
-      appID: ""
-      mchCertificateSerialNumber: ""
-      mchID: ""
-      apiKey: ""
-      notifyUrl: ""
-    aliPayConf:
-      appID: ""
-      privateKey: ""
-      apiKey: ""
-      notifyUrl: ""
-      isProd: false # default false
-    orderExpireInterval: 86400000 # 24 hours
-    intentExpireInterval: 1800000 # 30 minutes
-    identityExpireNtfConf:
-      toNtfLeftDays: [1,3,7]
-      ntfRate: 20
+      kmsKeyID: "" # cmkid or alias
   workspace:
     enabled: false
   statsConf:
@@ -318,62 +210,27 @@ config:
   jaegerConf:
     enabled: false
     grpcEndpoint: "jaeger:4317"
-  models: []
-  invitationCode:
-    enabled: false
-  wechat:
-    appID: "" # deprecated
-    appSecret: "" # deprecated
-    web:
-      appID: ""
-      appSecret: ""
-    miniProgram:
-      appID: ""
-      appSecret: ""
-    jsapi:
-      appID: ""
-      appSecret: ""
   permissionBasedExport:
     enabled: false
-  notifyConf:
-    purchase:
-      - channel: 1
-        templateId: ""
-        locale: ""
-    identityExpiring:
-      - channel: 1
-        templateId: ""
-      - channel: 2
-        templateId: ""
-  ip2AddrCliConf:
-    pathFmt: ""
-    token: ""
-  googleConf:
-    enabled: false
-  proxyConf:
-    proxyUrl: ""
-  xunfei: {}
   unitPreLoadConf:
     enabled: false
+  secretManagerConf:
+    enabled: false
+    endpoint: ""
+    secretName: ""
+    roleArn: ""
 
 innerConfig: {}
 
-wechatPay:
-  apiclient_key: ""
-
-aliPay:
-  app_public_cert: ""
-  root_cert: ""
-  public_cert: ""
+env: {}
+  # Use Sonic by default. If a segmentation fault occurs, set this to `"std"` to use the standard JSON encoder.
+  # UNIVERSER_JSON_ENCODER: "std"
 
 license:
   LICENSE: ""
   publicKey: ""
   licenseV2: ""
   licenseKeyV2: ""
-
-casdoorLicense:
-  publicKey: ""
 
 job:
   enabled: true

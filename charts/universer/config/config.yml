@@ -12,7 +12,7 @@ server:
     {{- end }}
   grpc:
     addr: 0.0.0.0:{{ .Values.service.grpc }}
-    timeout: 60s # max timeout, not real timeout
+    timeout: 300s # max timeout, not real timeout
   shutdownTimeout: {{ .Values.config.server.shutdownTimeout }}
 data:
   database:
@@ -21,28 +21,38 @@ data:
     connMaxLifetime: {{ .Values.config.database.connMaxLifetime }}
     driver: {{ .Values.config.database.driver }}
     database: {{ .Values.config.database.dbname }}
-    dsn: {{ include "universer.database.dsn" .Values.config.database }}
-    replicaDSN: {{ include "universer.database.replicaDSN" .Values.config.database }}
+    dsn: ""
+    replicaDSN: ""
   rabbitmq:
     enabled: {{ .Values.config.rabbitmq.enabled }}
-    addr: amqp://{{ .Values.config.rabbitmq.username }}:{{ .Values.config.rabbitmq.password }}@{{ tpl .Values.config.rabbitmq.host . }}:{{ .Values.config.rabbitmq.port }}/
+    addr: ""
     {{- with .Values.config.rabbitmq.cluster }}
     cluster:
-      {{- toYaml . | nindent 6 }}
+      {{- $cluster := deepCopy . }}
+      {{- $_ := set $cluster "username" "" }}
+      {{- $_ := set $cluster "password" "" }}
+      {{- toYaml $cluster | nindent 6 }}
     {{- end }}
     eventSync: {{ .Values.config.rabbitmq.eventSync }}
-  clickhouse:
-    dsn: clickhouse://clickhouse:clickhouse@clickhouse:9000/univer?dial_timeout=10s&read_timeout=20s
   temporal:
     addr: {{ tpl .Values.config.temporal.addr . }}
     namespace: {{ .Values.config.temporal.namespace }}
   {{- with .Values.config.redis }}
   redis:
-    {{- toYaml . | nindent 4 }}
+    {{- $redis := deepCopy . }}
+    {{- $_ := set $redis "username" "" }}
+    {{- $_ := set $redis "password" "" }}
+    {{- $_ := set $redis.sentinel "username" "" }}
+    {{- $_ := set $redis.sentinel "password" "" }}
+    {{- $_ := set $redis.tlsConfig "key" "" }}
+    {{- toYaml $redis | nindent 4 }}
   {{- end }}
   {{- with .Values.config.s3 }}
   s3:
-    {{- toYaml . | nindent 4 }}
+    {{- $s3 := deepCopy . }}
+    {{- $_ := set $s3 "accessKeyID" "" }}
+    {{- $_ := set $s3 "accessKeySecret" "" }}
+    {{- toYaml $s3 | nindent 4 }}
   {{- end }}
 service:
   apply:
@@ -51,23 +61,12 @@ service:
   collaborationHelper:
     addr: {{ .Values.config.collaborationHelper.addr }}
     timeout: 180s
-  nodeRuntime:
-    addr: {{ .Values.config.nodeRuntime.addr }}
-    timeout: 10s
-  pythonRuntime:
-    addr: {{ .Values.config.pythonRuntime.addr }}
-    timeout: 10s
-  yuumi:
-    addr: {{ .Values.config.yuumi.addr }}
   {{- if .Values.config.fileExchange.enabled }}
   fileExchange:
     {{- toYaml .Values.config.fileExchange | nindent 4 }}
   {{- end }}
   ssc:
     addr: "{{ tpl .Values.config.ssc.host . }}:{{ .Values.config.ssc.port }}"
-    timeout: 10s
-  univerOps:
-    addr: "{{ tpl .Values.config.univerOps.host . }}:{{ .Values.config.univerOps.port }}"
     timeout: 10s
 unitRoutingConf:
   tiers:
@@ -92,37 +91,8 @@ apiLimit:
   {{- with .Values.config.apiLimit }}
   {{- toYaml . | nindent 2 }}
   {{- end }}
-admin: 
-{{- if .Values.config.admin -}}
-  {{- range .Values.config.admin }}
-  - user: {{ .user }}
-    password: {{ .password }}
-  {{- end }}
-{{- else }} []
-{{- end }}
-extra:
-  celldataMaxSize: 10485760 # 单位字节，10M
 auth:
   enabled: {{ .Values.config.auth.enabled }}
-  univerEnabled: {{ .Values.config.auth.univerEnabled }}
-  cookieDomain: {{ .Values.config.auth.cookieDomain }}
-  loginErrorURL: {{ .Values.config.auth.loginErrorURL }}
-  loginURL: {{ .Values.config.auth.loginURL }}
-  ssoAuthOrigin: {{ .Values.config.auth.ssoAuthOrigin }}
-  mobileBindURL: {{ .Values.config.auth.mobileBindURL }}
-  homepageURL: {{ .Values.config.auth.homepageURL }}
-  {{- with .Values.config.auth.casdoorSDK }}
-  casdoorSDK:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-  {{- with .Values.config.auth.oidc }}
-  oidc:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-  {{- with .Values.config.auth.oauth2 }}
-  oauth2:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
   {{- with .Values.config.auth.anonymous }}
   anonymous:
     {{- toYaml . | nindent 4 }}
@@ -131,25 +101,15 @@ auth:
   permission:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-  admin:
-    userIDs:
-    {{- range .Values.config.auth.admin.userIDs }}
-    - {{ . | quote }}
-    {{- end }}
-    liteServer: {{ .Values.config.auth.admin.liteServer }}
 usip:
   enabled: {{ .Values.config.usip.enabled }}
-  apikey: {{ .Values.config.usip.apikey | quote }}
+  apikey: ""
   {{- with .Values.config.usip.uri }}
   uri:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 sentryConfig:
-  {{- with .Values.config.sentryConfig.dsn }}
-  dsn: {{ . }}
-  {{- else }}
   dsn: ""
-  {{- end }}
   debug: false
   enableTracing: true
   TracesSampleRate: 1.0
@@ -159,66 +119,15 @@ dataProtectionConf:
   dataKeyCacheExpiration: {{ .Values.config.dataProtectionConf.dataKeyCacheExpiration }}
   {{- if eq .Values.config.dataProtectionConf.kmsServiceName "aws" }}
   awskms:
-    accessKeyID: {{ .Values.config.dataProtectionConf.awskms.accessKeyID }}
-    accessKeySecret: {{ .Values.config.dataProtectionConf.awskms.accessKeySecret }}
+    accessKeyID: ""
+    accessKeySecret: ""
     region: {{ .Values.config.dataProtectionConf.awskms.region }}
-    kmsKeyID: {{ .Values.config.dataProtectionConf.awskms.kmsKeyID }}
+    kmsKeyID: ""
   {{- else if eq .Values.config.dataProtectionConf.kmsServiceName "local" }}
   localKMS:
     cmkAlias: {{ .Values.config.dataProtectionConf.localKMS.cmkAlias }}
-    cmkBase64: {{ .Values.config.dataProtectionConf.localKMS.cmkBase64 }}
+    cmkBase64: ""
   {{- end }}
-sesConfig:
-{{- with .Values.config.sesConfig }}
-  {{- toYaml . | nindent 2 }}
-{{- end }}
-smsConf:
-{{- with .Values.config.smsConf }}
-  {{- toYaml . | nindent 2 }}
-{{- end }}
-postHogConf:
-  enabled: {{ .Values.config.postHogConf.enabled}}
-  endpoint: {{ default "" .Values.config.postHogConf.endpoint}}
-  projectKey: {{ default "" .Values.config.postHogConf.projectKey}}
-entitlementConf:
-  enable: {{ .Values.config.entitlementConf.enable }}
-  defaultEntiConf:
-    anonymousDefaultEntiId: {{ .Values.config.entitlementConf.defaultEntiConf.anonymousDefaultEntiId }}
-    registeredDefaultEntiId: {{ .Values.config.entitlementConf.defaultEntiConf.registeredDefaultEntiId }}
-  registerAwardConf:
-    {{- with .Values.config.entitlementConf.registerAwardConf }}
-      {{- toYaml . | nindent 4 }}
-    {{- end }}
-  cronConf:
-    reportRetryCron: {{ .Values.config.entitlementConf.cronConf.reportRetryCron | quote }}
-    minRetryInterval: {{ .Values.config.entitlementConf.cronConf.minRetryInterval }}
-    retryRate: {{ .Values.config.entitlementConf.cronConf.retryRate }}
-    pendingSubCleanCron: {{ .Values.config.entitlementConf.cronConf.pendingSubCleanCron | quote }}
-    detectInterval: {{ .Values.config.entitlementConf.cronConf.detectInterval }}
-    cleanRate: {{ .Values.config.entitlementConf.cronConf.cleanRate }}
-    maxActionBlockInterval: {{ .Values.config.entitlementConf.cronConf.maxActionBlockInterval }}
-  stripeConf:
-    apiPK: {{ .Values.config.entitlementConf.stripeConf.apiPK | quote }}
-    apiSK: {{ .Values.config.entitlementConf.stripeConf.apiSK | quote }}
-    whSK: {{ .Values.config.entitlementConf.stripeConf.whSK | quote }}
-    timeout: {{ .Values.config.entitlementConf.stripeConf.timeout }}
-  wechatPayConf:
-    appID: {{ .Values.config.entitlementConf.wechatPayConf.appID | quote }}
-    mchCertificateSerialNumber: {{ .Values.config.entitlementConf.wechatPayConf.mchCertificateSerialNumber | quote }}
-    mchID: {{ .Values.config.entitlementConf.wechatPayConf.mchID | quote }}
-    apiKey: {{ .Values.config.entitlementConf.wechatPayConf.apiKey | quote }}
-    notifyUrl: {{ .Values.config.entitlementConf.wechatPayConf.notifyUrl | quote }}
-  aliPayConf:
-    appID: {{ .Values.config.entitlementConf.aliPayConf.appID | quote }}
-    privateKey: {{ .Values.config.entitlementConf.aliPayConf.privateKey | quote }}
-    apiKey: {{ .Values.config.entitlementConf.aliPayConf.apiKey | quote }}
-    notifyUrl: {{ .Values.config.entitlementConf.aliPayConf.notifyUrl | quote }}
-    isProd: {{ .Values.config.entitlementConf.aliPayConf.isProd }}
-  orderExpireInterval: {{ .Values.config.entitlementConf.orderExpireInterval }} # 24 hours
-  intentExpireInterval: {{ .Values.config.entitlementConf.intentExpireInterval }} # 15 minutes
-  identityExpireNtfConf:
-    toNtfLeftDays: [{{ join ", " .Values.config.entitlementConf.identityExpireNtfConf.toNtfLeftDays }}]
-    ntfRate: {{ .Values.config.entitlementConf.identityExpireNtfConf.ntfRate }}
 workspace:
 {{- with .Values.config.workspace }}
   {{- toYaml . | nindent 2 }}
@@ -231,53 +140,16 @@ jaegerConf:
 {{- with .Values.config.jaegerConf }}
   {{- toYaml . | nindent 2 }}
 {{- end }}
-models:
-{{- if .Values.config.models -}}
-  {{- range .Values.config.models }}
-  - id: {{ .id }}
-    name: {{ .name }}
-  {{- end }}
-{{- else }} []
-{{- end }}
-invitationCode:
-  enabled: {{ .Values.config.invitationCode.enabled}}
 permissionBasedExport:
   enabled: {{ .Values.config.permissionBasedExport.enabled }}
-wechat:
-  appID: {{ .Values.config.wechat.appID }}
-  appSecret: {{ .Values.config.wechat.appSecret }}
-  web:
-    appID: {{ .Values.config.wechat.web.appID }}
-    appSecret: {{ .Values.config.wechat.web.appSecret }}
-  miniProgram:
-    appID: {{ .Values.config.wechat.miniProgram.appID }}
-    appSecret: {{ .Values.config.wechat.miniProgram.appSecret }}
-  jsapi:
-    appID: {{ .Values.config.wechat.jsapi.appID }}
-    appSecret: {{ .Values.config.wechat.jsapi.appSecret }}
 {{- if .Values.innerConfig }}
 {{ toYaml .Values.innerConfig }}
 {{- end }}
-notifyConf:
-  {{- with .Values.config.notifyConf }}
-  {{- toYaml . | nindent 2 }}
-  {{- end }}
-ip2AddrCliConf:
-  pathFmt: {{ .Values.config.ip2AddrCliConf.pathFmt | quote }}
-  token: {{ .Values.config.ip2AddrCliConf.token | quote }}
-googleConf:
-{{- with .Values.config.googleConf }}
-  {{- toYaml . | nindent 2 }}
-{{- end }}
-proxyConf:
-{{- with .Values.config.proxyConf }}
-  {{- toYaml . | nindent 2 }}
-{{- end }}
-xunfei:
-{{- with .Values.config.xunfei }}
-  {{- toYaml . | nindent 2 }}
-{{- end }}
 unitPreLoadConf:
 {{- with .Values.config.unitPreLoadConf }}
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+secretManagerConf:
+{{- with .Values.config.secretManagerConf }}
   {{- toYaml . | nindent 2 }}
 {{- end }}

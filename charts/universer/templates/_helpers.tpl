@@ -109,3 +109,15 @@ version: default
 {{- printf "" -}}
 {{- end }}
 {{- end }}
+
+{{/* Render a base64-encoded Secret key only when its value is non-empty. */}}
+{{- define "universer.secret.optionalKey" -}}
+{{- if not (empty .value) -}}
+{{ .key }}: {{ .value | toString | b64enc | quote }}
+{{- end -}}
+{{- end -}}
+
+{{/* Return the existing env Secret name or the chart-managed Secret name. */}}
+{{- define "universer.envSecretName" -}}
+{{- default (printf "%s-env-secret" (include "universer.fullname" .)) .Values.envSecretName -}}
+{{- end -}}
