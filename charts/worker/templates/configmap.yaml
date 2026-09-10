@@ -30,10 +30,21 @@ data:
 
     {{- with .Values.redis }}
     redis:
-      {{- toYaml . | nindent 6 }}
+      {{- $redis := deepCopy . }}
+      {{- $_ := set $redis "username" "" }}
+      {{- $_ := set $redis "password" "" }}
+      {{- $_ := set $redis.sentinel "username" "" }}
+      {{- $_ := set $redis.sentinel "password" "" }}
+      {{- $_ := set $redis.tlsConfig "key" "" }}
+      {{- toYaml $redis | nindent 6 }}
     {{- end }}
 
     {{- with .Values.jaeger }}
     jaeger:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+
+    {{- with .Values.secretManager }}
+    secretManager:
       {{- toYaml . | nindent 6 }}
     {{- end }}

@@ -9,9 +9,11 @@ image:
   repository: release/worker-exchange
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 1.0.0-beta.2 # VERSION
+  tag: 1.0.0-rc.0 # VERSION
 
 imagePullSecrets: []
+# Use an existing Secret for container environment variables instead of creating one.
+envSecretName: ""
 nameOverride: ""
 fullnameOverride: ""
 
@@ -89,6 +91,12 @@ redis:
 jaeger:
   enabled: false
   grpcEndpoint: jaeger:4317
+
+secretManager:
+  enabled: false
+  endpoint: ""
+  roleArn: ""
+  secretName: ""
 
 env:
   UNIVER_EXCHANGE_RUST_ENABLED: "true"

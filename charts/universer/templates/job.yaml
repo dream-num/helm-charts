@@ -41,9 +41,15 @@ spec:
             - name: DATABASE
               value: {{ .Values.config.database.dbname }}
             - name: USERNAME
-              value: {{ .Values.config.database.username }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "universer.envSecretName" . }}
+                  key: UNIVERSER_DATABASE_USERNAME
             - name: PASSWORD
-              value: {{ .Values.config.database.password }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "universer.envSecretName" . }}
+                  key: UNIVERSER_DATABASE_PASSWORD
       restartPolicy: Never
   backoffLimit: 1
 {{- end -}}
