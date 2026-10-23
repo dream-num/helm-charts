@@ -48,7 +48,8 @@ jobs:
         OSS_BUCKET: ${{ secrets.OSS_BUCKET }}
       run: |
         ossutil cp "${ALLINONE_PATH}" "oss://${OSS_BUCKET}/release/${ALLINONE_TAR}" \
-          --force --connect-timeout 30 --read-timeout 120 --retry-times 10
+          --force --connect-timeout 30 --read-timeout 120 --retry-times 10 \
+          --parallel=5
 
   build-arm64:
     name: build-arm64
@@ -88,7 +89,8 @@ jobs:
         OSS_BUCKET: ${{ secrets.OSS_BUCKET }}
       run: |
         ossutil cp "${ALLINONE_PATH}" "oss://${OSS_BUCKET}/release/${ALLINONE_TAR}" \
-          --force --connect-timeout 30 --read-timeout 120 --retry-times 10
+          --force --connect-timeout 30 --read-timeout 120 --retry-times 10 \
+          --parallel=5
 
   build-k8s:
     name: build-k8s
@@ -130,4 +132,5 @@ jobs:
         OSS_BUCKET: ${{ secrets.OSS_BUCKET }}
       run: |
         ossutil cp "${ALLINONE_PATH}" "oss://${OSS_BUCKET}/release/${ALLINONE_TAR}" \
-          --force --connect-timeout 30 --read-timeout 120 --retry-times 10
+          --force --connect-timeout 30 --read-timeout 120 --retry-times 10 \
+          --parallel=5
