@@ -13,7 +13,7 @@ image:
   repository: release/universer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 1.5.2 # VERSION
+  tag: 1.6.0 # VERSION
 
 imagePullSecrets: []
 # Use an existing Secret for container environment variables instead of creating one.
@@ -238,7 +238,7 @@ job:
     registry: univer-acr-registry.cn-shenzhen.cr.aliyuncs.com
     repository: release/universer-sql
     pullPolicy: IfNotPresent
-    tag: "0.0.25"
+    tag: "0.0.26"
 
 istio:
   enabled: false
